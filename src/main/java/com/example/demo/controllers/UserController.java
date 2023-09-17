@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,7 +13,8 @@ import com.example.demo.repositories.UserRepository;
 import com.example.demo.services.RecoveryCodeService;
 import com.example.demo.services.UserService;
 
-@RestController("/api/user")
+@RestController
+@RequestMapping("/api/user")
 public class UserController {
 
 	@Autowired
@@ -30,7 +32,6 @@ public class UserController {
 	@PostMapping("/CreateAccount")
 	public int CreateAccount(@RequestBody User user)
 	{
-		System.out.println(user.getEmail());
 		return userService.CreateAccount(user);
 	}
 	
