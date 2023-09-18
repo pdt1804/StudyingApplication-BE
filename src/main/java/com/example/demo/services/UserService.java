@@ -10,7 +10,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.entities.Information;
 import com.example.demo.entities.User;
+import com.example.demo.repositories.InformationRepository;
 import com.example.demo.repositories.UserRepository;
 
 @Service
@@ -18,6 +20,9 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private InformationService informationService;
 	
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -40,6 +45,7 @@ public class UserService {
 	{
 		try 
 		{
+			user.setInformation(informationService.createInformation());
 			userRepository.save(user); 
 			return user.getUID();
 		}
