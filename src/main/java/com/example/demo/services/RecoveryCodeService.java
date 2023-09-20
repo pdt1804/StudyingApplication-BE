@@ -31,8 +31,8 @@ public class RecoveryCodeService {
 	    return !isExpired;
 	}
 	
-	@Scheduled(fixedRate = 100000)
-	public void EliminateInvalidCode()
+	//@Scheduled(fixedRate = 61000)
+	private void EliminateInvalidCode()
 	{
 		List<RecoveryCode> listRecoveryCode = recoveryCodeRepository.findAll();
 		for (RecoveryCode p : listRecoveryCode)
