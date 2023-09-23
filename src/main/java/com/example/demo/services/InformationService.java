@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entities.Information;
 import com.example.demo.entities.User;
@@ -17,7 +18,7 @@ public class InformationService {
 	private InformationRepository informationRepository;
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 	
 	public Information getInformationbyID(int ID)
 	{
@@ -46,22 +47,45 @@ public class InformationService {
 		existingInformation.setListDownside(information.getListDownside());
 		existingInformation.setListUpside(information.getListUpside());
 		existingInformation.setPhoneNumber(information.getPhoneNumber());
-		existingInformation.setImage(information.getImage());
+		//existingInformation.setImage(information.getImage());
 		informationRepository.save(existingInformation);
 	}
 	
-	public String changePassword(int userID, String newPassWord, String currentPassWord)
+	public String changePassword(String userName, String newPassWord, String currentPassWord)
 	{
-		User user = userRepository.getById(userID);
+		User user = userService.GetUserByUsername(userName);
 		if (user.getPassWord().equals(currentPassWord))
 		{
 			user.setPassWord(newPassWord);
-		    userRepository.save(user);
+		    userService.changePassword(user);
 		    return "Đổi thành công";
 		}
 		else
 		{
 			return "Sai mật khẩu";
+		}
+	}
+	
+	public String changeAvatar(MultipartFile file, String userName)
+	{
+		try
+		{
+			User user = userService.GetUserByUsername(userName);
+			if (user == null)
+			{
+				return "Không tồn tại tài khoản";
+			}
+			else
+			{
+				user.getInformation().setImage(file.getBytes());
+				userService.changeAvatar(user);
+				return "Thay đổi ảnh thành công";
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return "Thay đổi không thành công";
 		}
 	}
 }

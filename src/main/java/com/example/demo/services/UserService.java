@@ -22,7 +22,7 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private InformationService informationService;
+	private InformationRepository informationRepository;
 	
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -41,19 +41,31 @@ public class UserService {
 		}
 	}
 		
-	public int CreateAccount(User user)
+	public String CreateAccount(User user)
 	{
 		try 
 		{
-			user.setInformation(informationService.createInformation());
+			Information information = new Information();
+			informationRepository.save(information);
+			user.setInformation(information);
 			userRepository.save(user); 
-			return user.getUID();
+			return user.getUserName();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			return -1; // Failed to create account
+			return "Không tạo thành công"; // Failed to create account
 		}
+	}
+	
+	public void changePassword(User user)
+	{
+		userRepository.save(user);
+	}
+	
+	public void changeAvatar(User user)
+	{
+		userRepository.save(user);
 	}
 	
 	public User GetUserById(int ID)

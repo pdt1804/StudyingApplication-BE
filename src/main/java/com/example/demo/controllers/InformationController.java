@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entities.Information;
 import com.example.demo.services.InformationService;
@@ -31,8 +32,14 @@ public class InformationController {
 	}
 	
 	@PostMapping("/changePassword")
-	public String changePassword(@RequestParam int userID, @RequestParam String newPassWord, @RequestParam String currentPassWord)
+	public String changePassword(@RequestParam String userName, @RequestParam String newPassWord, @RequestParam String currentPassWord)
 	{
-		return informationService.changePassword(userID, newPassWord, currentPassWord);
+		return informationService.changePassword(userName, newPassWord, currentPassWord);
+	}
+	
+	@PostMapping("/changeAvatar")
+	public String changeAvatar(@RequestParam ("file") MultipartFile file, @RequestParam ("userName") String userName)
+	{
+		return informationService.changeAvatar(file, userName);
 	}
 }

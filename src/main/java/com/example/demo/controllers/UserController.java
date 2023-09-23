@@ -30,7 +30,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/CreateAccount")
-	public int CreateAccount(@RequestBody User user)
+	public String CreateAccount(@RequestBody User user)
 	{
 		return userService.CreateAccount(user);
 	}
