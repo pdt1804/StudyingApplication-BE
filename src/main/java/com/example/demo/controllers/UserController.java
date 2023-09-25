@@ -14,7 +14,7 @@ import com.example.demo.services.RecoveryCodeService;
 import com.example.demo.services.UserService;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/v1/user")
 public class UserController {
 
 	@Autowired
