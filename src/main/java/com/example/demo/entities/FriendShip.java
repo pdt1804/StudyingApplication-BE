@@ -27,11 +27,11 @@ public class FriendShip {
     private int FriendShip_ID;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "sentUser_UserName", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "friend_id", nullable = false)
+    @JoinColumn(name = "friendUser_UserName", nullable = false)
     private User friend;
     
     private Date sentTime;
