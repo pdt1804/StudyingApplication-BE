@@ -1,15 +1,21 @@
 package com.example.demo.entities;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.GeneratorType;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,9 +42,9 @@ public class User {
 	@JoinColumn(name = "Users-Infomation")
 	private Information information;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_name"), inverseJoinColumns = @JoinColumn(name = "groupid"))
-    private Set<GroupStudying> groups = new HashSet<>();
+    private List<GroupStudying> groups = new ArrayList<>();
   
 	
     public User(String userName, String passWord, String Email) {

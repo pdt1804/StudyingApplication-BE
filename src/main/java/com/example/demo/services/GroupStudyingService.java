@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +45,6 @@ public class GroupStudyingService {
 		if (group.getUsers().size() == 1)
 		{
 			group.getUsers().remove(user);
-			group.setLeaderOfGroup(null);
 			groupStudyingRepository.delete(group);
 		}
 		else
@@ -54,6 +54,7 @@ public class GroupStudyingService {
 			groupStudyingRepository.save(group);
 		}
 		user.getGroups().remove(group);
+		userRepository.save(user);
 	}
 	
 	public GroupStudying findGroupbyID(int id)
@@ -86,8 +87,11 @@ public class GroupStudyingService {
 	public void joinInGroup(String userName, int groupID)
 	{
 		var group = groupStudyingRepository.getById(groupID);
+		var user = userRepository.getById(userName);
+		user.getGroups().add(group);
 		group.getUsers().add(userRepository.getById(userName));
-		userRepository.getById(userName).getGroups().add(group);
+		groupStudyingRepository.save(group);
+		userRepository.save(user);
 	}
 	
 	public void changeAvatarGroup(MultipartFile file, int groupID)
@@ -114,8 +118,26 @@ public class GroupStudyingService {
 		}
 	}
 	
-	public Set<GroupStudying> getAllGroupofUser(String myUserName)
+	public List<GroupStudying> getAllGroupofUser(String myUserName)
 	{
+//		List<GroupStudying> list = new ArrayList<>();
+//		for (var p : groupStudyingRepository.findAll())
+//		{
+//			if (p.getLeaderOfGroup().getUserName().equals(myUserName))
+//			{
+//				list.add(p);
+//			}
+//			else
+//			{
+//				for (var b : p.getUsers())
+//				{
+//					if (b.getUserName().equals(myUserName))
+//					{
+//						list.add(p);
+//					}
+//				}
+//			}
+//		}
 		return userRepository.getById(myUserName).getGroups();
 	}
 }

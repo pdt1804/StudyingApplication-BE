@@ -25,7 +25,7 @@ public class GroupStudyingController {
 	private GroupStudyingService groupStudyingService;
 	
 	@GetMapping("/getAllGroupofUser")
-	public Set<GroupStudying> getAllGroupofUser(@RequestParam("myUserName") String myUserName)
+	public List<GroupStudying> getAllGroupofUser(@RequestParam("myUserName") String myUserName)
 	{
 		return groupStudyingService.getAllGroupofUser(myUserName);
 	}

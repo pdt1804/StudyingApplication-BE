@@ -1,8 +1,14 @@
 package com.example.demo.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,7 +37,7 @@ public class GroupStudying {
 	@ManyToOne
 	private User leaderOfGroup;
 	@ManyToMany
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 	
 	public GroupStudying(int groupID, byte[] imageGroup, String nameGroup, Date dateCreated, Set<User> users) {
 		super();
@@ -39,7 +45,6 @@ public class GroupStudying {
 		this.imageGroup = imageGroup;
 		this.nameGroup = nameGroup;
 		this.dateCreated = dateCreated;
-		this.users = users;
 	}
 	
 	public GroupStudying()
