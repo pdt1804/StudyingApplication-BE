@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,8 @@ public class GroupStudying {
 	private byte[] imageGroup;
 	private String nameGroup;
 	private Date dateCreated;
+	@ManyToOne
+	private User leaderOfGroup;
 	@ManyToMany
     private Set<User> users = new HashSet<>();
 	

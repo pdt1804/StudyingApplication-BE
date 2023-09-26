@@ -68,9 +68,9 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
-	public User GetUserById(int ID)
+	public User GetUserByUserName(String userName)
 	{
-		return userRepository.getById(ID);
+		return userRepository.getById(userName);
 	}
 	
 	public User GetUserByUsername(String userName)
