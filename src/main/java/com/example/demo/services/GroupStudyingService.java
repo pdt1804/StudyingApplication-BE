@@ -28,13 +28,16 @@ public class GroupStudyingService {
 	{
 		GroupStudying group = new GroupStudying();
 		var user = userRepository.getById(userName);
-		group.setDateCreated(new Date());
-		group.setLeaderOfGroup(user);
-		group.setNameGroup(nameGroup);
-		group.getUsers().add(user);
-		user.getGroups().add(group);
-		groupStudyingRepository.save(group);
-		userRepository.save(user);
+		if (user != null)
+		{
+			group.setDateCreated(new Date());
+			group.setLeaderOfGroup(user);
+			group.setNameGroup(nameGroup);
+			group.getUsers().add(user);
+			user.getGroups().add(group);
+			groupStudyingRepository.save(group);
+			userRepository.save(user);
+		}
 		return group.getGroupID();
 	}
 	
@@ -57,9 +60,11 @@ public class GroupStudyingService {
 		userRepository.save(user);
 	}
 	
-	public GroupStudying findGroupbyID(int id)
+	public List<GroupStudying> findGroupbyID(int id)
 	{
-		return groupStudyingRepository.getById(id);
+		List<GroupStudying> list = new ArrayList<>();
+		list.add(groupStudyingRepository.getById(id));
+		return list;
 	}
 
 	public List<GroupStudying> findGroupbyName(String name)

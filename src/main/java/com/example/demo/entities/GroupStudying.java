@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,9 +35,11 @@ public class GroupStudying {
 	private byte[] imageGroup;
 	private String nameGroup;
 	private Date dateCreated;
+	@JsonIgnore
 	@ManyToOne
 	private User leaderOfGroup;
-	@ManyToMany
+	@JsonIgnore
+	@ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
 	
 	public GroupStudying(int groupID, byte[] imageGroup, String nameGroup, Date dateCreated, Set<User> users) {

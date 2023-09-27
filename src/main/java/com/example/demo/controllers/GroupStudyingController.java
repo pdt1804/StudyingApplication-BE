@@ -30,11 +30,12 @@ public class GroupStudyingController {
 		return groupStudyingService.getAllGroupofUser(myUserName);
 	}
 	
+	/*
 	@GetMapping("/findGroupbyId")
-	public GroupStudying findGroupbyId(@RequestParam("groupID") int groupID)
+	public List<GroupStudying> findGroupbyId(@RequestParam("groupID") int groupID)
 	{
 		return groupStudyingService.findGroupbyID(groupID);
-	}
+	}*/
 
 	@GetMapping("/findGroupbyName")
 	public List<GroupStudying> findGroupbyName(@RequestParam("nameGroup") String nameGroup)

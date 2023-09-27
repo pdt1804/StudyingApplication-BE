@@ -43,7 +43,7 @@ public class User {
 	private Information information;
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_name"), inverseJoinColumns = @JoinColumn(name = "groupid"))
+    @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "users_names"), inverseJoinColumns = @JoinColumn(name = "group_study_id"))
     private List<GroupStudying> groups = new ArrayList<>();
   
 	
