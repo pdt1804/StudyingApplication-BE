@@ -15,6 +15,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
@@ -37,6 +38,7 @@ public class GroupStudying {
 	private Date dateCreated;
 	@JsonIgnore
 	@ManyToOne
+	@JoinColumn(name = "user_name", nullable = true)
 	private User leaderOfGroup;
 	@JsonIgnore
 	@ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.DTO.GroupStudyingDTO;
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.services.GroupStudyingService;
 
@@ -30,12 +31,12 @@ public class GroupStudyingController {
 		return groupStudyingService.getAllGroupofUser(myUserName);
 	}
 	
-	/*
+	
 	@GetMapping("/findGroupbyId")
-	public List<GroupStudying> findGroupbyId(@RequestParam("groupID") int groupID)
+	public GroupStudyingDTO findGroupbyId(@RequestParam("groupID") int groupID)
 	{
 		return groupStudyingService.findGroupbyID(groupID);
-	}*/
+	}
 
 	@GetMapping("/findGroupbyName")
 	public List<GroupStudying> findGroupbyName(@RequestParam("nameGroup") String nameGroup)

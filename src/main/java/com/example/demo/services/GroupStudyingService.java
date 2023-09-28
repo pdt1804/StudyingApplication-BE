@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.DTO.GroupStudyingDTO;
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.repositories.GroupStudyingRepository;
 import com.example.demo.repositories.UserRepository;
@@ -48,6 +49,9 @@ public class GroupStudyingService {
 		if (group.getUsers().size() == 1)
 		{
 			group.getUsers().remove(user);
+			group.setLeaderOfGroup(null);
+			user.getGroups().remove(group);
+			userRepository.save(user);
 			groupStudyingRepository.delete(group);
 		}
 		else
@@ -60,11 +64,9 @@ public class GroupStudyingService {
 		userRepository.save(user);
 	}
 	
-	public List<GroupStudying> findGroupbyID(int id)
+	public GroupStudyingDTO findGroupbyID(int id)
 	{
-		List<GroupStudying> list = new ArrayList<>();
-		list.add(groupStudyingRepository.getById(id));
-		return list;
+		return new GroupStudyingDTO(groupStudyingRepository.getById(id));
 	}
 
 	public List<GroupStudying> findGroupbyName(String name)
