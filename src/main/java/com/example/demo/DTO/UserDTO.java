@@ -16,7 +16,6 @@ public class UserDTO {
 	private String userName;
     private String passWord;
 	private String Email;
-    private List<GroupStudyingDTO> groups = new ArrayList<GroupStudyingDTO>();
  
     public UserDTO() {
     	
@@ -26,13 +25,6 @@ public class UserDTO {
         this.userName = user.getUserName();
         this.passWord = user.getPassWord();
         this.Email = user.getEmail();
-
-        // Convert groups to GroupStudyingDTO
-        if (user.getGroups() != null) {
-            for (GroupStudying group : user.getGroups()) {
-                this.groups.add(new GroupStudyingDTO(group));
-            }
-        }
     }
 
 }
