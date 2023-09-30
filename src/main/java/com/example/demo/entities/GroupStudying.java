@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +44,8 @@ public class GroupStudying {
 	@JsonIgnore
 	@ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
+	@OneToMany(mappedBy = "groupStudying")
+	private List<Notifycation> notifycations = new ArrayList<>();
 	
 	public GroupStudying(int groupID, byte[] imageGroup, String nameGroup, Date dateCreated, Set<User> users) {
 		super();

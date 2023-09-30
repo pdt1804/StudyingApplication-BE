@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import com.example.demo.entities.Notifycation;
+
 
 import org.hibernate.annotations.GeneratorType;
 
@@ -45,6 +47,15 @@ public class User {
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "users_names"), inverseJoinColumns = @JoinColumn(name = "group_study_id"))
     private List<GroupStudying> groups = new ArrayList<>();
+	
+	@ManyToMany
+	@JoinTable
+	(
+		name = "user_notifycation",
+	    joinColumns = @JoinColumn(name = "user_id"),
+	    inverseJoinColumns = @JoinColumn(name = "notifycation_id")
+    )
+    private List<Notifycation> notifycations = new ArrayList<>();
   
 	
     public User(String userName, String passWord, String Email) {
