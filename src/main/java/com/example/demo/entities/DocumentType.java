@@ -7,6 +7,7 @@ public enum DocumentType {
 	powerpoint,
 	pdf,
 	video,
-	image
+	image,
+	unidentify
 	
 }

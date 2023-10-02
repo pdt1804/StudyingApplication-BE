@@ -2,6 +2,8 @@ package com.example.demo.entities;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,7 +34,12 @@ public class Document {
 	private Date dateUploaded;
 	private DocumentType type;
 	@ManyToOne
-	@JoinColumn(name = "group_id")
+	@JoinColumn(name = "group_id", nullable = true)
+	@JsonIgnore
 	private GroupStudying group;
+	@ManyToOne
+	@JsonIgnore
+    @JoinColumn(name = "user_name", nullable = true)
+    private User user;
 
 }
