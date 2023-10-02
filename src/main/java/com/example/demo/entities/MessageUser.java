@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,10 +21,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class MessageGroup {
+public class MessageUser {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,13 +32,14 @@ public class MessageGroup {
 	@Lob
 	private String Content;
 	private Date dateSent;
-	@ManyToOne
-	@JsonIgnore
-	private User user;
-	@ManyToOne
-	@JoinColumn(name = "group_id", nullable = true)
-	@JsonIgnore
-	private GroupStudying group;
-	
-	
+	//private MessageUserStatus status;
+    @ManyToOne
+    @JoinColumn(name = "sent_username")
+    @JsonIgnore
+	private User sentUser;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "received_username")
+	private User receivedUser;
+    
 }

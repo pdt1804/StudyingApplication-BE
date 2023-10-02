@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,8 @@ public class NotifycationService {
 	{
 		try
 		{
-			return userRepository.getById(userName).getNotifycations();
+			return userRepository.getById(userName).getNotifycations()
+					.stream().sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
 		}
 		catch (Exception e)
 		{
@@ -65,7 +67,8 @@ public class NotifycationService {
 	{
 		try
 		{
-			return groupStudyingRepository.getById(groupID).getNotifycations();
+			return groupStudyingRepository.getById(groupID).getNotifycations()
+					.stream().sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
 		}
 		catch (Exception e)
 		{
@@ -82,7 +85,8 @@ public class NotifycationService {
 	public List<Notifycation> findNotifycation(String userName, String inputContentbyUser)
 	{
 		return userRepository.getById(userName).getNotifycations().stream()
-				.filter(p -> p.getContent().contains(inputContentbyUser) || p.getHeader().contains(inputContentbyUser)).toList();
+				.filter(p -> p.getContent().contains(inputContentbyUser) || p.getHeader().contains(inputContentbyUser))
+				.sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
 	}
 	
 	public void deleteNotifycationByLeaderGroupForAll(String userName, int notifycationID, int groupID)
