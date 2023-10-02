@@ -48,6 +48,8 @@ public class GroupStudying {
 	private List<Notifycation> notifycations = new ArrayList<>();
 	@OneToMany(mappedBy = "group")
 	private List<Document> documents = new ArrayList<>();
+	@OneToMany(mappedBy = "group")
+	private List<MessageGroup> messages = new ArrayList<>();
 	
 	public GroupStudying(int groupID, byte[] imageGroup, String nameGroup, Date dateCreated, Set<User> users) {
 		super();
