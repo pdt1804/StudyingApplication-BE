@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.FriendShip;
 import com.example.demo.entities.FriendShipStatus;
+import com.example.demo.entities.MessageUserStatus;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.FriendShipRepository;
+import com.example.demo.repositories.MessageUserRepository;
 import com.example.demo.repositories.UserRepository;
 
 @Service
@@ -21,6 +23,9 @@ public class FriendShipService {
 	private FriendShipRepository friendShipRepository;
 	
 	@Autowired
+	private MessageUserRepository messageUserRepository;
+	
+	@Autowired
 	private UserService userService;
 	
 	public void AddFriend(String sentUserName, String receivedUserName)
@@ -28,6 +33,7 @@ public class FriendShipService {
 		try
 		{
 			friendShipRepository.save(new FriendShip().builder().sentTime(new Date())
+																.lastTimeEdited(new Date())
 															    .status(FriendShipStatus.Đã_gửi)
 													   		    .user(userService.GetUserByUsername(sentUserName))
 															    .friend(userService.GetUserByUsername(receivedUserName)).build());
@@ -74,7 +80,7 @@ public class FriendShipService {
 			return (p.getFriend().getUserName().equals(userName) && p.getStatus() == FriendShipStatus.Đã_xác_nhận) 
 					|| (p.getUser().getUserName().equals(userName) && p.getStatus() == FriendShipStatus.Đã_xác_nhận);
 			
-		}).collect(Collectors.toList());
+		}).sorted((f1,f2) -> f1.getLastTimeEdited().compareTo(f2.getLastTimeEdited())).collect(Collectors.toList());
 		
 		List<User> listUser = new ArrayList<>();
 		
@@ -137,9 +143,18 @@ public class FriendShipService {
 			
 		}).findFirst().orElse(null);
 				
+		friendShip.setLastTimeEdited(new Date());
 		friendShip.setStatus(FriendShipStatus.Đã_xác_nhận);
 		
 		friendShipRepository.save(friendShip);
 		
+	}
+	
+	public boolean checkNewMessage(String fromUserName, String myUserName)
+	{
+		return messageUserRepository.findAll().stream()
+				.anyMatch(p -> p.getReceivedUser().getUserName().equals(myUserName) 
+						&& p.getSentUser().getUserName().equals(fromUserName) 
+						&& p.getStatus() == MessageUserStatus.sent);
 	}
 }

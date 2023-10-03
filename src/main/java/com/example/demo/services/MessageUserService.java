@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.MessageUser;
+import com.example.demo.entities.MessageUserStatus;
+import com.example.demo.repositories.FriendShipRepository;
 import com.example.demo.repositories.MessageUserRepository;
 import com.example.demo.repositories.UserRepository;
 
@@ -21,6 +23,9 @@ public class MessageUserService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired 
+	private FriendShipRepository friendShipRepository;
+	
 	public long sendMessage(MessageUser mess, String fromUserName, String toUserName)
 	{
 		try 
@@ -28,11 +33,25 @@ public class MessageUserService {
 			var fromUser = userRepository.getById(fromUserName);
 			var toUser = userRepository.getById(toUserName);
 			
+			mess.setStatus(MessageUserStatus.sent);
 			mess.setSentUser(fromUser);
 			mess.setReceivedUser(toUser);
 			mess.setDateSent(new Date());
+						
+			var friendShip = friendShipRepository.findAll().stream()
+					.filter(p -> (p.getUser().getUserName().equals(fromUserName) && p.getFriend().getUserName().equals(toUserName)) 
+							|| (p.getUser().getUserName().equals(toUserName) && p.getFriend().getUserName().equals(fromUserName)))
+					.findFirst().orElse(null);
+			friendShip.setLastTimeEdited(new Date());
 			
-			return messageUserRepository.save(mess).getID();
+			if (friendShip != null)
+			{
+				return messageUserRepository.save(mess).getID();
+			}
+			else
+			{
+				return -1;
+			}
 		}
 		catch (Exception e)
 		{
@@ -53,7 +72,9 @@ public class MessageUserService {
 			}
 			else if (mess.getSentUser().getUserName().equals(toUserName) && mess.getReceivedUser().getUserName().equals(fromUserName))
 			{
+				mess.setStatus(MessageUserStatus.seen);
 				listMessageUser.add(mess);
+				messageUserRepository.save(mess);
 			}
 			else
 			{
@@ -61,6 +82,7 @@ public class MessageUserService {
 			}
 		}
 		
-		return listMessageUser.stream().sorted((m1,m2) -> m2.getDateSent().compareTo(m1.getDateSent())).collect(Collectors.toList());
+		return listMessageUser.stream().sorted((m1,m2) -> m1.getDateSent().compareTo(m2.getDateSent())).collect(Collectors.toList());
 	}
+	
 }

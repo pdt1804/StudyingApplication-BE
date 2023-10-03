@@ -32,7 +32,7 @@ public class MessageUser {
 	@Lob
 	private String Content;
 	private Date dateSent;
-	//private MessageUserStatus status;
+	private MessageUserStatus status;
     @ManyToOne
     @JoinColumn(name = "sent_username")
     @JsonIgnore

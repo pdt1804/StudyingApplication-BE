@@ -36,6 +36,7 @@ public class FriendShip {
     
     private Date sentTime;
     private FriendShipStatus status;
+    private Date lastTimeEdited;
     
     public FriendShip()
     {

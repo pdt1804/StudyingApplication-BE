@@ -62,4 +62,10 @@ public class FriendShipController {
 		friendShipService.deleteFriendShip(sentUserName, receivedUserName);
 	}
 	
+	@PostMapping("/checkNewMessage")
+	public boolean checkNewMessage(@RequestParam("fromUserName") String fromUserName, @RequestParam("myUserName") String myUserName)
+	{
+		return friendShipService.checkNewMessage(fromUserName, myUserName);
+	}
+	
 }
