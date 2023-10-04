@@ -40,10 +40,16 @@ public class NotifycationController {
 		return notifycationService.getAllNotifycationByUserName(userName);
 	}
 	
-	@GetMapping("/loadNotifycation")
-	public NotifycationDTO loadNotifycation(@RequestParam("notifycationID") int notifycationID)
+	@PostMapping("/checkNewNotifycation")
+	public boolean checkNewNotifycation(@RequestParam("myUserName") String myUserName, @RequestParam("notifycationID") int notifycationID)
 	{
-		return notifycationService.loadNotifycation(notifycationID);
+		return notifycationService.checkNewNotifycation(myUserName, notifycationID);
+	}
+	
+	@GetMapping("/loadNotifycation")
+	public NotifycationDTO loadNotifycation(@RequestParam("myUserName") String myUserName, @RequestParam("notifycationID") int notifycationID)
+	{
+		return notifycationService.loadNotifycation(myUserName, notifycationID);
 	}
 	
 	@DeleteMapping("/deleteNotifycationForAllMembers")

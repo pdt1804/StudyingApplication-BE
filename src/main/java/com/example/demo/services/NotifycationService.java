@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.DTO.NotifycationDTO;
 import com.example.demo.entities.Notifycation;
+import com.example.demo.entities.NotifycationStatus;
+import com.example.demo.entities.NotifycationType;
 import com.example.demo.repositories.GroupStudyingRepository;
 import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.UserRepository;
@@ -32,11 +34,13 @@ public class NotifycationService {
 			var user = userRepository.getById(userName);
 			var group = groupStudyingRepository.getById(groupID);
 			notifycation.setGroupStudying(group);
+			notifycation.setNotifycationType(NotifycationType.user);
 			group.getNotifycations().add(notifycation);
 			group.setLastTimeEdited(new Date());
 			for (var p: group.getUsers())
 			{
 				notifycation.getUsers().add(p);
+				notifycation.getUserSeenNotifycation().add(p);
 				p.getNotifycations().add(notifycation);
 			}
 			notifycation.setDateSent(new Date());
@@ -78,9 +82,21 @@ public class NotifycationService {
 		}
 	}
 	
-	public NotifycationDTO loadNotifycation(int notifycationID)
+	public NotifycationDTO loadNotifycation(String userName, int notifycationID)
 	{
-		return new NotifycationDTO(notifycationRepository.getById(notifycationID));
+		var user = userRepository.getById(userName);
+		var notifycation = notifycationRepository.getById(notifycationID);
+		
+		notifycation.getUserSeenNotifycation().remove(user);
+		notifycationRepository.save(notifycation);
+		
+		return new NotifycationDTO(notifycation);
+	}
+	
+	public boolean checkNewNotifycation(String userName, int notifycationID)
+	{
+		return notifycationRepository.getById(notifycationID).getUserSeenNotifycation()
+				.stream().anyMatch(p -> p.getUserName().equals(userName));
 	}
 	
 	public List<Notifycation> findNotifycation(String userName, String inputContentbyUser)
