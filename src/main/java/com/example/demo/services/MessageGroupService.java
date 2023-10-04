@@ -32,12 +32,19 @@ public class MessageGroupService {
 			var group = groupStudyingRepository.getById(groupID);
 			var user = userRepository.getById(userName);
 			
+			for (var p : group.getUsers())
+			{
+				mess.getStatusMessageWithUsers().add(p);
+			}
+			
+			mess.getStatusMessageWithUsers().remove(user);
 			mess.setGroup(group);
 			mess.setUser(user);
 			mess.setDateSent(new Date());
 			messageGroupRepository.save(mess);
 			
 			group.getMessages().add(mess);
+			group.setLastTimeEdited(new Date());
 			groupStudyingRepository.save(group);
 			
 			return mess.getID();
@@ -49,10 +56,15 @@ public class MessageGroupService {
 		}
 	}
 	
-	public List<MessageGroup> loadMessage(int groupID)
+	public List<MessageGroup> loadMessage(String myUserName, int groupID)
 	{
-		return groupStudyingRepository.getById(groupID).getMessages()
-				.stream().sorted((d1,d2) -> d2.getDateSent().compareTo(d1.getDateSent())).collect(Collectors.toList());
+		var group = groupStudyingRepository.getById(groupID);
+		
+		var lastMess = group.getMessages().stream().max((m1,m2) -> m1.getDateSent().compareTo(m2.getDateSent()));
+		lastMess.get().getStatusMessageWithUsers().remove(userRepository.getById(myUserName));
+		messageGroupRepository.save(lastMess.get());
+		
+		return group.getMessages().stream().sorted((d1,d2) -> d2.getDateSent().compareTo(d1.getDateSent())).collect(Collectors.toList());
 	}
 	
 }

@@ -33,6 +33,7 @@ public class NotifycationService {
 			var group = groupStudyingRepository.getById(groupID);
 			notifycation.setGroupStudying(group);
 			group.getNotifycations().add(notifycation);
+			group.setLastTimeEdited(new Date());
 			for (var p: group.getUsers())
 			{
 				notifycation.getUsers().add(p);

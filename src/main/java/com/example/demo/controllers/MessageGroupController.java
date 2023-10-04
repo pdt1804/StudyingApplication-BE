@@ -28,8 +28,8 @@ public class MessageGroupController {
 	}
 	
 	@GetMapping("/loadMessageInGroup")
-	public List<MessageGroup> loadMessageInGroup(@RequestParam("groupID") int groupID)
+	public List<MessageGroup> loadMessageInGroup(@RequestParam("myUserName") String myUserName, @RequestParam("groupID") int groupID)
 	{
-		return messageGroupService.loadMessage(groupID);
+		return messageGroupService.loadMessage(myUserName, groupID);
 	}
 }

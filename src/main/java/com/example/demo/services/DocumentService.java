@@ -54,6 +54,7 @@ public class DocumentService {
 					 .build());
 			var group = groupStudyingRepository.getById(groupID);
 			group.getDocuments().add(doc);
+			group.setLastTimeEdited(new Date());
 			
 			int i = documentRepository.save(doc).getDocumentID();
 			groupStudyingRepository.save(group);

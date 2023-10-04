@@ -37,6 +37,7 @@ public class GroupStudying {
 	private byte[] imageGroup;
 	private String nameGroup;
 	private Date dateCreated;
+	private Date lastTimeEdited;
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_name", nullable = true)

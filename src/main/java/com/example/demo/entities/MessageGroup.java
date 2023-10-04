@@ -1,6 +1,8 @@
 package com.example.demo.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -11,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +34,10 @@ public class MessageGroup {
 	@Lob
 	private String Content;
 	private Date dateSent;
+	@OneToMany
+	@JoinColumn(name = "status_user_name", nullable = true)
+	@JsonIgnore
+	private List<User> statusMessageWithUsers = new ArrayList<>();
 	@ManyToOne
 	@JsonIgnore
 	private User user;
@@ -38,6 +45,5 @@ public class MessageGroup {
 	@JoinColumn(name = "group_id", nullable = true)
 	@JsonIgnore
 	private GroupStudying group;
-	
 	
 }

@@ -31,6 +31,11 @@ public class GroupStudyingController {
 		return groupStudyingService.getAllGroupofUser(myUserName);
 	}
 	
+	@PostMapping("/checkNewMessage")
+	public boolean checkNewMessage(@RequestParam("myUserName") String myUserName, @RequestParam("groupID") int groupID)
+	{
+		return groupStudyingService.checkNewMessageInGroup(myUserName, groupID);
+	}
 	
 	@GetMapping("/findGroupbyId")
 	public GroupStudyingDTO findGroupbyId(@RequestParam("groupID") int groupID)

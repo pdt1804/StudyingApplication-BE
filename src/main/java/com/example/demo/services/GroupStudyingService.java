@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.DTO.GroupStudyingDTO;
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.repositories.GroupStudyingRepository;
+import com.example.demo.repositories.MessageGroupRepository;
 import com.example.demo.repositories.UserRepository;
 
 @Service
@@ -25,6 +26,9 @@ public class GroupStudyingService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private MessageGroupRepository messageGroupRepository;
+	
 	public int createGroup(String userName, String nameGroup)
 	{
 		GroupStudying group = new GroupStudying();
@@ -34,6 +38,7 @@ public class GroupStudyingService {
 			group.setDateCreated(new Date());
 			group.setLeaderOfGroup(user);
 			group.setNameGroup(nameGroup);
+			group.setLastTimeEdited(new Date());
 			group.getUsers().add(user);
 			user.getGroups().add(group);
 			groupStudyingRepository.save(group);
@@ -127,24 +132,16 @@ public class GroupStudyingService {
 	
 	public List<GroupStudying> getAllGroupofUser(String myUserName)
 	{
-//		List<GroupStudying> list = new ArrayList<>();
-//		for (var p : groupStudyingRepository.findAll())
-//		{
-//			if (p.getLeaderOfGroup().getUserName().equals(myUserName))
-//			{
-//				list.add(p);
-//			}
-//			else
-//			{
-//				for (var b : p.getUsers())
-//				{
-//					if (b.getUserName().equals(myUserName))
-//					{
-//						list.add(p);
-//					}
-//				}
-//			}
-//		}
-		return userRepository.getById(myUserName).getGroups();
+		return userRepository.getById(myUserName).getGroups()
+				.stream().sorted((g1,g2) -> g1.getLastTimeEdited().compareTo(g2.getLastTimeEdited())).toList();
+	}
+	
+	public boolean checkNewMessageInGroup(String myUserName, int groupID)
+	{
+		var lastMess = groupStudyingRepository.getById(groupID).getMessages()
+				.stream().max((m1,m2) -> m1.getDateSent().compareTo(m2.getDateSent()));
+
+		return lastMess.get().getStatusMessageWithUsers().stream().anyMatch(p -> p.getUserName().equals(myUserName));
+
 	}
 }
