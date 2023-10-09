@@ -36,9 +36,15 @@ public class UserController {
 	}
 	
 	@GetMapping("/GetRecoveryCode")
-	public int GetCode(@RequestParam("userName") String userName)
+	public int GetRecoveryCode(@RequestParam("userName") String userName)
 	{
 		return userService.sendOTP(userName);
+	}
+	
+	@GetMapping("/GetAuthenticationCode")
+	public int GetAuthenticationCode(@RequestParam("email") String email)
+	{
+		return userService.sendOTPtoEmail(email);
 	}
 	
 	

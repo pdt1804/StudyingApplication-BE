@@ -120,7 +120,8 @@ public class NotifycationService {
 			{
 				p.getNotifycations().remove(notifycation);
 			}
-			notifycation.setUsers(null);			
+			notifycation.setUsers(null);
+			notifycation.setUserSeenNotifycation(null);
 			
 			groupStudyingRepository.save(group);
 			userRepository.save(user);
@@ -151,6 +152,7 @@ public class NotifycationService {
 			else
 			{
 				notifycation.setUsers(null);
+				notifycation.setUserSeenNotifycation(null);
 				group.getNotifycations().remove(notifycation);
 				notifycation.setGroupStudying(null);
 				

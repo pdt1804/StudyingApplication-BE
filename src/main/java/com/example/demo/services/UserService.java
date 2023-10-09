@@ -84,6 +84,12 @@ public class UserService {
         return sendOTPByEmail(userName, otp);
     }
 	
+	public int sendOTPtoEmail(String email) 
+	{
+        int otp = generateRandomNumber();
+        return sendOTPtoAuthenticate(email, otp);
+    }
+	
 	private int generateRandomNumber() 
 	{
         return new Random().nextInt(900000) + 100000;
@@ -96,6 +102,25 @@ public class UserService {
 	        SimpleMailMessage message = new SimpleMailMessage();
 	        message.setFrom("phamduythong600@gmail.com");
 	        message.setTo(GetUserByUsername(userName).getEmail());
+	        message.setSubject("OTP Verification");
+	        message.setText("Your OTP is: " + String.valueOf(otp));
+	        javaMailSender.send(message);
+	        return otp;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+    }
+	
+	private int sendOTPtoAuthenticate(String email, int otp) 
+	{	
+		try
+		{
+	        SimpleMailMessage message = new SimpleMailMessage();
+	        message.setFrom("phamduythong600@gmail.com");
+	        message.setTo(email);
 	        message.setSubject("OTP Verification");
 	        message.setText("Your OTP is: " + String.valueOf(otp));
 	        javaMailSender.send(message);

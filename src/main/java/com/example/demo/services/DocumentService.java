@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,8 +11,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.DTO.DocumentDTO;
 import com.example.demo.entities.Document;
 import com.example.demo.entities.DocumentType;
+import com.example.demo.entities.Notifycation;
+import com.example.demo.entities.NotifycationType;
 import com.example.demo.repositories.DocumentRepository;
 import com.example.demo.repositories.GroupStudyingRepository;
+import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.UserRepository;
 
 @Service
@@ -25,6 +29,9 @@ public class DocumentService {
 	
 	@Autowired
 	private GroupStudyingRepository groupStudyingRepository;
+	
+	@Autowired
+	private NotifycationRepository notifycationRepository;
 	 
 	public int addDocument(MultipartFile file ,int groupID, String userName)
 	{
@@ -44,20 +51,36 @@ public class DocumentService {
 
 		try
 		{
-			var doc = documentRepository.save(new Document().builder()
-					 .user(userRepository.getById(userName))
-					 .group(groupStudyingRepository.getById(groupID))
-					 .dateUploaded(new Date())
-					 .File(file.getBytes())
-					 .type(type)
-					 .Header(file.getName())
-					 .build());
+			var user = userRepository.getById(userName);
 			var group = groupStudyingRepository.getById(groupID);
-			group.getDocuments().add(doc);
-			group.setLastTimeEdited(new Date());
+			var doc = new Document().builder()
+					 .user(user).group(group).dateUploaded(new Date()).File(file.getBytes()).type(type).Header(file.getName()).build();
 			
-			int i = documentRepository.save(doc).getDocumentID();
+			group.getDocuments().add(doc);
+			
+			// theem thoong baso
+			Notifycation notifycation = new Notifycation().builder()
+						 .Header("New Document !!!")
+						 .Content("Group " + group.getNameGroup() + " has new document ")
+						 .dateSent(new Date()).notifycationType(NotifycationType.admin)
+						 .groupStudying(group).build();
+			
+			group.getNotifycations().add(notifycation);
 			groupStudyingRepository.save(group);
+			
+			if (notifycation.getUserSeenNotifycation() == null) notifycation.setUserSeenNotifycation(new ArrayList<>());
+			if (notifycation.getUsers() == null) notifycation.setUsers(new ArrayList<>());
+
+			for (var p: group.getUsers())
+			{
+				notifycation.getUserSeenNotifycation().add(p);
+				p.getNotifycations().add(notifycation);
+			}
+			
+			notifycationRepository.save(notifycation);						
+			int i = documentRepository.save(doc).getDocumentID();
+			userRepository.save(user);
+			
 			return i;
 		}
 		catch (Exception e)
