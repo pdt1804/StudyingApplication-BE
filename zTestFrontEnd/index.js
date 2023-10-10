@@ -12,6 +12,7 @@ import {Welcome,
     ForgetPassword,
     Verification,
     ResetPassword,
+    Settings,
 } from './screens'
 
-AppRegistry.registerComponent(appName, () => Login)
+AppRegistry.registerComponent(appName, () => Settings)

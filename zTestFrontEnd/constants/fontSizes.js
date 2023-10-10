@@ -4,5 +4,5 @@ export default {
     h3: 18,
     h4: 14,
     h5: 12,
-    h6: 9
+    h6: 9,
 }
