@@ -44,11 +44,13 @@ public class User {
 	@JoinColumn(name = "Users-Infomation")
 	private Information information;
 	
+	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "users_names"), inverseJoinColumns = @JoinColumn(name = "group_study_id"))
     private List<GroupStudying> groups = new ArrayList<>();
 	
 	@ManyToMany
+	@JsonIgnore
 	@JoinTable
 	(
 		name = "user_notifycation",

@@ -26,6 +26,9 @@ public class FriendShipService {
 	private MessageUserRepository messageUserRepository;
 	
 	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
 	private UserService userService;
 	
 	public void AddFriend(String sentUserName, String receivedUserName)
@@ -156,5 +159,15 @@ public class FriendShipService {
 				.anyMatch(p -> p.getReceivedUser().getUserName().equals(myUserName) 
 						&& p.getSentUser().getUserName().equals(fromUserName) 
 						&& p.getStatus() == MessageUserStatus.sent);
+	}
+	
+	public List<User> findFriend(String input)
+	{
+		return userRepository.findAll().stream().filter(p -> p.getInformation().getFulName().contains(input)).toList();
+	}
+	
+	public List<User> findFriendbyUserName(String userName)
+	{
+		return userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName)).toList();
 	}
 }

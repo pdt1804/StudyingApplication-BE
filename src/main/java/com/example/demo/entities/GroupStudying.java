@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -46,11 +47,20 @@ public class GroupStudying {
 	@ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
 	@OneToMany(mappedBy = "groupStudying")
+	@JsonIgnore
 	private List<Notifycation> notifycations = new ArrayList<>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "group")
 	private List<Document> documents = new ArrayList<>();
+	@JsonIgnore
 	@OneToMany(mappedBy = "group")
 	private List<MessageGroup> messages = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "group")
+	@JsonIgnore
+	private List<Blog> blogs = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "group")
+	@JsonIgnore
+	private List<Subject> subjects = new ArrayList<>();
 	
 	public GroupStudying(int groupID, byte[] imageGroup, String nameGroup, Date dateCreated, Set<User> users) {
 		super();
