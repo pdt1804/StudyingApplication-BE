@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,11 +46,11 @@ public class Blog {
 	@ManyToOne
 	@JoinColumn(name = "user_blog_ID", nullable = true)
 	private User userCreated;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JsonIgnore
 	@JoinColumn(name = "group_blog_id", nullable = true)
 	private GroupStudying group; 
-	@OneToMany(mappedBy = "blog")
+	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
 	
 }

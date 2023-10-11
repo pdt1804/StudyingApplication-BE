@@ -109,39 +109,42 @@ public class BlogService {
 	{
 		var subject = subjectRepository.getById(subjectID);
 		var group = groupStudyingRepository.getById(groupID);
+		List<Blog> listBlogToDelete = new ArrayList<>();
+		List<Comment> listCommentToDelete = new ArrayList<>();
+		List<Reply> listReplyToDelete = new ArrayList<>();
 		for (var blog : group.getBlogs())
 		{
 			if (blog.getSubject().getSubjectID() == subjectID)
 			{
-				group.getBlogs().remove(blog);
-				blog.setGroup(null);
-				blog.setUserCreated(null);
-				blog.setSubject(null);
-				for (var cmt : blog.getComments())
+				for (var cmt: blog.getComments())
 				{
-					cmt.setBlog(null);
-					cmt.setUserComment(null);
+					listReplyToDelete = new ArrayList<>();
 					for (var rep : cmt.getReplies())
 					{
-						rep.setUserReplied(null);
-						replyRepository.delete(rep);
+						listReplyToDelete.add(rep);
 					}
-					cmt.setReplies(null);
-					commentRepository.delete(cmt);
+					cmt.getReplies().removeAll(listReplyToDelete);
+					replyRepository.deleteAll(listReplyToDelete);
+					cmt.setBlog(null);
+					cmt.setUserComment(null);
+					commentRepository.save(cmt);
+					listCommentToDelete.add(cmt);
 				}
-				blogRepository.delete(blog);	
+				blog.getComments().removeAll(listCommentToDelete);
+				commentRepository.deleteAll(listCommentToDelete);
+				blog.setGroup(null);
+				blog.setSubject(null);
+				blog.setUserCreated(null);
+				blogRepository.save(blog);
+				listBlogToDelete.add(blog);
 			}
 		}
-		if (group.getSubjects() != null)
-		{
-			group.getSubjects().remove(subject);
-			groupStudyingRepository.save(group);
-		}
-		if (subject.getGroup() != null)
-		{
-			subject.setGroup(null);
-			subjectRepository.delete(subject);
-		}
+		group.getBlogs().removeAll(listBlogToDelete);
+		group.getSubjects().remove(subject);
+		groupStudyingRepository.save(group);
+	
+		subject.setGroup(null);
+		subjectRepository.delete(subject);
 	}
 	
 	public void deleteSubject(int subjectID)
@@ -232,6 +235,7 @@ public class BlogService {
 		{
 			deleteComment(p.getCommentID());
 		}
+		blog.setComments(null);
 		blogRepository.delete(blog);
 	}
 	
@@ -265,8 +269,7 @@ public class BlogService {
 		
 		for (var rep : cmt.getReplies())
 		{
-			rep.setUserReplied(null);
-			replyRepository.delete(rep);
+			deleteReply(rep.getReplyID());
 		}
 		
 		cmt.setReplies(null);
