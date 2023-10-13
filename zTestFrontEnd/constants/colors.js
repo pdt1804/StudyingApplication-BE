@@ -5,4 +5,7 @@ export default {
 
     inactive: 'gray',
     primary: 'blue',
+
+    Online: 'lime',
+    Offline: 'red',
 }

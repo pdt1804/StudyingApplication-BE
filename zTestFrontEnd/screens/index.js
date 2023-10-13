@@ -6,6 +6,7 @@ import Verification from "./Verification"
 import ResetPassword from "./ResetPassword"
 import FoodList from "./FoodList/FoodList"
 import Settings from "./Settings"
+import GroupChat from "./GroupChat/GroupChat"
 
 export {
     Welcome,
@@ -15,4 +16,5 @@ export {
     Verification,
     ResetPassword,
     Settings,
+    GroupChat,
 }

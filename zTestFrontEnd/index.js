@@ -13,6 +13,7 @@ import {Welcome,
     Verification,
     ResetPassword,
     Settings,
+    GroupChat,
 } from './screens'
 
-AppRegistry.registerComponent(appName, () => Settings)
+AppRegistry.registerComponent(appName, () => GroupChat)
