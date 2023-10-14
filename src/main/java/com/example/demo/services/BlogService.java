@@ -109,39 +109,45 @@ public class BlogService {
 	{
 		var subject = subjectRepository.getById(subjectID);
 		var group = groupStudyingRepository.getById(groupID);
-		for (var blog : group.getBlogs())
+		
+		// Tạo 3 list để lưu trữ các phần tử cần xoá 
+		List<Blog> listBlogToDelete = new ArrayList<>();
+		List<Comment> listCommentToDelete = new ArrayList<>();
+		List<Reply> listReplyToDelete = new ArrayList<>();
+		
+		for (var blog : group.getBlogs()) // duyệt từng blog 
 		{
 			if (blog.getSubject().getSubjectID() == subjectID)
 			{
-				group.getBlogs().remove(blog);
-				blog.setGroup(null);
-				blog.setUserCreated(null);
-				blog.setSubject(null);
-				for (var cmt : blog.getComments())
+				for (var cmt: blog.getComments()) // duyệt từng comment trong blog để xoá 
 				{
+					listReplyToDelete = new ArrayList<>();
+					for (var rep : cmt.getReplies()) // duyệt từng reply trong comment để xoá 
+					{
+						listReplyToDelete.add(rep);
+					}
+					cmt.getReplies().removeAll(listReplyToDelete);
+					replyRepository.deleteAll(listReplyToDelete);
 					cmt.setBlog(null);
 					cmt.setUserComment(null);
-					for (var rep : cmt.getReplies())
-					{
-						rep.setUserReplied(null);
-						replyRepository.delete(rep);
-					}
-					cmt.setReplies(null);
-					commentRepository.delete(cmt);
+					commentRepository.save(cmt);
+					listCommentToDelete.add(cmt);
 				}
-				blogRepository.delete(blog);	
+				blog.getComments().removeAll(listCommentToDelete);
+				commentRepository.deleteAll(listCommentToDelete);
+				blog.setGroup(null);
+				blog.setSubject(null);
+				blog.setUserCreated(null);
+				blogRepository.save(blog);
+				listBlogToDelete.add(blog);
 			}
 		}
-		if (group.getSubjects() != null)
-		{
-			group.getSubjects().remove(subject);
-			groupStudyingRepository.save(group);
-		}
-		if (subject.getGroup() != null)
-		{
-			subject.setGroup(null);
-			subjectRepository.delete(subject);
-		}
+		group.getBlogs().removeAll(listBlogToDelete);
+		group.getSubjects().remove(subject);
+		groupStudyingRepository.save(group);
+	
+		subject.setGroup(null);
+		subjectRepository.delete(subject);
 	}
 	
 	public void deleteSubject(int subjectID)
@@ -232,21 +238,40 @@ public class BlogService {
 		{
 			deleteComment(p.getCommentID());
 		}
+		blog.setComments(null);
 		blogRepository.delete(blog);
 	}
 	
 	public void commentBlog(long blogID, String userName, Comment cmt)
 	{
 		var blog = blogRepository.getById(blogID);
-		var user = userRepository.getById(userName);
+		var sentUser = userRepository.getById(userName);
+		var receivedUser = blog.getUserCreated();
 		
 		cmt.setBlog(blog);
-		cmt.setUserComment(user);
+		cmt.setUserComment(sentUser);
 		cmt.setDateComment(new Date());
 		commentRepository.save(cmt);
 		
 		blog.getComments().add(cmt);
 		blogRepository.save(blog);
+		
+		Notifycation notifycation = new Notifycation().builder()
+				 .Header("Your Blog " + blog.getBlogID() + " in group " + blog.getGroup().getNameGroup() + " has new comment !!!")
+				 .Content("Group " + blog.getGroup().getNameGroup() + ", blog " + blog.getContent() + " has new comment ")
+				 .dateSent(new Date()).notifycationType(NotifycationType.admin)
+				 .groupStudying(blog.getGroup()).build();
+		
+		if (notifycation.getUserSeenNotifycation() == null) notifycation.setUserSeenNotifycation(new ArrayList<>());
+		if (notifycation.getUsers() == null) notifycation.setUsers(new ArrayList<>());
+		
+		receivedUser.getNotifycations().add(notifycation);
+		notifycation.getUsers().add(receivedUser);
+		notifycation.getUserSeenNotifycation().add(receivedUser);
+		
+		notifycationRepository.save(notifycation); 
+		userRepository.save(sentUser);
+		userRepository.save(receivedUser);
 	}
 	
 	public void updateComment(int commentID, Comment cmt)
@@ -265,8 +290,7 @@ public class BlogService {
 		
 		for (var rep : cmt.getReplies())
 		{
-			rep.setUserReplied(null);
-			replyRepository.delete(rep);
+			deleteReply(rep.getReplyID());
 		}
 		
 		cmt.setReplies(null);
@@ -286,15 +310,33 @@ public class BlogService {
 	public void replyComment(int commentID, String userName, Reply reply)
 	{
 		var cmt = commentRepository.getById(commentID);
-		var user = userRepository.getById(userName);
+		var sentUser = userRepository.getById(userName);
+		var receivedUser = cmt.getUserComment();
 		
 		reply.setDateReplied(new Date());
-		reply.setUserReplied(user);
+		reply.setUserReplied(sentUser);
 		reply.setComment(cmt);
 		cmt.getReplies().add(reply);
 		
 		replyRepository.save(reply);
 		commentRepository.save(cmt);
+		
+		Notifycation notifycation = new Notifycation().builder()
+				 .Header("Your Comment " + cmt.getCommentID() + " in group " + cmt.getBlog().getGroup().getNameGroup() + ", in blog " + cmt.getBlog().getBlogID() + " has new reply !!!")
+				 .Content("Group " + cmt.getBlog().getGroup().getNameGroup() + ", blog " + cmt.getBlog().getContent() + ", in comment " + cmt.getContent() + " has new reply ")
+				 .dateSent(new Date()).notifycationType(NotifycationType.admin)
+				 .groupStudying(cmt.getBlog().getGroup()).build();
+		
+		if (notifycation.getUserSeenNotifycation() == null) notifycation.setUserSeenNotifycation(new ArrayList<>());
+		if (notifycation.getUsers() == null) notifycation.setUsers(new ArrayList<>());
+		
+		receivedUser.getNotifycations().add(notifycation);
+		notifycation.getUsers().add(receivedUser);
+		notifycation.getUserSeenNotifycation().add(receivedUser);
+		
+		notifycationRepository.save(notifycation);
+		userRepository.save(sentUser);
+		userRepository.save(receivedUser);
 	}
 	
 	public void updateReply(int replyID, Reply reply)

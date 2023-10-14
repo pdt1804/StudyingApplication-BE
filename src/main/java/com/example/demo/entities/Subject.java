@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +25,7 @@ public class Subject {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int SubjectID;
 	private String nameSubject;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "subject_group_id", nullable = true)
 	private GroupStudying group;
 	
