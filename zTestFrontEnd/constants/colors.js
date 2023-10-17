@@ -4,6 +4,7 @@ export default {
     PlaceHolder: 'rgba(0,0,0,0.4)',
 
     inactive: 'gray',
+    active: 'red',
     primary: 'blue',
 
     Online: 'lime',

@@ -19,7 +19,7 @@ function App(props) {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Welcome"
+        initialRouteName="UITab"
         screenOptions={{
           headerShown: false,
         }}>
