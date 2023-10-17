@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import GroupChatItems from './GroupChatItems';
+import {images, colors, fontSizes} from '../../constants';
 
 function GroupChat(props) {
   //list of group example = state
@@ -51,18 +52,65 @@ function GroupChat(props) {
     },
   ]);
 
+  //use for search bar (textInput)
+  const [searchText, setSearchText] = useState('');
+
+  //Testing..
+  const filteredGroups = () => {
+    groups.filter(eachGroup =>
+      eachGroup.name.toLowerCase().includes(searchText.toLowerCase()),
+    );
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <View
+        style={{
+          marginHorizontal: 15,
+          flexDirection: 'row',
+          paddingTop: 10,
+        }}>
+        <TextInput
+          autoCorrect={false}
+          onChangeText={text => {
+            setSearchText(text);
+          }}
+          style={{
+            backgroundColor: 'gray',
+            height: '75%',
+            flex: 1,
+            borderRadius: 90,
+            paddingStart: 35,
+          }}
+        />
+        <Image
+          source={images.searchIcon}
+          style={{
+            width: 20,
+            height: 20,
+            position: 'absolute',
+            top: 18,
+            left: 8,
+          }}
+        />
+      </View>
+
+      <View style={{backgroundColor: 'black', height: 1}} />
+
       <ScrollView>
-        {groups.map(eachGroup => (
-          <GroupChatItems
-            group={eachGroup}
-            key={eachGroup.ID}
-            onPress={() => {
-              alert(`You pressed group "${eachGroup.name}"`);
-            }}
-          />
-        ))}
+        {groups
+          .filter(eachGroup =>
+            eachGroup.name.toLowerCase().includes(searchText.toLowerCase()),
+          )
+          .map(eachGroup => (
+            <GroupChatItems
+              group={eachGroup}
+              key={eachGroup.ID}
+              onPress={() => {
+                alert(`You pressed group "${eachGroup.name}"`);
+              }}
+            />
+          ))}
       </ScrollView>
     </View>
   );

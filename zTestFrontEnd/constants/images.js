@@ -16,4 +16,6 @@ export default {
   lockIcon: require('../assets/icon/Lock.png'),
   passportIcon: require('../assets/icon/Passport.png'),
   phoneIcon: require('../assets/icon/Phone.png'),
+  menuIcon: require('../assets/icon/Menu.png'),
+  searchIcon: require('../assets/icon/Search.png'),
 };
