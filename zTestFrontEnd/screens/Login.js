@@ -20,6 +20,12 @@ const Login = props => {
   //states to store email/password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  //navigation
+  const {navigation, route} = props;
+  //function of navigation to/back
+  const {navigate, goBack} = navigation;
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -136,7 +142,7 @@ const Login = props => {
           
           <TouchableOpacity /* forget password */
             onPress={() => {
-              alert('Enter forget password Screen');
+              navigate('ForgetPassword')
             }}
             style={{
               marginHorizontal: 5,
@@ -158,7 +164,8 @@ const Login = props => {
 
           <TouchableOpacity
             onPress={() => {
-              alert(`Email = ${email}, password = ${password}`);
+              navigate('UITab')
+              //alert(`Email = ${email}, password = ${password}`);
             }}
             style={{
               marginHorizontal: 55,
@@ -183,7 +190,7 @@ const Login = props => {
 
           <TouchableOpacity
             onPress={() => {
-              alert('Enter Registration Screen');
+              navigate('Registration')
             }}
             style={{
               marginHorizontal: 55,

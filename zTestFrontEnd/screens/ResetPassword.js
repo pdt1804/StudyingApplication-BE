@@ -20,9 +20,15 @@ const ResetPassword = props => {
   //states to store email/password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  //navigation
+  const {navigation, route} = props;
+  //function of navigation to/back
+  const {navigate, goBack} = navigation;
+
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{
         backgroundColor: '#D7FFFD',
         flex: 100,
@@ -58,7 +64,7 @@ const ResetPassword = props => {
           </Text>
         </View>
 
-        <View 
+        <View
           style={{
             flex: 80,
             width: '90%',
@@ -88,20 +94,23 @@ const ResetPassword = props => {
             />
             <TextInput
               onChangeText={text => {
-              /*
+                /*
                 if (isValidEmail(text) == false) {
                   setErrorEmail('Email not in correct format');
                 } else setErrorEmail('');
               */
-                setErrorEmail(isValidEmail(text) == true ? 
-                  '' : 'Email not in correct format') 
+                setErrorEmail(
+                  isValidEmail(text) == true
+                    ? ''
+                    : 'Email not in correct format',
+                );
                 setEmail(text);
               }}
               placeholder="Password"
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
+
           <View /* password */
             style={{
               flexDirection: 'row',
@@ -121,40 +130,21 @@ const ResetPassword = props => {
             />
             <TextInput
               onChangeText={text => {
-                setErrorPassword(isValidPassword(text) == true ? 
-                  '' : 'Password must be at least 3 characters') 
+                setErrorPassword(
+                  isValidPassword(text) == true
+                    ? ''
+                    : 'Password must be at least 3 characters',
+                );
                 setPassword(text);
               }}
               placeholder="Re-enter Password"
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
-          <View /* forget password */
-            onPress={() => {
-              alert('Enter forget password Screen');
-            }}
-            style={{
-              marginHorizontal: 5,
-              marginBottom: 25,
-              backgroundColor: null,
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-            }}>
-            <Text
-              style={{
-                padding: 1,
-                fontSize: fontSizes.h4,
-                fontWeight: 'bold',
-                color: 'blue',
-              }}>
-              
-            </Text>
-          </View>
 
           <TouchableOpacity
             onPress={() => {
-              alert(`Email = ${email}, password = ${password}`);
+              navigate('Login');
             }}
             style={{
               marginHorizontal: 55,
@@ -176,7 +166,6 @@ const ResetPassword = props => {
               {'ResetPassword'.toUpperCase()}
             </Text>
           </TouchableOpacity>
-
         </View>
       </View>
 

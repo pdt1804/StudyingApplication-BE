@@ -20,9 +20,15 @@ const Registration = props => {
   //states to store email/password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  //navigation
+  const {navigation, route} = props;
+  //function of navigation to/back
+  const {navigate, goBack} = navigation;
+
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{
         backgroundColor: '#D7FFFD',
         flex: 100,
@@ -57,7 +63,7 @@ const Registration = props => {
           </Text>
         </View>
 
-        <View 
+        <View
           style={{
             flex: 80,
             width: '90%',
@@ -90,7 +96,7 @@ const Registration = props => {
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
+
           <View /* email */
             style={{
               flexDirection: 'row',
@@ -103,7 +109,7 @@ const Registration = props => {
               alignItems: 'center',
             }}>
             <Image
-              source={images.personIcon}
+              source={images.emailIcon}
               style={{
                 width: 25,
                 height: 25,
@@ -114,7 +120,7 @@ const Registration = props => {
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
+
           <View /* password */
             style={{
               flexDirection: 'row',
@@ -138,7 +144,7 @@ const Registration = props => {
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
+
           <View /* re-enter password */
             style={{
               flexDirection: 'row',
@@ -166,7 +172,7 @@ const Registration = props => {
 
           <TouchableOpacity
             onPress={() => {
-              alert('Enter Login Screen');
+              navigate('Login');
             }}
             style={{
               marginHorizontal: 55,
@@ -191,7 +197,7 @@ const Registration = props => {
 
           <TouchableOpacity
             onPress={() => {
-              alert('Enter login Screen');
+              navigate('Login');
             }}
             style={{
               marginHorizontal: 55,

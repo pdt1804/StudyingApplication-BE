@@ -12,6 +12,11 @@ import {
 import {images, colors, fontSizes} from '../constants/index';
 
 const Verification = props => {
+  //navigation
+  const {navigation, route} = props;
+  //function of navigation to/back
+  const {navigate, goBack} = navigation;
+
   return (
     <KeyboardAvoidingView
       style={{
@@ -48,7 +53,7 @@ const Verification = props => {
           </Text>
         </View>
 
-        <View 
+        <View
           style={{
             flex: 10,
             width: '90%',
@@ -74,11 +79,10 @@ const Verification = props => {
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
 
           <TouchableOpacity
             onPress={() => {
-              alert('Enter Login Screen');
+              navigate('ResetPassword');
             }}
             style={{
               marginHorizontal: 55,
