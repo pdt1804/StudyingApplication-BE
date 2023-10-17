@@ -13,44 +13,35 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Table
+@Entity
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Blog {
+@Builder
+public class Comment {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long blogID;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int commentID;
 	@Column(columnDefinition = "TEXT")
 	private String Content;
-	@Lob
-	private byte[] images;
-	private int likeCount;
-	private Date dateCreated;
-	@OneToOne
-	@JoinColumn(name = "subject_id", nullable = true)
-	private Subject subject;
+	private Date dateComment;
 	@ManyToOne
-	@JoinColumn(name = "user_blog_ID", nullable = true)
-	private User userCreated;
+	@JoinColumn(name = "user_comment_ID", nullable = true)
+	private User userComment;
 	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "blog_comment_ID", nullable = true)
 	@JsonIgnore
-	@JoinColumn(name = "group_blog_id", nullable = true)
-	private GroupStudying group; 
-	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
-	private List<Comment> comments = new ArrayList<>();
-	
+	private Blog blog;
+	@OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+	private List<Reply> replies = new ArrayList<>();
 }

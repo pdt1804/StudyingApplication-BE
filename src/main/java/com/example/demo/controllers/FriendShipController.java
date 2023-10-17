@@ -68,4 +68,16 @@ public class FriendShipController {
 		return friendShipService.checkNewMessage(fromUserName, myUserName);
 	}
 	
+	@GetMapping("/findAllFriendByInputName")
+	public List<User> findAllFriendByInputName(@RequestParam("input") String input)
+	{
+		return friendShipService.findFriend(input);
+	}
+	
+	@GetMapping("/findAllFriendByUserName")
+	public List<User> findAllFriendByUserName(@RequestParam("userName") String userName)
+	{
+		return friendShipService.findFriendbyUserName(userName);
+	}
+	
 }

@@ -74,6 +74,7 @@ public class DocumentService {
 			for (var p: group.getUsers())
 			{
 				notifycation.getUserSeenNotifycation().add(p);
+				notifycation.getUsers().add(p);
 				p.getNotifycations().add(notifycation);
 			}
 			
