@@ -105,7 +105,7 @@ const ForgetPassword = props => {
             <Text
               style={{
                 padding: 11,
-                fontSize: fontSizes.h2,
+                fontSize: fontSizes.h4,
                 fontWeight: 'bold',
               }}>
               {'continue'.toUpperCase()}

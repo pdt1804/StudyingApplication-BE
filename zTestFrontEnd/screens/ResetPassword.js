@@ -160,7 +160,7 @@ const ResetPassword = props => {
             <Text
               style={{
                 padding: 11,
-                fontSize: fontSizes.h2,
+                fontSize: fontSizes.h4,
                 fontWeight: 'bold',
               }}>
               {'ResetPassword'.toUpperCase()}

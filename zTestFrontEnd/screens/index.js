@@ -7,6 +7,8 @@ import ResetPassword from "./ResetPassword"
 import Settings from "./Settings"
 import GroupChat from "./GroupChat/GroupChat"
 
+import Friends from "./Friends/Friends"
+
 export {
     Welcome,
     Login,
@@ -16,4 +18,5 @@ export {
     ResetPassword,
     Settings,
     GroupChat,
+    Friends,
 }

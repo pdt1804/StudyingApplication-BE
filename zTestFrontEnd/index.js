@@ -16,6 +16,7 @@ import {Welcome,
     ResetPassword,
     Settings,
     GroupChat,
+    Friends,
 } from './screens'
 import UITab from './navigation/UITab'
 

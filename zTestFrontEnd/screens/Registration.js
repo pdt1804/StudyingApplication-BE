@@ -188,7 +188,7 @@ const Registration = props => {
             <Text
               style={{
                 padding: 11,
-                fontSize: fontSizes.h2,
+                fontSize: fontSizes.h3,
                 fontWeight: 'bold',
               }}>
               {'Sign up'.toUpperCase()}
@@ -209,7 +209,7 @@ const Registration = props => {
             <Text
               style={{
                 padding: 11,
-                fontSize: fontSizes.h4,
+                fontSize: fontSizes.h6,
                 fontWeight: 'bold',
                 color: 'blue',
               }}>

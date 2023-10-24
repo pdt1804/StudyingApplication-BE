@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
 } from 'react-native';
 import {images, colors, fontSizes} from '../constants/index';
@@ -14,6 +15,7 @@ import {UIButton} from '../components/index';
 import {isValidEmail, isValidPassword} from '../utilies/Validation';
 
 const Login = props => {
+  const [keyboardIsShown, setKeyboardIsShown] = useState(false)
   //states for validating
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
@@ -25,6 +27,16 @@ const Login = props => {
   const {navigation, route} = props;
   //function of navigation to/back
   const {navigate, goBack} = navigation;
+
+  useEffect(()=>{
+      //componentDidMount
+      Keyboard.addListener('keyboardDidShow', () => {            
+          setKeyboardIsShown(true)
+      })
+      Keyboard.addListener('keyboardDidHide', () => {            
+          setKeyboardIsShown(false)
+      })
+  })
 
   return (
     <KeyboardAvoidingView
@@ -140,7 +152,7 @@ const Login = props => {
             />
           </View>
           
-          <TouchableOpacity /* forget password */
+          { keyboardIsShown == false && <TouchableOpacity /* forget password */
             onPress={() => {
               navigate('ForgetPassword')
             }}
@@ -154,15 +166,15 @@ const Login = props => {
             <Text
               style={{
                 padding: 1,
-                fontSize: fontSizes.h4,
+                fontSize: fontSizes.h6,
                 fontWeight: 'bold',
                 color: 'blue',
               }}>
               Forget Password?
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
-          <TouchableOpacity
+          {keyboardIsShown == false && <TouchableOpacity
             onPress={() => {
               navigate('UITab')
               //alert(`Email = ${email}, password = ${password}`);
@@ -181,14 +193,14 @@ const Login = props => {
             <Text
               style={{
                 padding: 11,
-                fontSize: fontSizes.h2,
+                fontSize: fontSizes.h3,
                 fontWeight: 'bold',
               }}>
               {'Login'.toUpperCase()}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
-          <TouchableOpacity
+          {keyboardIsShown == false && <TouchableOpacity
             onPress={() => {
               navigate('Registration')
             }}
@@ -202,13 +214,13 @@ const Login = props => {
             <Text
               style={{
                 padding: 11,
-                fontSize: fontSizes.h4,
+                fontSize: fontSizes.h6,
                 fontWeight: 'bold',
                 color: 'orange',
               }}>
               Don't have a Account? Register
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </View>
 

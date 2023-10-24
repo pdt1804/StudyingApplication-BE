@@ -1,414 +1,479 @@
 import React, {useState, useEffect} from 'react';
 import {
-    Text, 
-    View,
-    Image,
-    TouchableOpacity,
-    TextInput,    
-    FlatList,
-    ScrollView, 
-    Switch,
-    SafeAreaView,
-} from 'react-native'
-import {images, colors, icons, fontSizes} from '../constants'
-import { UIHeader } from '../components';
-//import {auth, firebaseDatabase, firebaseDatabaseRef} from '../firebase/firebase'
-//import {StackActions} from '@react-navigation/native'
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+  ScrollView,
+  Switch,
+  SafeAreaView,
+} from 'react-native';
+import {images, colors, icons, fontSizes} from '../constants';
+import {UIHeader} from '../components';
 function Settings(props) {
-    const [isEnabledLockApp, setEnabledLockApp] = useState(true)
-    const [isUseFingerprint, setUseFingerprint] = useState(false)
-    const [isEnabledChangePassword, setEnabledChangePassword] = useState(true)
+  const [isEnabledLockApp, setEnabledLockApp] = useState(true);
+  const [isUseFingerprint, setUseFingerprint] = useState(false);
+  const [isEnabledChangePassword, setEnabledChangePassword] = useState(true);
 
-    //navigation
-    //const {navigation, route} = props
-    //functions of navigate to/back
-    //const {navigate, goBack} = navigation
+  //navigation
+  const {navigation, route} = props;
+  //function of navigation to/back
+  const {navigate, goBack} = navigation;
 
-    return <SafeAreaView style={{
+  return (
+    <SafeAreaView
+      style={{
         flex: 1,
-        backgroundColor: 'white'
-    }}>
-        <UIHeader title={"Settings"}/>
-        <ScrollView>
-            <View style={{
-                height: 200,
-                backgroundColor: 'gray',
-                alignItems: 'center',   
+        backgroundColor: 'white',
+      }}>
+      <UIHeader title={'Settings'} />
+      <ScrollView>
+        <View
+          style={{
+            height: 200,
+            backgroundColor: 'gray',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.background}
+            style={{
+              width: 100,
+              height: 100,
+              resizeMode: 'cover',
+              margin: 15,
+              borderRadius: 90,
+            }}
+          />
+          <Text>USERNAME</Text>
+        </View>
+        <View
+          style={{
+            height: 40,
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'red',
+              paddingStart: 10,
             }}>
-                <Image 
-                source={images.background}
-                style={{
-                    width: 100,
-                    height: 100,
-                    resizeMode: 'cover',
-                    margin: 15,
-                    borderRadius:90,
-                }}/>
-                <Text>USERNAME</Text>
-            </View>
-            <View style={{
-                height: 40,
-                backgroundColor: 'rgba(0,0,0,0.2)',    
-                justifyContent: 'center',            
+            Account
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.phoneIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'red', 
-                    paddingStart: 10,
-                }}>Account</Text>                
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Phone number
+          </Text>
+          <View style={{flex: 1}} />
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.emailIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.phoneIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Phone number</Text>                
-                <View style={{flex: 1}} />                
-                <Image
-                    source={images.chevronRightIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Email
+          </Text>
+          <View style={{flex: 1}} />
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </View>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}
+          onPress={() => {
+            navigate('Login');
+          }}>
+          <Image
+            source={images.exportIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.emailIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Email</Text>                
-                <View style={{flex: 1}} />                
-                <Image
-                    source={images.chevronRightIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-            </View>
-            <TouchableOpacity style={{
-                flexDirection: 'row',
-                paddingVertical: 10,                
-                alignItems: 'center',
-            }} onPress={()=>{
-                auth.signOut()
-                navigation.dispatch(StackActions.popToTop())
+            Sign out
+          </Text>
+          <View style={{flex: 1}} />
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </TouchableOpacity>
+        <View
+          style={{
+            height: 40,
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'red',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.exportIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Sign out</Text>                
-                <View style={{flex: 1}} />                
-                <Image
-                    source={images.chevronRightIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-            </TouchableOpacity>
-            <View style={{
-                height: 40,
-                backgroundColor: 'rgba(0,0,0,0.2)',    
-                justifyContent: 'center',            
+            Common
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.globeIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'red', 
-                    paddingStart: 10,
-                }}>Common</Text>                
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Language
+          </Text>
+          <View style={{flex: 1}} />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingEnd: 10,
+              opacity: 0.5,
             }}>
-                <Image
-                    source={images.globeIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Language</Text>                
-                <View style={{flex: 1}} />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingEnd: 10,
-                    opacity: 0.5,
-                }}>English</Text> 
-                <Image
-                    source={images.chevronRightIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            English
+          </Text>
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.cloudIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.cloudIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Environment</Text>                
-                <View style={{flex: 1}} />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingEnd: 10,
-                    opacity: 0.5,
-                }}>Production</Text> 
-                <Image
-                    source={images.chevronRightIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-            </View>
-            
-            <View style={{
-                height: 40,
-                backgroundColor: 'rgba(0,0,0,0.2)',    
-                justifyContent: 'center',            
+            Environment
+          </Text>
+          <View style={{flex: 1}} />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingEnd: 10,
+              opacity: 0.5,
             }}>
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'red', 
-                    paddingStart: 10,
-                }}>Security</Text>                
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Production
+          </Text>
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            height: 40,
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'red',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.doorIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Lock app in background</Text>                
-                <View style={{flex: 1}} /> 
-                <Switch
-                    trackColor={{ false: colors.inactive, true:  colors.primary}}
-                    thumbColor={isEnabledLockApp ? colors.primary : colors.inactive}
-                    //ios_backgroundColor="#3e3e3e"
-                    onValueChange={()=>{
-                        setEnabledLockApp(!isEnabledLockApp)
-                    }}
-                    value={isEnabledLockApp}
-                    style={{marginEnd: 10}}
-                />                               
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Security
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.doorIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.fingerprintIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Use fingerprint</Text>                
-                <View style={{flex: 1}} /> 
-                <Switch
-                    trackColor={{ false: colors.inactive, true:  colors.primary}}
-                    thumbColor={isUseFingerprint ? colors.primary : colors.inactive}
-                    //ios_backgroundColor="#3e3e3e"
-                    onValueChange={()=>{
-                        setUseFingerprint(!isUseFingerprint)
-                    }}
-                    value={isUseFingerprint}
-                    style={{marginEnd: 10}}
-                />                               
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Lock app in background
+          </Text>
+          <View style={{flex: 1}} />
+          <Switch
+            trackColor={{false: colors.inactive, true: colors.primary}}
+            thumbColor={isEnabledLockApp ? colors.primary : colors.inactive}
+            //ios_backgroundColor="#3e3e3e"
+            onValueChange={() => {
+              setEnabledLockApp(!isEnabledLockApp);
+            }}
+            value={isEnabledLockApp}
+            style={{marginEnd: 10}}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.fingerprintIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.lockIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Change password</Text>                
-                <View style={{flex: 1}} /> 
-                <Switch
-                    trackColor={{ false: colors.inactive, true:  colors.primary}}
-                    thumbColor={isUseFingerprint ? colors.primary : colors.inactive}
-                    //ios_backgroundColor="#3e3e3e"
-                    onValueChange={()=>{
-                        setEnabledChangePassword(!isEnabledChangePassword)                        
-                    }}
-                    value={isEnabledChangePassword}
-                    style={{marginEnd: 10}}
-                />                               
-            </View>
-            <View style={{
-                height: 40,
-                backgroundColor: 'rgba(0,0,0,0.2)',    
-                justifyContent: 'center',            
+            Use fingerprint
+          </Text>
+          <View style={{flex: 1}} />
+          <Switch
+            trackColor={{false: colors.inactive, true: colors.primary}}
+            thumbColor={isUseFingerprint ? colors.primary : colors.inactive}
+            //ios_backgroundColor="#3e3e3e"
+            onValueChange={() => {
+              setUseFingerprint(!isUseFingerprint);
+            }}
+            value={isUseFingerprint}
+            style={{marginEnd: 10}}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.lockIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'red', 
-                    paddingStart: 10,
-                }}>Misc</Text>                
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Change password
+          </Text>
+          <View style={{flex: 1}} />
+          <Switch
+            trackColor={{false: colors.inactive, true: colors.primary}}
+            thumbColor={isUseFingerprint ? colors.primary : colors.inactive}
+            //ios_backgroundColor="#3e3e3e"
+            onValueChange={() => {
+              setEnabledChangePassword(!isEnabledChangePassword);
+            }}
+            value={isEnabledChangePassword}
+            style={{marginEnd: 10}}
+          />
+        </View>
+        <View
+          style={{
+            height: 40,
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'red',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.documentIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Term of Service</Text>                
-                <View style={{flex: 1}} />                
-                <Image
-                    source={images.chevronRightIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-            </View>
-            <View style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                alignItems: 'center'
+            Misc
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.documentIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
             }}>
-                <Image
-                    source={images.passportIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-                <Text style={{
-                    color:'black',
-                    fontSize: fontSizes.h6,
-                    color: 'black', 
-                    paddingStart: 10,
-                }}>Open source licenses</Text>                
-                <View style={{flex: 1}} />                
-                <Image
-                    source={images.chevronRightIcon}
-                    style={{
-                        width: 20,
-                        height: 20,
-                        marginStart: 10,
-                    }}
-                />
-            </View>
-        </ScrollView>
+            Term of Service
+          </Text>
+          <View style={{flex: 1}} />
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.passportIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
+            }}>
+            Open source licenses
+          </Text>
+          <View style={{flex: 1}} />
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
+  );
 }
-export default Settings
+export default Settings;

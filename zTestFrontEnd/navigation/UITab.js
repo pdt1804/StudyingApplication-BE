@@ -27,7 +27,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import {Settings, GroupChat, Login} from '../screens';
+import {Settings, GroupChat, Friends} from '../screens';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {images, colors, fontSizes} from '../constants';
 
@@ -45,20 +45,18 @@ const ScreenOptions = ({route}) => ({
     let iconName = images.personIcon;
     if (screenName == 'GroupChat') {
       iconName = images.atSignIcon;
-    } else if (screenName == 'Login') {
-      iconName = images.globeIcon;
     } else if (screenName == 'Settings') {
       iconName = images.menuIcon;
+    } else if (screenName == 'testing') {
+      iconName = images.globeIcon;
     }
 
     return (
       <Image
         source={iconName}
         style={{
-          width: 25,
-          height: 25,
-          marginRight: 10,
-          marginLeft: 10,
+          width: 22,
+          height: 22,
           tintColor: focused ? colors.active : colors.inactive,
         }}
       />
@@ -75,17 +73,7 @@ function UITab(props) {
         options={{
           tabBarLabel: 'Groups',
           tabBarLabelStyle: {
-            fontSize: fontSizes.h3,
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Login"
-        component={Login}
-        options={{
-          tabBarLabel: 'Testing...',
-          tabBarLabelStyle: {
-            fontSize: fontSizes.h3,
+            fontSize: fontSizes.h5,
           },
         }}
       />
@@ -95,7 +83,17 @@ function UITab(props) {
         options={{
           tabBarLabel: 'Settings',
           tabBarLabelStyle: {
-            fontSize: fontSizes.h3,
+            fontSize: fontSizes.h5,
+          },
+        }}
+      />
+      <Tab.Screen
+        name="testing"
+        component={Friends}
+        options={{
+          tabBarLabel: 'test',
+          tabBarLabelStyle: {
+            fontSize: fontSizes.h5,
           },
         }}
       />
