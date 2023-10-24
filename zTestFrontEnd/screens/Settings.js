@@ -29,11 +29,12 @@ function Settings(props) {
         backgroundColor: 'white',
       }}>
       <UIHeader title={'Settings'} />
+
       <ScrollView>
         <View
           style={{
             height: 200,
-            backgroundColor: 'gray',
+            backgroundColor: colors.mainBackground,
             alignItems: 'center',
           }}>
           <Image
@@ -44,9 +45,17 @@ function Settings(props) {
               resizeMode: 'cover',
               margin: 15,
               borderRadius: 90,
+              borderColor: 'white',
+              borderWidth: 5,
             }}
           />
-          <Text>USERNAME</Text>
+          <Text
+            style={{
+              color: 'black',
+              fontSize: fontSizes.h6,
+            }}>
+            USERNAME
+          </Text>
         </View>
         <View
           style={{
@@ -56,7 +65,6 @@ function Settings(props) {
           }}>
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'red',
               paddingStart: 10,
@@ -80,7 +88,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -113,7 +120,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -149,7 +155,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -174,7 +179,6 @@ function Settings(props) {
           }}>
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'red',
               paddingStart: 10,
@@ -198,7 +202,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -208,7 +211,6 @@ function Settings(props) {
           <View style={{flex: 1}} />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingEnd: 10,
@@ -241,7 +243,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -251,7 +252,6 @@ function Settings(props) {
           <View style={{flex: 1}} />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingEnd: 10,
@@ -277,7 +277,6 @@ function Settings(props) {
           }}>
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'red',
               paddingStart: 10,
@@ -301,7 +300,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -336,7 +334,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -371,7 +368,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -398,7 +394,6 @@ function Settings(props) {
           }}>
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'red',
               paddingStart: 10,
@@ -422,7 +417,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
@@ -455,7 +449,6 @@ function Settings(props) {
           />
           <Text
             style={{
-              color: 'black',
               fontSize: fontSizes.h6,
               color: 'black',
               paddingStart: 10,
