@@ -37,8 +37,8 @@ const ScreenOptions = ({route}) => ({
   headerShown: false,
   tabBarActiveTintColor: colors.active,
   tabBarInactiveTintColor: colors.inactive,
-  tabBarActiveBackgroundColor: 'white',
-  tabBarInactiveBackgroundColor: 'gold',
+  tabBarActiveBackgroundColor: colors.myWhite,
+  tabBarInactiveBackgroundColor: colors.myWhite,
 
   tabBarIcon: ({focused, color, size}) => {
     let screenName = route.name;
