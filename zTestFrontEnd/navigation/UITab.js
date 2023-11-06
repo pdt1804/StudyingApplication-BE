@@ -44,11 +44,11 @@ const ScreenOptions = ({route}) => ({
     let screenName = route.name;
     let iconName = images.personIcon;
     if (screenName == 'GroupChat') {
-      iconName = images.atSignIcon;
-    } else if (screenName == 'Settings') {
-      iconName = images.menuIcon;
-    } else if (screenName == 'testing') {
-      iconName = images.globeIcon;
+      iconName = images.groupIcon;
+    } else if (screenName == 'Friends') {
+      iconName = images.chatIcon;
+    } else if (screenName == 'Notifications') {
+      iconName = images.bellIcon;
     }
 
     return (
@@ -65,35 +65,47 @@ const ScreenOptions = ({route}) => ({
 });
 
 function UITab(props) {
+  const fontSizeTabs = fontSizes.h6;
+
   return (
     <Tab.Navigator initialRouteName="Settings" screenOptions={ScreenOptions}>
-      <Tab.Screen
-        name="GroupChat"
-        component={GroupChat}
-        options={{
-          tabBarLabel: 'Groups',
-          tabBarLabelStyle: {
-            fontSize: fontSizes.h5,
-          },
-        }}
-      />
       <Tab.Screen
         name="Settings"
         component={Settings}
         options={{
-          tabBarLabel: 'Settings',
+          tabBarLabel: 'Tài khoản',
           tabBarLabelStyle: {
-            fontSize: fontSizes.h5,
+            fontSize: fontSizeTabs,
           },
         }}
       />
       <Tab.Screen
-        name="testing"
+        name="Friends"
         component={Friends}
         options={{
-          tabBarLabel: 'test',
+          tabBarLabel: 'Bạn bè',
           tabBarLabelStyle: {
-            fontSize: fontSizes.h5,
+            fontSize: fontSizeTabs,
+          },
+        }}
+      />
+      <Tab.Screen
+        name="GroupChat"
+        component={GroupChat}
+        options={{
+          tabBarLabel: 'Nhóm học tập',
+          tabBarLabelStyle: {
+            fontSize: fontSizeTabs,
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Notifications"
+        component={Friends}
+        options={{
+          tabBarLabel: 'Thông báo',
+          tabBarLabelStyle: {
+            fontSize: fontSizeTabs,
           },
         }}
       />

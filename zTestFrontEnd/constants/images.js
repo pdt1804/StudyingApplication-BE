@@ -2,8 +2,8 @@ export default {
   background: require('../assets/background.jpg'),
   uitLogo: require('../assets/Logo_UIT_Web_Transparent.png'),
   
-  personIcon: require('../assets/icon/person_icon.png'),
-  keyIcon: require('../assets/icon/key_icon.png'),
+  personIcon: require('../assets/icon/Person.png'),
+  keyIcon: require('../assets/icon/Key.png'),
   atSignIcon: require('../assets/icon/At_sign.png'),
   cloudIcon: require('../assets/icon/Cloud.png'),
   chevronRightIcon: require('../assets/icon/Chevron_Right.png'),
@@ -18,4 +18,7 @@ export default {
   phoneIcon: require('../assets/icon/Phone.png'),
   menuIcon: require('../assets/icon/Menu.png'),
   searchIcon: require('../assets/icon/Search.png'),
+  groupIcon: require('../assets/icon/People.png'),
+  chatIcon: require('../assets/icon/Chat.png'),
+  bellIcon: require('../assets/icon/Notification.png'),
 };
