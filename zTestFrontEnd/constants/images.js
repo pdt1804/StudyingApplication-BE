@@ -26,4 +26,6 @@ export default {
   questionMarkIcon: require('../assets/icon/Question_Mark.png'),
   errorIcon: require('../assets/icon/Error.png'),
   warningShieldIcon: require('../assets/icon/Warning_Shield.png'),
+  pencilIcon: require('../assets/icon/Pencil.png'),
+  backIcon: require('../assets/icon/Back.png'),
 };

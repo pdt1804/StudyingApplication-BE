@@ -28,13 +28,23 @@ function Settings(props) {
         flex: 1,
         backgroundColor: colors.myWhite,
       }}>
-      <UIHeader title={'Settings'} />
+      <UIHeader
+        title={'Tài khoản'}
+        leftIconName={images.backIcon}
+        rightIconName={images.pencilIcon}
+        onPressLeftIcon={()=>{
+          alert('To the previous screen')
+        }}
+        onPressRightIcon={()=>{
+          alert('Edit profile')
+        }}
+      />
 
       <ScrollView>
         <View
           style={{
             height: 200,
-            backgroundColor: colors.mainBackground,
+            //backgroundColor: colors.mainBackground,
             alignItems: 'center',
           }}>
           <Image
@@ -288,8 +298,8 @@ function Settings(props) {
           </Text>
           <View style={{flex: 1}} />
           <Switch
-            trackColor={{false: colors.inactive, true: colors.switchOn}}
-            thumbColor={isEnabledLockApp ? colors.primary : colors.switchOff}
+            trackColor={{false: colors.switchOff, true: colors.switchOn}}
+            thumbColor={isEnabledLockApp ? colors.switchOn : colors.switchOff}
             onValueChange={() => {
               setEnabledLockApp(!isEnabledLockApp);
             }}

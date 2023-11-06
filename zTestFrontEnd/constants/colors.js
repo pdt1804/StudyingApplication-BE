@@ -11,7 +11,7 @@ export default {
     active: 'rgb(88, 155, 238)',
 
     switchOn: 'blue',
-    switchOff: inactive,
+    switchOff: 'rgba(182, 205, 212, 0.75)', //same as inactive for now
 
     Online: 'lime',
     Offline: 'red',
