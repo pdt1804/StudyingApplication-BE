@@ -13,6 +13,8 @@ import com.example.demo.repositories.UserRepository;
 import com.example.demo.services.RecoveryCodeService;
 import com.example.demo.services.UserService;
 
+
+// https://localhost:8080/api/v1/user/Authenticate
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
