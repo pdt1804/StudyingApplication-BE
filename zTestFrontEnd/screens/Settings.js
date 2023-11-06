@@ -26,7 +26,7 @@ function Settings(props) {
     <SafeAreaView
       style={{
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: colors.myWhite,
       }}>
       <UIHeader title={'Settings'} />
 
@@ -57,19 +57,20 @@ function Settings(props) {
             USERNAME
           </Text>
         </View>
-        <View
+
+        <View /** Thông tin tài khoản */
           style={{
-            height: 40,
-            backgroundColor: 'rgba(0,0,0,0.2)',
+            height: 50,
+            backgroundColor: colors.myWhite,
             justifyContent: 'center',
           }}>
           <Text
             style={{
-              fontSize: fontSizes.h6,
-              color: 'red',
+              fontSize: fontSizes.h7,
+              color: colors.noImportantText,
               paddingStart: 10,
             }}>
-            Account
+            Thông tin tài khoản
           </Text>
         </View>
         <View
@@ -92,7 +93,7 @@ function Settings(props) {
               color: 'black',
               paddingStart: 10,
             }}>
-            Phone number
+            Số điện thoại
           </Text>
           <View style={{flex: 1}} />
           <Image
@@ -143,6 +144,41 @@ function Settings(props) {
             alignItems: 'center',
           }}
           onPress={() => {
+            navigate('Verification');
+          }}>
+          <Image
+            source={images.keyIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
+            }}>
+            Đổi mật khẩu
+          </Text>
+          <View style={{flex: 1}} />
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}
+          onPress={() => {
             navigate('Login');
           }}>
           <Image
@@ -159,7 +195,7 @@ function Settings(props) {
               color: 'black',
               paddingStart: 10,
             }}>
-            Sign out
+            Đăng xuất
           </Text>
           <View style={{flex: 1}} />
           <Image
@@ -171,19 +207,20 @@ function Settings(props) {
             }}
           />
         </TouchableOpacity>
-        <View
+
+        <View /** Tùy chỉnh */
           style={{
-            height: 40,
-            backgroundColor: 'rgba(0,0,0,0.2)',
+            height: 50,
+            backgroundColor: colors.myWhite,
             justifyContent: 'center',
           }}>
           <Text
             style={{
-              fontSize: fontSizes.h6,
-              color: 'red',
+              fontSize: fontSizes.h7,
+              color: colors.noImportantText,
               paddingStart: 10,
             }}>
-            Common
+            Tùy chỉnh
           </Text>
         </View>
         <View
@@ -206,7 +243,7 @@ function Settings(props) {
               color: 'black',
               paddingStart: 10,
             }}>
-            Language
+            Ngôn ngữ
           </Text>
           <View style={{flex: 1}} />
           <Text
@@ -216,7 +253,7 @@ function Settings(props) {
               paddingEnd: 10,
               opacity: 0.5,
             }}>
-            English
+            Tiếng Việt
           </Text>
           <Image
             source={images.chevronRightIcon}
@@ -234,7 +271,7 @@ function Settings(props) {
             alignItems: 'center',
           }}>
           <Image
-            source={images.cloudIcon}
+            source={images.darkModeIcon}
             style={{
               width: 20,
               height: 20,
@@ -247,70 +284,12 @@ function Settings(props) {
               color: 'black',
               paddingStart: 10,
             }}>
-            Environment
-          </Text>
-          <View style={{flex: 1}} />
-          <Text
-            style={{
-              fontSize: fontSizes.h6,
-              color: 'black',
-              paddingEnd: 10,
-              opacity: 0.5,
-            }}>
-            Production
-          </Text>
-          <Image
-            source={images.chevronRightIcon}
-            style={{
-              width: 20,
-              height: 20,
-              marginStart: 10,
-            }}
-          />
-        </View>
-
-        <View
-          style={{
-            height: 40,
-            backgroundColor: 'rgba(0,0,0,0.2)',
-            justifyContent: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: fontSizes.h6,
-              color: 'red',
-              paddingStart: 10,
-            }}>
-            Security
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            paddingVertical: 10,
-            alignItems: 'center',
-          }}>
-          <Image
-            source={images.doorIcon}
-            style={{
-              width: 20,
-              height: 20,
-              marginStart: 10,
-            }}
-          />
-          <Text
-            style={{
-              fontSize: fontSizes.h6,
-              color: 'black',
-              paddingStart: 10,
-            }}>
-            Lock app in background
+            Chế độ nền tối
           </Text>
           <View style={{flex: 1}} />
           <Switch
-            trackColor={{false: colors.inactive, true: colors.primary}}
-            thumbColor={isEnabledLockApp ? colors.primary : colors.inactive}
-            //ios_backgroundColor="#3e3e3e"
+            trackColor={{false: colors.inactive, true: colors.switchOn}}
+            thumbColor={isEnabledLockApp ? colors.primary : colors.switchOff}
             onValueChange={() => {
               setEnabledLockApp(!isEnabledLockApp);
             }}
@@ -318,87 +297,20 @@ function Settings(props) {
             style={{marginEnd: 10}}
           />
         </View>
-        <View
+
+        <View /** Khác */
           style={{
-            flexDirection: 'row',
-            paddingVertical: 10,
-            alignItems: 'center',
-          }}>
-          <Image
-            source={images.fingerprintIcon}
-            style={{
-              width: 20,
-              height: 20,
-              marginStart: 10,
-            }}
-          />
-          <Text
-            style={{
-              fontSize: fontSizes.h6,
-              color: 'black',
-              paddingStart: 10,
-            }}>
-            Use fingerprint
-          </Text>
-          <View style={{flex: 1}} />
-          <Switch
-            trackColor={{false: colors.inactive, true: colors.primary}}
-            thumbColor={isUseFingerprint ? colors.primary : colors.inactive}
-            //ios_backgroundColor="#3e3e3e"
-            onValueChange={() => {
-              setUseFingerprint(!isUseFingerprint);
-            }}
-            value={isUseFingerprint}
-            style={{marginEnd: 10}}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            paddingVertical: 10,
-            alignItems: 'center',
-          }}>
-          <Image
-            source={images.lockIcon}
-            style={{
-              width: 20,
-              height: 20,
-              marginStart: 10,
-            }}
-          />
-          <Text
-            style={{
-              fontSize: fontSizes.h6,
-              color: 'black',
-              paddingStart: 10,
-            }}>
-            Change password
-          </Text>
-          <View style={{flex: 1}} />
-          <Switch
-            trackColor={{false: colors.inactive, true: colors.primary}}
-            thumbColor={isUseFingerprint ? colors.primary : colors.inactive}
-            //ios_backgroundColor="#3e3e3e"
-            onValueChange={() => {
-              setEnabledChangePassword(!isEnabledChangePassword);
-            }}
-            value={isEnabledChangePassword}
-            style={{marginEnd: 10}}
-          />
-        </View>
-        <View
-          style={{
-            height: 40,
-            backgroundColor: 'rgba(0,0,0,0.2)',
+            height: 50,
+            backgroundColor: colors.myWhite,
             justifyContent: 'center',
           }}>
           <Text
             style={{
-              fontSize: fontSizes.h6,
-              color: 'red',
+              fontSize: fontSizes.h7,
+              color: colors.noImportantText,
               paddingStart: 10,
             }}>
-            Misc
+            Khác
           </Text>
         </View>
         <View
@@ -408,7 +320,7 @@ function Settings(props) {
             alignItems: 'center',
           }}>
           <Image
-            source={images.documentIcon}
+            source={images.warningShieldIcon}
             style={{
               width: 20,
               height: 20,
@@ -421,7 +333,7 @@ function Settings(props) {
               color: 'black',
               paddingStart: 10,
             }}>
-            Term of Service
+            Báo cáo sự cố kỹ thuật
           </Text>
           <View style={{flex: 1}} />
           <Image
@@ -440,7 +352,7 @@ function Settings(props) {
             alignItems: 'center',
           }}>
           <Image
-            source={images.passportIcon}
+            source={images.questionMarkIcon}
             style={{
               width: 20,
               height: 20,
@@ -453,7 +365,39 @@ function Settings(props) {
               color: 'black',
               paddingStart: 10,
             }}>
-            Open source licenses
+            Trợ giúp
+          </Text>
+          <View style={{flex: 1}} />
+          <Image
+            source={images.chevronRightIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingVertical: 10,
+            alignItems: 'center',
+          }}>
+          <Image
+            source={images.documentBlackIcon}
+            style={{
+              width: 20,
+              height: 20,
+              marginStart: 10,
+            }}
+          />
+          <Text
+            style={{
+              fontSize: fontSizes.h6,
+              color: 'black',
+              paddingStart: 10,
+            }}>
+            Pháp lý & Chính sách
           </Text>
           <View style={{flex: 1}} />
           <Image

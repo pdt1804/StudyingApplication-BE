@@ -8,6 +8,7 @@ export default {
   cloudIcon: require('../assets/icon/Cloud.png'),
   chevronRightIcon: require('../assets/icon/Chevron_Right.png'),
   documentIcon: require('../assets/icon/Document.png'),
+  documentBlackIcon: require('../assets/icon/DocumentBlack.png'),
   doorIcon: require('../assets/icon/Door.png'),
   emailIcon: require('../assets/icon/Email.png'),
   exportIcon: require('../assets/icon/Export.png'),
@@ -21,4 +22,8 @@ export default {
   groupIcon: require('../assets/icon/People.png'),
   chatIcon: require('../assets/icon/Chat.png'),
   bellIcon: require('../assets/icon/Notification.png'),
+  darkModeIcon: require('../assets/icon/Eclipse.png'),
+  questionMarkIcon: require('../assets/icon/Question_Mark.png'),
+  errorIcon: require('../assets/icon/Error.png'),
+  warningShieldIcon: require('../assets/icon/Warning_Shield.png'),
 };

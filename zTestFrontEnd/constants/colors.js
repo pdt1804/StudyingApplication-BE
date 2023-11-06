@@ -5,11 +5,13 @@ export default {
 
     mainBackground: '#D7FFFD',
     myWhite: 'rgb(240, 250, 255)',
+    noImportantText: 'rgba(190, 200, 210, 0.85)',
 
     inactive: 'rgba(182, 205, 212, 0.75)',
     active: 'rgb(88, 155, 238)',
 
-    primary: 'blue',
+    switchOn: 'blue',
+    switchOff: inactive,
 
     Online: 'lime',
     Offline: 'red',
