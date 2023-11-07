@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import FriendItems from './FriendItems';
 import {images, colors, fontSizes} from '../../constants';
+import {UIHeader} from '../../components';
 
 function Friends(props) {
   //list of group example = state
@@ -64,6 +65,18 @@ function Friends(props) {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <UIHeader
+        title={'Bạn bè'}
+        leftIconName={images.backIcon}
+        rightIconName={images.pencilIcon}
+        onPressLeftIcon={() => {
+          alert('To the previous screen');
+        }}
+        onPressRightIcon={() => {
+          alert('Edit profile');
+        }}
+      />
+
       <View
         style={{
           marginHorizontal: 15,
