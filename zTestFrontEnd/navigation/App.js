@@ -10,6 +10,7 @@ import {
   ForgetPassword,
   Verification,
   ResetPassword,
+  Messenger,
 } from '../screens';
 import UITab from './UITab';
 
@@ -32,6 +33,7 @@ function App(props) {
         <Stack.Screen name="ResetPassword" component={ResetPassword} />
 
         <Stack.Screen name="UITab" component={UITab} />
+        <Stack.Screen name="Messenger" component={Messenger} />
       </Stack.Navigator>
     </NavigationContainer>
   );

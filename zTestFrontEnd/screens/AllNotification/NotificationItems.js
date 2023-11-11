@@ -16,7 +16,7 @@ function _getColorFromStatus(status) {
   } else return colors.Offline;
 }
 
-function GroupChatItems(props) {
+function NotificationItems(props) {
   let {name, imageUrl, status} = props.group;
   const {onPress} = props;
   return (
@@ -71,4 +71,4 @@ function GroupChatItems(props) {
     </TouchableOpacity>
   );
 }
-export default GroupChatItems;
+export default NotificationItems;

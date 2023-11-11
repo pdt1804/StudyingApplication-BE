@@ -10,43 +10,43 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import GroupChatItems from './GroupChatItems';
+import NotificationItems from './NotificationItems';
 import {images, colors, fontSizes} from '../../constants';
+import {UIHeader} from '../../components';
 
-function GroupChat(props) {
-  //list of group example = state
+function AllNotification(props) {
   const [groups, setGroups] = useState([
     {
       ID: '01',
-      name: 'Top 30 Nhạc Remix Tiktok Hay Nhất 2022',
+      name: 'Thông báo 1',
       imageUrl:
         'https://i1.sndcdn.com/avatars-000528843336-cug73s-t500x500.jpg',
       status: 'Online',
     },
     {
       ID: '02',
-      name: 'Anti giản viên ABC-XXX',
+      name: 'Thông báo 2',
       imageUrl:
         'https://jekashop.co.uk/media/catalog/product/cache/12ad95d8a2fb3df88ee5f5df1ef6c6e8/a/n/anti-slip-picto-d-p006.png',
       status: 'Offline',
     },
     {
       ID: '03',
-      name: 'Discover the world',
+      name: 'Thông báo 3',
       imageUrl:
         'https://m.media-amazon.com/images/I/61NV+pGB42L._AC_UF1000,1000_QL80_.jpg',
       status: 'Offline',
     },
     {
       ID: '04',
-      name: 'SE121.O11.PMCL',
+      name: 'Thông báo 4',
       imageUrl:
         'https://cdn.haitrieu.com/wp-content/uploads/2021/10/Logo-DH-Cong-Nghe-Thong-Tin-UIT.png',
       status: 'Online',
     },
     {
       ID: '05',
-      name: 'Nhóm học tập trẩu tre',
+      name: 'Thông báo 5',
       imageUrl: 'https://i.imgur.com/WnXdJha.png',
       status: 'Offline',
     },
@@ -64,6 +64,18 @@ function GroupChat(props) {
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <UIHeader
+        title={'Thông báo'}
+        leftIconName={images.backIcon}
+        rightIconName={images.pencilIcon}
+        onPressLeftIcon={() => {
+          alert('To the previous screen');
+        }}
+        onPressRightIcon={() => {
+          alert('Edit profile');
+        }}
+      />
+
       <View
         style={{
           marginHorizontal: 15,
@@ -103,7 +115,7 @@ function GroupChat(props) {
             eachGroup.name.toLowerCase().includes(searchText.toLowerCase()),
           )
           .map(eachGroup => (
-            <GroupChatItems
+            <NotificationItems
               group={eachGroup}
               key={eachGroup.ID}
               onPress={() => {
@@ -115,4 +127,4 @@ function GroupChat(props) {
     </View>
   );
 }
-export default GroupChat;
+export default AllNotification;

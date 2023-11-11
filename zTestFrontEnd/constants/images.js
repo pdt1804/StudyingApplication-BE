@@ -28,4 +28,6 @@ export default {
   warningShieldIcon: require('../assets/icon/Warning_Shield.png'),
   pencilIcon: require('../assets/icon/Pencil.png'),
   backIcon: require('../assets/icon/Back.png'),
+  checkMarkIcon: require('../assets/icon/CheckMark.png'),
+  cancelIcon: require('../assets/icon/Cancel.png'),
 };

@@ -16,56 +16,98 @@ function _getColorFromStatus(status) {
   } else return colors.Offline;
 }
 
+function _getIconFromStatus(status) {
+  if (status.toLowerCase().trim() == 'online') {
+    return images.checkMarkIcon;
+  } else return images.cancelIcon;
+}
+
 function GroupChatItems(props) {
-  let {name, imageUrl, status} = props.group;
+  let {name, imageUrl, newestMessage, status} = props.group;
   const {onPress} = props;
+
+  let fontSizeName = fontSizes.h3;
+  if (name.length > 22) {
+    fontSizeName = fontSizes.h5;
+  }
+
   return (
     <TouchableOpacity
       onPress={onPress}
       style={{
-        height: 100,
+        height: 90,
         paddingTop: 20,
         paddingStart: 10,
         flexDirection: 'row',
+        alignItems: 'center',
       }}>
-      <Image
-        style={{
-          width: 55,
-          height: 55,
-          resizeMode: 'cover',
-          borderRadius: 90,
-          marginRight: 15,
-        }}
-        source={{
-          uri: imageUrl,
-        }}
-      />
+      <View>
+        <Image /** Avatar */
+          style={{
+            width: 55,
+            height: 55,
+            resizeMode: 'cover',
+            borderRadius: 90,
+            marginRight: 15,
+            alignSelf: 'center',
+          }}
+          source={{
+            uri: imageUrl,
+          }}
+        />
+        <Image /** Status */
+          style={{
+            width: 17,
+            height: 17,
+            resizeMode: 'cover',
+            borderRadius: 90,
+            marginRight: 15,
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+            tintColor: _getColorFromStatus(status),
+          }}
+          source={_getIconFromStatus(status)}
+        />
+      </View>
+
       <View
         style={{
-          flex: 1,
+          flexDirection: 'column',
+          flex:4,
           marginRight: 10,
         }}>
-        <Text
+        <Text /** Name */
           style={{
             color: 'black',
-            fontSize: fontSizes.h2,
+            fontSize: fontSizeName,
             fontWeight: 'bold',
           }}>
           {name}
         </Text>
-        <View
+        <Text /** Message */
           style={{
-            backgroundColor: 'black',
-            height: 1,
-          }}
-        />
-        <Text
-          style={{
-            color: _getColorFromStatus(status),
-            fontSize: fontSizes.h3,
-            fontWeight: 'bold',
+            color: colors.inactive,
+            fontSize: fontSizes.h6,
           }}>
-          {status.toUpperCase()}
+          {/**newestMessage*/ 'Hello, Àm Fai Thank You, Àn you?'}
+        </Text>
+      </View>
+
+      <View
+        style={{
+          flexDirection: 'column',
+          flex:1,
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+        }}>
+        <Text /** Minute ago */
+          style={{
+            color: 'black',
+            fontSize: fontSizes.h6 * 0.8,
+            marginRight: 10,
+          }}>
+          5 phút trước
         </Text>
       </View>
     </TouchableOpacity>

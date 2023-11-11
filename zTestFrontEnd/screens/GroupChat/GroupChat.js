@@ -12,42 +12,88 @@ import {
 } from 'react-native';
 import GroupChatItems from './GroupChatItems';
 import {images, colors, fontSizes} from '../../constants';
+import {UIHeader} from '../../components';
 
 function GroupChat(props) {
   //list of group example = state
   const [groups, setGroups] = useState([
     {
       ID: '01',
-      name: 'Top 30 Nhạc Remix Tiktok Hay Nhất 2022',
-      imageUrl:
-        'https://i1.sndcdn.com/avatars-000528843336-cug73s-t500x500.jpg',
+      name: 'Tự học bất cứ điều gì',
+      imageUrl: 'https://i.pravatar.cc/100',
+      newestMessage: 'Mình trả 20,000 Euro để học kỹ năng này',
       status: 'Online',
     },
     {
       ID: '02',
-      name: 'Anti giản viên ABC-XXX',
-      imageUrl:
-        'https://jekashop.co.uk/media/catalog/product/cache/12ad95d8a2fb3df88ee5f5df1ef6c6e8/a/n/anti-slip-picto-d-p006.png',
+      name: 'Kỹ năng Lu3',
+      imageUrl: 'https://i.pravatar.cc/200',
+      newestMessage:
+        'Has never heard lofi music that is so round and huge and white.',
       status: 'Offline',
     },
     {
       ID: '03',
-      name: 'Discover the world',
-      imageUrl:
-        'https://m.media-amazon.com/images/I/61NV+pGB42L._AC_UF1000,1000_QL80_.jpg',
+      name: 'Tóm tắt video',
+      imageUrl: 'https://i.pravatar.cc/300',
+      newestMessage: 'Came for the image stayed for the vibes',
       status: 'Offline',
     },
     {
       ID: '04',
-      name: 'SE121.O11.PMCL',
-      imageUrl:
-        'https://cdn.haitrieu.com/wp-content/uploads/2021/10/Logo-DH-Cong-Nghe-Thong-Tin-UIT.png',
+      name: 'Tokyo Lofi Healing',
+      imageUrl: 'https://i.pravatar.cc/400',
+      newestMessage: 'Enjoy Moment',
       status: 'Online',
     },
     {
       ID: '05',
-      name: 'Nhóm học tập trẩu tre',
-      imageUrl: 'https://i.imgur.com/WnXdJha.png',
+      name: 'Xung đột Israel đánh nta trước .nta đánh lại thì lại kêu',
+      imageUrl: 'https://i.pravatar.cc/500',
+      newestMessage:
+        'Hamas ở Dải Gaza nguy cơ lan rộng toàn khu vực, ai có thể tháo ngòi nổ? THVN',
+      status: 'Offline',
+    },
+    {
+      ID: '06',
+      name: 'Tư Duy Ngược',
+      imageUrl: 'https://i.pravatar.cc/301',
+      newestMessage: 'Không sao nhãng',
+      status: 'Offline',
+    },
+    {
+      ID: '07',
+      name: 'Cách Tôi Làm Việc',
+      imageUrl: 'https://i.pravatar.cc/302',
+      newestMessage: '8-12 Tiếng Một Ngày',
+      status: 'Offline',
+    },
+    {
+      ID: '08',
+      name: 'Statistical Thinking',
+      imageUrl: 'https://i.pravatar.cc/303',
+      newestMessage: ' Kỹ Năng Cần Thiết Cho Thời Đại Big Data',
+      status: 'Offline',
+    },
+    {
+      ID: '09',
+      name: 'Speak English',
+      imageUrl: 'https://i.pravatar.cc/304',
+      newestMessage: 'all day in Vietnam',
+      status: 'Offline',
+    },
+    {
+      ID: '10',
+      name: 'Vô văn hóa',
+      imageUrl: 'https://i.pravatar.cc/305',
+      newestMessage: 'Trang xạo',
+      status: 'Offline',
+    },
+    {
+      ID: '11',
+      name: 'Wa???Wa???',
+      imageUrl: 'https://i.pravatar.cc/306',
+      newestMessage: 'Kho cho nguoi dan thuong qua',
       status: 'Offline',
     },
   ]);
@@ -62,8 +108,25 @@ function GroupChat(props) {
     );
   };
 
+  //navigation
+  const {navigation, route} = props;
+  //function of navigation to/back
+  const {navigate, goBack} = navigation;
+
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
+      <UIHeader
+        title={'Nhóm học tập'}
+        leftIconName={images.backIcon}
+        rightIconName={images.pencilIcon}
+        onPressLeftIcon={() => {
+          alert('To the previous screen');
+        }}
+        onPressRightIcon={() => {
+          alert('Edit profile');
+        }}
+      />
+
       <View
         style={{
           marginHorizontal: 15,
@@ -107,7 +170,8 @@ function GroupChat(props) {
               group={eachGroup}
               key={eachGroup.ID}
               onPress={() => {
-                alert(`You pressed group "${eachGroup.name}"`);
+/*                 alert(`You pressed group "${eachGroup.name}"`); */
+              navigate('Messenger', {user: eachGroup})
               }}
             />
           ))}

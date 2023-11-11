@@ -15,4 +15,6 @@ export default {
 
     Online: 'lime',
     Offline: 'red',
+
+    message: 'rgba(175, 225, 250, 0.9)',
 }

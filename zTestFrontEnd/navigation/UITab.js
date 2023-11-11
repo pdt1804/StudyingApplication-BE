@@ -27,7 +27,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import {Settings, GroupChat, Friends} from '../screens';
+import {Settings, GroupChat, Friends, AllNotification} from '../screens';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {images, colors, fontSizes} from '../constants';
 
@@ -101,7 +101,7 @@ function UITab(props) {
       />
       <Tab.Screen
         name="Notifications"
-        component={Friends}
+        component={AllNotification}
         options={{
           tabBarLabel: 'Thông báo',
           tabBarLabelStyle: {

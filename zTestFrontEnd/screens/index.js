@@ -8,6 +8,8 @@ import Settings from "./Settings"
 import GroupChat from "./GroupChat/GroupChat"
 
 import Friends from "./Friends/Friends"
+import AllNotification from "./AllNotification/AllNotification"
+import Messenger from "./Messenger/Messenger"
 
 export {
     Welcome,
@@ -19,4 +21,6 @@ export {
     Settings,
     GroupChat,
     Friends,
+    AllNotification,
+    Messenger,
 }
