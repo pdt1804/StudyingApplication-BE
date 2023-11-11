@@ -13,34 +13,70 @@ import {
 import {images, colors, fontSizes} from '../constants/index';
 import {UIButton} from '../components/index';
 import {isValidEmail, isValidPassword} from '../utilies/Validation';
+import axios from 'axios';
+
+const getUserCredentials = async () => {
+  try {
+    const response = await axios.get(
+      'https://localhost:8080/api/v1/user/Authenticate', {
+        params: {
+          userName: 'abc',
+          passWord: 'abc', 
+        }
+      }
+    );
+    alert('1234')
+
+    // The response will contain the username and password.
+    const {username, password} = response.data;
+
+    return {username, password};
+  } catch (error) {
+    // Handle the error.
+  }
+};
 
 const Login = props => {
-  const [keyboardIsShown, setKeyboardIsShown] = useState(false)
+  const [keyboardIsShown, setKeyboardIsShown] = useState(false);
   //states for validating
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
   //states to store email/password
-  const [email, setEmail] = useState('');
+  /*   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState(''); */
+
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    const getUserCredentialsAsync = async () => {
+      const {username, password} = await getUserCredentials();
+
+      setUsername(username);
+      setPassword(password);
+    };
+
+    getUserCredentialsAsync();
+  }, []);
 
   //navigation
   const {navigation, route} = props;
   //function of navigation to/back
   const {navigate, goBack} = navigation;
 
-  useEffect(()=>{
-      //componentDidMount
-      Keyboard.addListener('keyboardDidShow', () => {            
-          setKeyboardIsShown(true)
-      })
-      Keyboard.addListener('keyboardDidHide', () => {            
-          setKeyboardIsShown(false)
-      })
-  })
+  useEffect(() => {
+    //componentDidMount
+    Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardIsShown(true);
+    });
+    Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardIsShown(false);
+    });
+  });
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{
         backgroundColor: '#D7FFFD',
         flex: 100,
@@ -76,7 +112,7 @@ const Login = props => {
           </Text>
         </View>
 
-        <View 
+        <View
           style={{
             flex: 80,
             width: '90%',
@@ -103,25 +139,28 @@ const Login = props => {
                 width: 25,
                 height: 25,
                 marginRight: 10,
-                marginLeft: 10
+                marginLeft: 10,
               }}
             />
             <TextInput
               onChangeText={text => {
-              /*
+                /*
                 if (isValidEmail(text) == false) {
                   setErrorEmail('Email not in correct format');
                 } else setErrorEmail('');
               */
-                setErrorEmail(isValidEmail(text) == true ? 
-                  '' : 'Email not in correct format') 
+                setErrorEmail(
+                  isValidEmail(text) == true
+                    ? ''
+                    : 'Email not in correct format',
+                );
                 setEmail(text);
               }}
               placeholder="Username"
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
+
           <View /* password */
             style={{
               flexDirection: 'row',
@@ -138,89 +177,100 @@ const Login = props => {
                 width: 25,
                 height: 25,
                 marginRight: 10,
-                marginLeft: 10
+                marginLeft: 10,
               }}
             />
             <TextInput
               onChangeText={text => {
-                setErrorPassword(isValidPassword(text) == true ? 
-                  '' : 'Password must be at least 3 characters') 
+                setErrorPassword(
+                  isValidPassword(text) == true
+                    ? ''
+                    : 'Password must be at least 3 characters',
+                );
                 setPassword(text);
               }}
               placeholder="Password"
               placeholderTextColor={colors.placeholder}
             />
           </View>
-          
-          { keyboardIsShown == false && <TouchableOpacity /* forget password */
-            onPress={() => {
-              navigate('ForgetPassword')
-            }}
-            style={{
-              marginHorizontal: 5,
-              marginBottom: 25,
-              backgroundColor: null,
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-            }}>
-            <Text
-              style={{
-                padding: 1,
-                fontSize: fontSizes.h6,
-                fontWeight: 'bold',
-                color: 'blue',
-              }}>
-              Forget Password?
-            </Text>
-          </TouchableOpacity>}
 
-          {keyboardIsShown == false && <TouchableOpacity
-            onPress={() => {
-              navigate('UITab')
-              //alert(`Email = ${email}, password = ${password}`);
-            }}
-            style={{
-              marginHorizontal: 55,
-              marginTop: 20,
-              marginBottom: 5,
-              borderColor: 'gray',
-              borderWidth: 2,
-              borderRadius: 30,
-              backgroundColor: 'orange',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text
+          {keyboardIsShown == false && (
+            <TouchableOpacity /* forget password */
+              onPress={() => {
+                navigate('ForgetPassword');
+              }}
               style={{
-                padding: 11,
-                fontSize: fontSizes.h3,
-                fontWeight: 'bold',
+                marginHorizontal: 5,
+                marginBottom: 25,
+                backgroundColor: null,
+                justifyContent: 'center',
+                alignItems: 'flex-end',
               }}>
-              {'Login'.toUpperCase()}
-            </Text>
-          </TouchableOpacity>}
+              <Text
+                style={{
+                  padding: 1,
+                  fontSize: fontSizes.h6,
+                  fontWeight: 'bold',
+                  color: 'blue',
+                }}>
+                Forget Password?
+              </Text>
+            </TouchableOpacity>
+          )}
 
-          {keyboardIsShown == false && <TouchableOpacity
-            onPress={() => {
-              navigate('Registration')
-            }}
-            style={{
-              marginHorizontal: 55,
-              marginBottom: 5,
-              backgroundColor: null,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Text
+          {keyboardIsShown == false && (
+            <TouchableOpacity
+              onPress={() => { 
+                alert('cbnm'),
+                getUserCredentials
+                //navigate('UITab');
+                //alert(`Email = ${username}, password = ${password}`);
+              }}
               style={{
-                padding: 11,
-                fontSize: fontSizes.h6,
-                fontWeight: 'bold',
-                color: 'orange',
+                marginHorizontal: 55,
+                marginTop: 20,
+                marginBottom: 5,
+                borderColor: 'gray',
+                borderWidth: 2,
+                borderRadius: 30,
+                backgroundColor: 'orange',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}>
-              Don't have a Account? Register
-            </Text>
-          </TouchableOpacity>}
+              <Text
+                style={{
+                  padding: 11,
+                  fontSize: fontSizes.h3,
+                  fontWeight: 'bold',
+                }}>
+                {'Login'.toUpperCase()}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {keyboardIsShown == false && (
+            <TouchableOpacity
+              onPress={() => {
+                navigate('Registration');
+              }}
+              style={{
+                marginHorizontal: 55,
+                marginBottom: 5,
+                backgroundColor: null,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  padding: 11,
+                  fontSize: fontSizes.h6,
+                  fontWeight: 'bold',
+                  color: 'orange',
+                }}>
+                Don't have a Account? Register
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
