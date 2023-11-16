@@ -10,12 +10,6 @@ import {
 } from 'react-native';
 import {images, colors, icons, fontSizes} from '../../constants';
 
-function _getColorFromStatus(status) {
-  if (status.toLowerCase().trim() == 'online') {
-    return colors.Online;
-  } else return colors.Offline;
-}
-
 function NotificationItems(props) {
   let {name, imageUrl, status} = props.group;
   const {onPress} = props;
@@ -36,9 +30,7 @@ function NotificationItems(props) {
           borderRadius: 90,
           marginRight: 15,
         }}
-        source={{
-          uri: imageUrl,
-        }}
+        source={images.atSignIcon}
       />
       <View
         style={{
@@ -52,20 +44,6 @@ function NotificationItems(props) {
             fontWeight: 'bold',
           }}>
           {name}
-        </Text>
-        <View
-          style={{
-            backgroundColor: 'black',
-            height: 1,
-          }}
-        />
-        <Text
-          style={{
-            color: _getColorFromStatus(status),
-            fontSize: fontSizes.h3,
-            fontWeight: 'bold',
-          }}>
-          {status.toUpperCase()}
         </Text>
       </View>
     </TouchableOpacity>

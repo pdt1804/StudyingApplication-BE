@@ -55,7 +55,7 @@ function GroupChatItems(props) {
             uri: imageUrl,
           }}
         />
-        <Image /** Status */
+        {/* <Image /** Status 
           style={{
             width: 17,
             height: 17,
@@ -68,7 +68,7 @@ function GroupChatItems(props) {
             tintColor: _getColorFromStatus(status),
           }}
           source={_getIconFromStatus(status)}
-        />
+        /> */}
       </View>
 
       <View
@@ -97,18 +97,18 @@ function GroupChatItems(props) {
       <View
         style={{
           flexDirection: 'column',
-          flex:1,
+          flex:0,
           justifyContent: 'center',
           alignItems: 'flex-end',
         }}>
-        <Text /** Minute ago */
+        {/* <Text /** Minute ago 
           style={{
             color: 'black',
             fontSize: fontSizes.h6 * 0.8,
             marginRight: 10,
           }}>
           5 phút trước
-        </Text>
+        </Text> */}
       </View>
     </TouchableOpacity>
   );

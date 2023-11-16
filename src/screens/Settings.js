@@ -30,14 +30,10 @@ function Settings(props) {
       }}>
       <UIHeader
         title={'Tài khoản'}
-        leftIconName={images.backIcon}
-        rightIconName={images.pencilIcon}
-        onPressLeftIcon={()=>{
-          alert('To the previous screen')
-        }}
-        onPressRightIcon={()=>{
-          alert('Edit profile')
-        }}
+        leftIconName={null}
+        rightIconName={null}
+        onPressLeftIcon={() => {}}
+        onPressRightIcon={() => {}}
       />
 
       <ScrollView>

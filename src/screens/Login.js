@@ -13,28 +13,7 @@ import {
 import {images, colors, fontSizes} from '../constants/index';
 import {UIButton} from '../components/index';
 import {isValidEmail, isValidPassword} from '../utilies/Validation';
-import axios from 'axios';
-
-const getUserCredentials = async () => {
-  try {
-    const response = await axios.get(
-      'https://localhost:8080/api/v1/user/Authenticate', {
-        params: {
-          userName: 'abc',
-          passWord: 'abc', 
-        }
-      }
-    );
-    alert('1234')
-
-    // The response will contain the username and password.
-    const {username, password} = response.data;
-
-    return {username, password};
-  } catch (error) {
-    // Handle the error.
-  }
-};
+import { user_login } from '../api/user_api';
 
 const Login = props => {
   const [keyboardIsShown, setKeyboardIsShown] = useState(false);
@@ -42,22 +21,28 @@ const Login = props => {
   const [errorEmail, setErrorEmail] = useState('');
   const [errorPassword, setErrorPassword] = useState('');
   //states to store email/password
-  /*   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState(''); */
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    const getUserCredentialsAsync = async () => {
-      const {username, password} = await getUserCredentials();
-
-      setUsername(username);
-      setPassword(password);
-    };
-
-    getUserCredentialsAsync();
-  }, []);
+  const handleLogin = () => {
+    const checkPassword = isValidPassword(password);
+    if(true) {
+      user_login({
+        userName:username,
+        passWord:password,
+      })
+        .then(result => {
+          console.log(result);
+          if (result.status == 200) {
+            AsyncStorage.setItem('AccessToken', result.data.token);
+            navigate('UITab'); 
+          }
+        })
+    } else {
+      alert(checkPassword);
+    }
+  };
 
   //navigation
   const {navigation, route} = props;
@@ -149,12 +134,13 @@ const Login = props => {
                   setErrorEmail('Email not in correct format');
                 } else setErrorEmail('');
               */
-                setErrorEmail(
+                /* setErrorEmail(
                   isValidEmail(text) == true
                     ? ''
                     : 'Email not in correct format',
-                );
-                setEmail(text);
+                ); */
+                //setEmail(text);
+                setUsername(text);
               }}
               placeholder="Username"
               placeholderTextColor={colors.placeholder}
@@ -182,11 +168,11 @@ const Login = props => {
             />
             <TextInput
               onChangeText={text => {
-                setErrorPassword(
+               /*  setErrorPassword(
                   isValidPassword(text) == true
                     ? ''
                     : 'Password must be at least 3 characters',
-                );
+                ); */
                 setPassword(text);
               }}
               placeholder="Password"
@@ -220,12 +206,12 @@ const Login = props => {
 
           {keyboardIsShown == false && (
             <TouchableOpacity
-              onPress={() => { 
-                alert('cbnm'),
-                getUserCredentials
+              onPress={handleLogin/* () => { 
+                
+                
                 //navigate('UITab');
                 //alert(`Email = ${username}, password = ${password}`);
-              }}
+              } */}
               style={{
                 marginHorizontal: 55,
                 marginTop: 20,

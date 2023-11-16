@@ -59,12 +59,6 @@ function FriendItems(props) {
           }}>
           {name}
         </Text>
-        <View
-          style={{
-            backgroundColor: 'black',
-            height: 1,
-          }}
-        />
       </View>
     </TouchableOpacity>
   );

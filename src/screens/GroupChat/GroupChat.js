@@ -117,14 +117,10 @@ function GroupChat(props) {
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <UIHeader
         title={'Nhóm học tập'}
-        leftIconName={images.backIcon}
-        rightIconName={images.pencilIcon}
-        onPressLeftIcon={() => {
-          alert('To the previous screen');
-        }}
-        onPressRightIcon={() => {
-          alert('Edit profile');
-        }}
+        leftIconName={null}
+        rightIconName={null}
+        onPressLeftIcon={() => {}}
+        onPressRightIcon={() => {}}
       />
 
       <View
@@ -170,8 +166,8 @@ function GroupChat(props) {
               group={eachGroup}
               key={eachGroup.ID}
               onPress={() => {
-/*                 alert(`You pressed group "${eachGroup.name}"`); */
-              navigate('Messenger', {user: eachGroup})
+                /*                 alert(`You pressed group "${eachGroup.name}"`); */
+                navigate('Messenger', {user: eachGroup});
               }}
             />
           ))}

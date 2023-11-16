@@ -19,37 +19,28 @@ function Friends(props) {
   const [groups, setGroups] = useState([
     {
       ID: '01',
-      name: 'Top 30 Nhạc Tiktok Hay Nhất 2022',
-      imageUrl:
-        'https://i1.sndcdn.com/avatars-000528843336-cug73s-t500x500.jpg',
-      status: 'Online',
+      name: 'Tom',
+      imageUrl: 'https://i.pravatar.cc/1000',
     },
     {
       ID: '02',
-      name: 'Anti giản viên ABC-XXX',
-      imageUrl:
-        'https://jekashop.co.uk/media/catalog/product/cache/12ad95d8a2fb3df88ee5f5df1ef6c6e8/a/n/anti-slip-picto-d-p006.png',
-      status: 'Offline',
+      name: 'Jerry',
+      imageUrl: 'https://i.pravatar.cc/1001',
     },
     {
       ID: '03',
-      name: 'Discover the world',
-      imageUrl:
-        'https://m.media-amazon.com/images/I/61NV+pGB42L._AC_UF1000,1000_QL80_.jpg',
-      status: 'Offline',
+      name: 'Edison',
+      imageUrl: 'https://i.pravatar.cc/1002',
     },
     {
       ID: '04',
-      name: 'SE121.O11.PMCL',
-      imageUrl:
-        'https://cdn.haitrieu.com/wp-content/uploads/2021/10/Logo-DH-Cong-Nghe-Thong-Tin-UIT.png',
-      status: 'Online',
+      name: 'Anh So Tanh',
+      imageUrl: 'https://i.pravatar.cc/1003',
     },
     {
       ID: '05',
-      name: 'Nhóm học tập trẩu tre',
-      imageUrl: 'https://i.imgur.com/WnXdJha.png',
-      status: 'Offline',
+      name: 'My dog',
+      imageUrl: 'https://i.pravatar.cc/1004',
     },
   ]);
 
@@ -67,14 +58,10 @@ function Friends(props) {
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <UIHeader
         title={'Bạn bè'}
-        leftIconName={images.backIcon}
-        rightIconName={images.pencilIcon}
-        onPressLeftIcon={() => {
-          alert('To the previous screen');
-        }}
-        onPressRightIcon={() => {
-          alert('Edit profile');
-        }}
+        leftIconName={null}
+        rightIconName={null}
+        onPressLeftIcon={() => {}}
+        onPressRightIcon={() => {}}
       />
 
       <View

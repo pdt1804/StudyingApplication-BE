@@ -51,7 +51,7 @@ function Messenger(props) {
   ]);
 
   //list of tabs = state
-  const [navigateTab, setNavigateTab] = useState('')
+  const [navigateTab, setNavigateTab] = useState('0');
   const [chatTab, setChatTab] = useState([
     {
       ID: '0',
@@ -103,7 +103,9 @@ function Messenger(props) {
           renderItem={({item}) => {
             return (
               <TouchableOpacity
-                onPress={() => setNavigateTab(item.ID)}
+                onPress={() => {
+                  setNavigateTab(item.ID);
+                }}
                 style={{
                   padding: 1,
                   flexDirection: 'row',
@@ -126,12 +128,19 @@ function Messenger(props) {
           keyExtractor={item => item.name}
           style={{flex: 1}}></FlatList>
       </View>
-
-      <ScrollView>
-        {chatHistory.map(eachItem => (
-          <MessengerItems item={eachItem} />
-        ))}
-      </ScrollView>
+      <View>
+        {navigateTab == '0' ? (
+          <ScrollView>
+            {chatHistory.map(eachItem => (
+              <MessengerItems item={eachItem} key={eachItem.timestamp} />
+            ))}
+          </ScrollView>
+        ) : (
+          <View>
+            <Text>Hello W</Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 }
