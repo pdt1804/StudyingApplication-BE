@@ -6,9 +6,7 @@ import {AppRegistry} from 'react-native'
 import React from 'react';
 import {name as appName} from './app.json'
 
-//import MainScreen from './screens/MainScreen';
-
-import {Welcome,
+/* import {Welcome,
     Login,
     Registration,
     ForgetPassword,
@@ -17,9 +15,9 @@ import {Welcome,
     Settings,
     GroupChat,
     Friends,
-} from './screens'
-import UITab from './navigation/UITab'
+} from './src/screens'
+import UITab from './src/navigation/UITab' */
 
-import App from './navigation/App'
+import App from './src/navigation/App'
 
 AppRegistry.registerComponent(appName,() => () => <App />)

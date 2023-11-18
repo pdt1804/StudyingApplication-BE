@@ -47,12 +47,10 @@ function Friends(props) {
   //use for search bar (textInput)
   const [searchText, setSearchText] = useState('');
 
-  //Testing..
-  const filteredGroups = () => {
-    groups.filter(eachGroup =>
-      eachGroup.name.toLowerCase().includes(searchText.toLowerCase()),
-    );
-  };
+  //navigation
+  const {navigation, route} = props;
+  //function of navigation to/back
+  const {navigate, goBack} = navigation;
 
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -107,7 +105,7 @@ function Friends(props) {
               group={eachGroup}
               key={eachGroup.ID}
               onPress={() => {
-                alert(`You pressed group "${eachGroup.name}"`);
+                navigate('Messenger', {user: eachGroup});
               }}
             />
           ))}

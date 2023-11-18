@@ -101,13 +101,6 @@ function GroupChat(props) {
   //use for search bar (textInput)
   const [searchText, setSearchText] = useState('');
 
-  //Testing..
-  const filteredGroups = () => {
-    groups.filter(eachGroup =>
-      eachGroup.name.toLowerCase().includes(searchText.toLowerCase()),
-    );
-  };
-
   //navigation
   const {navigation, route} = props;
   //function of navigation to/back
@@ -166,8 +159,7 @@ function GroupChat(props) {
               group={eachGroup}
               key={eachGroup.ID}
               onPress={() => {
-                /*                 alert(`You pressed group "${eachGroup.name}"`); */
-                navigate('Messenger', {user: eachGroup});
+                navigate('MessengerGroup', {user: eachGroup});
               }}
             />
           ))}

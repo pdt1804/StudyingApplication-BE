@@ -10,6 +10,7 @@ import GroupChat from "./GroupChat/GroupChat"
 import Friends from "./Friends/Friends"
 import AllNotification from "./AllNotification/AllNotification"
 import Messenger from "./Messenger/Messenger"
+import MessengerGroup from "./MessengerGroup/MessengerGroup"
 
 export {
     Welcome,
@@ -23,4 +24,5 @@ export {
     Friends,
     AllNotification,
     Messenger,
+    MessengerGroup
 }

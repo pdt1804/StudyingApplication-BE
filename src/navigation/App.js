@@ -11,6 +11,7 @@ import {
   Verification,
   ResetPassword,
   Messenger,
+  MessengerGroup,
 } from '../screens';
 import UITab from './UITab';
 
@@ -34,6 +35,7 @@ function App(props) {
 
         <Stack.Screen name="UITab" component={UITab} />
         <Stack.Screen name="Messenger" component={Messenger} />
+        <Stack.Screen name="MessengerGroup" component={MessengerGroup} />
       </Stack.Navigator>
     </NavigationContainer>
   );
