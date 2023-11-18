@@ -25,6 +25,12 @@ public class UserController {
 	@Autowired
 	private RecoveryCodeService recoveryCodeService;
 	
+	@PostMapping("/test")
+	public String test(@RequestParam("userName") String userName, @RequestParam("passWord") String passWord)
+	{
+		return userName;
+	}
+
 	@PostMapping("/Authenticate")
 	public String Authenticate(@RequestParam("userName") String userName, @RequestParam("passWord") String passWord)
 	{

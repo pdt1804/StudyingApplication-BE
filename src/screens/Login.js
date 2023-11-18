@@ -13,41 +13,51 @@ import {
 import {images, colors, fontSizes} from '../constants/index';
 import {UIButton} from '../components/index';
 import {isValidEmail, isValidPassword} from '../utilies/Validation';
-import { user_login } from '../api/user_api';
+//import { user_login } from '../api/user_api';
+
+import axios from 'axios';
 
 const Login = props => {
-  const [keyboardIsShown, setKeyboardIsShown] = useState(false);
-  //states for validating
-  const [errorEmail, setErrorEmail] = useState('');
-  const [errorPassword, setErrorPassword] = useState('');
-  //states to store email/password
-
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    const checkPassword = isValidPassword(password);
-    if(true) {
-      user_login({
-        userName:username,
-        passWord:password,
-      })
-        .then(result => {
-          console.log(result);
-          if (result.status == 200) {
-            AsyncStorage.setItem('AccessToken', result.data.token);
-            navigate('UITab'); 
-          }
-        })
-    } else {
-      alert(checkPassword);
-    }
-  };
+  const [keyboardIsShown, setKeyboardIsShown] = useState(false);  
 
   //navigation
   const {navigation, route} = props;
   //function of navigation to/back
   const {navigate, goBack} = navigation;
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+
+    alert('sadaddddddsd');
+
+    try {
+      const response = await fetch('http://127.0.0.1:8080/api/v1/user/test', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userName: username,
+          passWord: password,
+        }),
+      
+      });
+
+      alert('sdddadaddddddsd');
+
+      alert(`${response.data}`);
+      if (response.data === 'SUCCESS') {
+        console.log('Login successful!');
+        navigate('UITab');
+      } else {
+        console.error('Login failed:', response.data);
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+    }
+  };
 
   useEffect(() => {
     //componentDidMount
@@ -206,12 +216,7 @@ const Login = props => {
 
           {keyboardIsShown == false && (
             <TouchableOpacity
-              onPress={handleLogin/* () => { 
-                
-                
-                //navigate('UITab');
-                //alert(`Email = ${username}, password = ${password}`);
-              } */}
+            onPress={handleLogin}
               style={{
                 marginHorizontal: 55,
                 marginTop: 20,
