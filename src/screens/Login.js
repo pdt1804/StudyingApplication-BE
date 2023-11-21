@@ -29,16 +29,18 @@ const Login = props => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    alert('aa')
 
+    const url = 'http://localhost:8080/api/v1/user/Authenticate'
+    const Params = {
+      userName : 'asdf',
+      passWord : 'asdf'
+    }
     try {
-      const response = await axios.post('http://localhost:8080/api/v1/user/Authenticate', {
-        userName: username,
-        passWord: password,
-      });
 
-      alert('ss')
-      if (response.data === 'SUCCESS') {
+      
+      const response = await axios.post('http://localhost:8080/api/v1/user/Authenticate', null, {Params});
+
+      if (response.data === username) {
         console.log('Login successful!');
         navigate('UITab');
       } else {

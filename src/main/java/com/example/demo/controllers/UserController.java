@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,14 +27,19 @@ public class UserController {
 	private RecoveryCodeService recoveryCodeService;
 	
 	@PostMapping("/test")
-	public String test(@RequestParam("userName") String userName, @RequestParam("passWord") String passWord)
+	public String test()
 	{
-		return userName;
+		return "admin";
 	}
 
+	@CrossOrigin(origins = "*")
 	@PostMapping("/Authenticate")
 	public String Authenticate(@RequestParam("userName") String userName, @RequestParam("passWord") String passWord)
 	{
+		System.out.println(userName);
+		System.out.println(passWord);
+
+
 		return userService.Login(userName, passWord);
 	}
 	
