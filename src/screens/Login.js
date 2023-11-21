@@ -29,25 +29,15 @@ const Login = props => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-
-    alert('sadaddddddsd');
+    alert('aa')
 
     try {
-      const response = await fetch('http://127.0.0.1:8080/api/v1/user/test', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userName: username,
-          passWord: password,
-        }),
-      
+      const response = await axios.post('http://localhost:8080/api/v1/user/Authenticate', {
+        userName: username,
+        passWord: password,
       });
 
-      alert('sdddadaddddddsd');
-
-      alert(`${response.data}`);
+      alert('ss')
       if (response.data === 'SUCCESS') {
         console.log('Login successful!');
         navigate('UITab');
