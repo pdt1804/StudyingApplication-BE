@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +46,20 @@ public class UserService {
 	{
 		try 
 		{
-			Information information = new Information();
-			informationRepository.save(information);
-			user.setInformation(information);
-			userRepository.save(user); 
-			return user.getUserName();
+			boolean checkExist = userRepository.findAll().stream().anyMatch(p -> p.getUserName().toLowerCase().equals(user.getUserName().toLowerCase()));
+			
+			if (checkExist == false)
+			{
+				Information information = new Information();
+				informationRepository.save(information);
+				user.setInformation(information);
+				userRepository.save(user); 
+				return user.getUserName();
+			}
+			else
+			{
+				return "Không tạo thành công";
+			}
 		}
 		catch (Exception e)
 		{
@@ -101,6 +111,7 @@ public class UserService {
 		{
 	        SimpleMailMessage message = new SimpleMailMessage();
 	        message.setFrom("phamduythong600@gmail.com");
+	        System.out.println(GetUserByUsername(userName).getEmail());
 	        message.setTo(GetUserByUsername(userName).getEmail());
 	        message.setSubject("OTP Verification");
 	        message.setText("Your OTP is: " + String.valueOf(otp));
@@ -132,4 +143,20 @@ public class UserService {
 			return -1;
 		}
     }
+
+	public boolean ChangePasswordAfterOTP(String userName, String passWord) 
+	{
+		var user = userRepository.getById(userName);
+		
+		if (user != null)
+		{
+			user.setPassWord(passWord);
+			userRepository.save(user);
+			return true;
+		}
+		else
+		{
+			return false;
+		}	
+	}
 }
