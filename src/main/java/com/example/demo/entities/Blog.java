@@ -37,10 +37,10 @@ public class Blog {
 	@Column(columnDefinition = "TEXT")
 	private String Content;
 	@Lob
-	private byte[] images;
-	private int likeCount;
+	private String image;
+	private List<String> likes = new ArrayList<String>();
 	private Date dateCreated;
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "subject_id", nullable = true)
 	private Subject subject;
 	@ManyToOne

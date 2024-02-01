@@ -14,9 +14,10 @@ import com.example.demo.entities.NotifycationType;
 import com.example.demo.repositories.GroupStudyingRepository;
 import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.serviceInterfaces.NotificationManagement;
 
 @Service
-public class NotifycationService {
+public class NotifycationService implements NotificationManagement{
 
 	@Autowired
 	private NotifycationRepository notifycationRepository;
@@ -27,6 +28,7 @@ public class NotifycationService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Override
 	public void createNotifycation(int groupID, String userName, Notifycation notifycation)
 	{
 		try
@@ -53,13 +55,14 @@ public class NotifycationService {
 			e.printStackTrace();
 		}
 	}
-	
+
+	@Override
 	public List<Notifycation> getAllNotifycationByUserName(String userName)
 	{
 		try
 		{
 			return userRepository.getById(userName).getNotifycations()
-					.stream().sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
+					.stream().sorted((n1,n2) -> n2.getDateSent().compareTo(n1.getDateSent())).collect(Collectors.toList());
 		}
 		catch (Exception e)
 		{
@@ -67,13 +70,14 @@ public class NotifycationService {
 			return null;
 		}
 	}
-	
+
+	@Override
 	public List<Notifycation> getAllNotifycationByGroupID(int groupID)
 	{
 		try
 		{
 			return groupStudyingRepository.getById(groupID).getNotifycations()
-					.stream().sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
+					.stream().filter(p -> p.getNotifycationType() == NotifycationType.user).sorted((n1,n2) -> n2.getDateSent().compareTo(n1.getDateSent())).collect(Collectors.toList());
 		}
 		catch (Exception e)
 		{
@@ -81,7 +85,8 @@ public class NotifycationService {
 			return null;
 		}
 	}
-	
+
+	@Override
 	public NotifycationDTO loadNotifycation(String userName, int notifycationID)
 	{
 		var user = userRepository.getById(userName);
@@ -92,21 +97,24 @@ public class NotifycationService {
 		
 		return new NotifycationDTO(notifycation);
 	}
-	
+
+	@Override
 	public boolean checkNewNotifycation(String userName, int notifycationID)
 	{
 		return notifycationRepository.getById(notifycationID).getUserSeenNotifycation()
 				.stream().anyMatch(p -> p.getUserName().equals(userName));
 	}
-	
+
+	@Override
 	public List<Notifycation> findNotifycation(String userName, String inputContentbyUser)
 	{
 		return userRepository.getById(userName).getNotifycations().stream()
 				.filter(p -> p.getContent().contains(inputContentbyUser) || p.getHeader().contains(inputContentbyUser))
 				.sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
 	}
-	
-	public void deleteNotifycationByLeaderGroupForAll(String userName, int notifycationID, int groupID)
+
+	@Override
+	public String deleteNotifycationByLeaderGroupForAll(String userName, int notifycationID, int groupID)
 	{
 		var user = userRepository.getById(userName);
 		var notifycation = notifycationRepository.getById(notifycationID);
@@ -126,13 +134,16 @@ public class NotifycationService {
 			groupStudyingRepository.save(group);
 			userRepository.save(user);
 			notifycationRepository.delete(notifycation);
+			
+			return "Successful";
 		}
 		else
 		{
-			System.out.println("Bạn không phải trưởng nhóm nên không thể xoá");
+			return "Failed";
 		}
 	}
-	
+
+	@Override
 	public void deleteNotifycationForMyAccount(String userName, int notifycationID, int groupID)
 	{
 		var user = userRepository.getById(userName);

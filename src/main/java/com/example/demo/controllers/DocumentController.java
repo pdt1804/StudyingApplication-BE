@@ -3,6 +3,9 @@ package com.example.demo.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.DTO.DocumentDTO;
 import com.example.demo.entities.Document;
 import com.example.demo.services.DocumentService;
+import com.example.demo.services.JwtService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RequestMapping("api/v1/document")
 @RestController
@@ -22,10 +28,14 @@ public class DocumentController {
 	@Autowired
 	private DocumentService documentService;
 	
-	@GetMapping("/getDocumentByID")
-	public DocumentDTO getDocumentByID(@RequestParam("groupID") int groupID, @RequestParam("documentID") int documentID)
+	@Autowired
+	private JwtService jwtService;
+	
+	public String extractTokenToGetUsername(HttpServletRequest request)
 	{
-		return documentService.getDocument(groupID, documentID);
+		String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        return jwtService.extractUsername(token);
 	}
 	
 	@GetMapping("/getAllDocumentOfGroup")
@@ -34,10 +44,26 @@ public class DocumentController {
 		return documentService.getAllDocumentOfGroup(groupID);
 	}
 	
-	@PostMapping("/addDocument")
-	public int addDocument(@RequestParam("file") MultipartFile file, @RequestParam("groupID") int groupID, @RequestParam("userName") String userName)
+	@GetMapping("/getDocumentById")
+	public DocumentDTO getDocumentById(@RequestParam("documentID") int documentID)
 	{
-		return documentService.addDocument(file, groupID, userName);
+		System.out.println(documentID);
+		return new DocumentDTO(documentService.getDocumentById(documentID));
+	}
+	
+	
+	@PostMapping("/addDocument")
+	public int addDocument(@RequestParam("file") String file, @RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("fileName") String fileName)
+	{
+		try
+		{
+			return documentService.addDocument(file, groupID, extractTokenToGetUsername(request), fileName);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
 	}
 	
 	@DeleteMapping("/deleteDocument")

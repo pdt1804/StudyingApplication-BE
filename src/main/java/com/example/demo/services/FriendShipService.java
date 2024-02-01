@@ -15,9 +15,10 @@ import com.example.demo.entities.User;
 import com.example.demo.repositories.FriendShipRepository;
 import com.example.demo.repositories.MessageUserRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.serviceInterfaces.FriendShipManagement;
 
 @Service
-public class FriendShipService {
+public class FriendShipService implements FriendShipManagement{
 
 	@Autowired
 	private FriendShipRepository friendShipRepository;
@@ -31,6 +32,26 @@ public class FriendShipService {
 	@Autowired
 	private UserService userService;
 	
+	@Override
+	public List<User> getAllSentInvitationList(String userName)
+	{
+		List<User> users = new ArrayList<User>();
+
+		for (var f : friendShipRepository.findAll())
+		{
+			if (f.getUser().getUserName().equals(userName))
+			{
+				if (f.getStatus() == FriendShipStatus.Đã_gửi)
+				{
+					users.add(f.getFriend());
+				}
+			}
+		}
+		
+		return users;
+	}
+	
+	@Override
 	public void AddFriend(String sentUserName, String receivedUserName)
 	{
 		try
@@ -46,7 +67,8 @@ public class FriendShipService {
 			e.printStackTrace();
 		}
 	}
-	
+
+	@Override
 	public void undoInvitationFriend(String sentUserName, String receivedUserName)
 	{
 		FriendShip friendShip = friendShipRepository.findAll()
@@ -59,7 +81,8 @@ public class FriendShipService {
 			friendShipRepository.delete(friendShip);
 		}
 	}
-	
+
+	@Override
 	public void deleteFriendShip(String sentUserName, String receivedUserName)
 	{
 		FriendShip friendShip = friendShipRepository.findAll()
@@ -75,7 +98,8 @@ public class FriendShipService {
 			friendShipRepository.delete(friendShip);
 		}
 	}
-	
+
+	@Override
 	public List<User> getAllFriendofUser(String userName)
 	{
 		var listFriendShip = friendShipRepository.findAll().stream().filter(p -> 
@@ -83,7 +107,7 @@ public class FriendShipService {
 			return (p.getFriend().getUserName().equals(userName) && p.getStatus() == FriendShipStatus.Đã_xác_nhận) 
 					|| (p.getUser().getUserName().equals(userName) && p.getStatus() == FriendShipStatus.Đã_xác_nhận);
 			
-		}).sorted((f1,f2) -> f1.getLastTimeEdited().compareTo(f2.getLastTimeEdited())).collect(Collectors.toList());
+		}).sorted((f1,f2) -> f2.getLastTimeEdited().compareTo(f1.getLastTimeEdited())).collect(Collectors.toList());
 		
 		List<User> listUser = new ArrayList<>();
 		
@@ -101,7 +125,8 @@ public class FriendShipService {
 		
 		return listUser;
 	}
-	
+
+	@Override
 	public List<User> getAllInvatationFriendofUser(String userName)
 	{
 		var listFriendShip = friendShipRepository.findAll().stream().filter(p -> 
@@ -119,7 +144,8 @@ public class FriendShipService {
 
 		return listUser;
 	}
-	
+
+	@Override
 	public void refuseToAddFriend(String sentUserName, String myUserName)
 	{
 		var friendShip = friendShipRepository.findAll().stream().filter(p -> 
@@ -135,7 +161,8 @@ public class FriendShipService {
 		friendShipRepository.save(friendShip);
 		
 	}
-	
+
+	@Override
 	public void acceptToAddFriend(String sentUserName, String myUserName)
 	{
 		var friendShip = friendShipRepository.findAll().stream().filter(p -> 
@@ -152,7 +179,8 @@ public class FriendShipService {
 		friendShipRepository.save(friendShip);
 		
 	}
-	
+
+	@Override
 	public boolean checkNewMessage(String fromUserName, String myUserName)
 	{
 		return messageUserRepository.findAll().stream()
@@ -160,12 +188,46 @@ public class FriendShipService {
 						&& p.getSentUser().getUserName().equals(fromUserName) 
 						&& p.getStatus() == MessageUserStatus.sent);
 	}
-	
-	public List<User> findFriend(String input)
+
+	@Override
+	public List<User> findFriend(String input, String userName)
 	{
-		return userRepository.findAll().stream().filter(p -> p.getInformation().getFulName().contains(input)).toList();
+		List<User> users = new ArrayList<User>();
+		
+		for (var p : userRepository.findAll())
+		{
+			if (p.getInformation().getFulName().toLowerCase().contains(input.toLowerCase()))
+			{
+				users.add(p);
+			}
+		}
+
+		for (var f : friendShipRepository.findAll())
+		{
+			if (f.getUser().getUserName().equals(userName))
+			{
+				if (f.getStatus() == FriendShipStatus.Đã_gửi || f.getStatus() == FriendShipStatus.Đã_xác_nhận)
+				{
+					users.remove(f.getFriend());
+				}
+			}
+			else if (f.getFriend().getUserName().equals(userName))
+			{
+				if (f.getStatus() == FriendShipStatus.Đã_gửi || f.getStatus() == FriendShipStatus.Đã_xác_nhận)
+				{
+					users.remove(f.getUser());
+				}
+			}
+			else
+			{
+				
+			}
+		}
+		users.remove(userRepository.getById(userName));
+		return users;
 	}
-	
+
+	@Override
 	public List<User> findFriendbyUserName(String userName)
 	{
 		return userRepository.findAll().stream().filter(p -> p.getUserName().equals(userName)).toList();

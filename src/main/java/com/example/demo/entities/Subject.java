@@ -1,5 +1,7 @@
 package com.example.demo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +29,8 @@ public class Subject {
 	private String nameSubject;
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "subject_group_id", nullable = true)
+	@JsonIgnore
 	private GroupStudying group;
+
 	
 }

@@ -24,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -58,6 +59,10 @@ public class User {
 	    inverseJoinColumns = @JoinColumn(name = "notifycation_id")
     )
     private List<Notifycation> notifycations = new ArrayList<>();
+	
+//	@OneToMany
+//    @JoinColumn(name="username_notifycation", nullable = true)
+//    private List<User> userSeenNotifycation = new ArrayList<>();
   
 	
     public User(String userName, String passWord, String Email) {

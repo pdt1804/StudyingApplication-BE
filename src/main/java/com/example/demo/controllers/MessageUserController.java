@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entities.MessageUser;
+import com.example.demo.entities.User;
+import com.example.demo.services.JwtService;
 import com.example.demo.services.MessageUserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/messageUser")
@@ -20,15 +24,49 @@ public class MessageUserController {
 	@Autowired
 	private MessageUserService messageUserService;
 	
-	@GetMapping("/loadMessageforUser")
-	public List<MessageUser> loadMessageforUser(@RequestParam("myUserName") String myUserName, @RequestParam("toUserName") String toUserName)
+	@Autowired
+	private JwtService jwtService;
+	
+	public String extractTokenToGetUsername(HttpServletRequest request)
 	{
-		return messageUserService.loadMessageInUser(myUserName, toUserName);
+		String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        return jwtService.extractUsername(token);
+	}
+	
+	@GetMapping("/loadMessageforUser")
+	public List<MessageUser> loadMessageforUser(HttpServletRequest request, @RequestParam("toUserName") String toUserName)
+	{
+		return messageUserService.loadMessageInUser(extractTokenToGetUsername(request), toUserName);
+	}
+	
+	@GetMapping("/getSentUser")
+	public User getSentUser(@RequestParam("messID") long id)
+	{
+		return messageUserService.getSentUser(id);
+	}
+	
+	@GetMapping("/checkSender")
+	public boolean checkSender(@RequestParam("userName") String userName, HttpServletRequest request)
+	{
+		return (userName.equals(extractTokenToGetUsername(request))) ? true : false;
 	}
 	
 	@PostMapping("/sendMessageForUser")
-	public long sendMessageForUser(@RequestBody MessageUser mess, @RequestParam("fromUserName") String fromUserName, @RequestParam("toUserName") String toUserName)
+	public long sendMessageForUser(@RequestParam("messContent") String content, HttpServletRequest request, @RequestParam("toUserName") String toUserName)
 	{
-		return messageUserService.sendMessage(mess, fromUserName, toUserName);
+		var mess = new MessageUser();
+		mess.setContent(content);
+		
+		return messageUserService.sendMessage(mess, extractTokenToGetUsername(request), toUserName);
+	}
+	
+	@PostMapping("/saveChatbotMessage")
+	public long saveChatbotMessage(@RequestParam("messContent") String content, HttpServletRequest request)
+	{
+		var mess = new MessageUser();
+		mess.setContent(content);
+		
+		return messageUserService.saveChatBotMessage(mess, extractTokenToGetUsername(request));
 	}
 }
