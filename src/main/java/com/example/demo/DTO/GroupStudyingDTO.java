@@ -15,6 +15,9 @@ public class GroupStudyingDTO {
 	private String nameGroup;
 	private Date dateCreated;
 	private UserDTO leaderOfGroup;
+	private String image;
+	private int numberOfMembers;
+	private String passWord;
 	
     public GroupStudyingDTO() {
     	
@@ -24,7 +27,10 @@ public class GroupStudyingDTO {
         this.groupID = groupStudying.getGroupID();
         this.nameGroup = groupStudying.getNameGroup();
         this.dateCreated = groupStudying.getDateCreated();
-
+        this.image = groupStudying.getImageGroup();
+        this.numberOfMembers = groupStudying.getUsers().size();
+        this.passWord = groupStudying.getPassWord();
+        
         if (groupStudying.getLeaderOfGroup() != null) {
             this.leaderOfGroup = new UserDTO(groupStudying.getLeaderOfGroup());
         }

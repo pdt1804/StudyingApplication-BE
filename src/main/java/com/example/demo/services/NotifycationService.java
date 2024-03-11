@@ -2,11 +2,16 @@ package com.example.demo.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.DTO.NotifycationDTO;
 import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.NotifycationStatus;
@@ -14,9 +19,10 @@ import com.example.demo.entities.NotifycationType;
 import com.example.demo.repositories.GroupStudyingRepository;
 import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.serviceInterfaces.NotificationManagement;
 
 @Service
-public class NotifycationService {
+public class NotifycationService implements NotificationManagement{
 
 	@Autowired
 	private NotifycationRepository notifycationRepository;
@@ -25,9 +31,31 @@ public class NotifycationService {
 	private GroupStudyingRepository groupStudyingRepository;
 	
 	@Autowired
+	private Cloudinary cloudinary;
+	
+	@Autowired
 	private UserRepository userRepository;
 	
-	public void createNotifycation(int groupID, String userName, Notifycation notifycation)
+	@Override
+	public void insertImage(int notificationID, MultipartFile image)
+	{
+		try {
+			var notification = notifycationRepository.getById(notificationID);
+			
+			if (notification != null)
+			{
+		        Map<String, String> data = this.cloudinary.uploader().upload(image.getBytes(), Map.of());
+		        notification.setImage(data.get("url"));
+		        notification.setPublicID(data.get("public_id"));
+		        notifycationRepository.save(notification);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	@Override
+	public int createNotifycation(int groupID, String userName, Notifycation notifycation)
 	{
 		try
 		{
@@ -47,19 +75,23 @@ public class NotifycationService {
 			notifycationRepository.save(notifycation);
 			userRepository.save(user);
 			groupStudyingRepository.save(group);
+			
+			return notifycation.getNotifycationID();
 		} 
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			return -1;
 		}
 	}
-	
+
+	@Override
 	public List<Notifycation> getAllNotifycationByUserName(String userName)
 	{
 		try
 		{
 			return userRepository.getById(userName).getNotifycations()
-					.stream().sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
+					.stream().sorted((n1,n2) -> n2.getDateSent().compareTo(n1.getDateSent())).collect(Collectors.toList());
 		}
 		catch (Exception e)
 		{
@@ -67,13 +99,14 @@ public class NotifycationService {
 			return null;
 		}
 	}
-	
+
+	@Override
 	public List<Notifycation> getAllNotifycationByGroupID(int groupID)
 	{
 		try
 		{
 			return groupStudyingRepository.getById(groupID).getNotifycations()
-					.stream().sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
+					.stream().filter(p -> p.getNotifycationType() == NotifycationType.user).sorted((n1,n2) -> n2.getDateSent().compareTo(n1.getDateSent())).collect(Collectors.toList());
 		}
 		catch (Exception e)
 		{
@@ -81,7 +114,8 @@ public class NotifycationService {
 			return null;
 		}
 	}
-	
+
+	@Override
 	public NotifycationDTO loadNotifycation(String userName, int notifycationID)
 	{
 		var user = userRepository.getById(userName);
@@ -92,47 +126,66 @@ public class NotifycationService {
 		
 		return new NotifycationDTO(notifycation);
 	}
-	
+
+	@Override
 	public boolean checkNewNotifycation(String userName, int notifycationID)
 	{
 		return notifycationRepository.getById(notifycationID).getUserSeenNotifycation()
 				.stream().anyMatch(p -> p.getUserName().equals(userName));
 	}
-	
+
+	@Override
 	public List<Notifycation> findNotifycation(String userName, String inputContentbyUser)
 	{
 		return userRepository.getById(userName).getNotifycations().stream()
 				.filter(p -> p.getContent().contains(inputContentbyUser) || p.getHeader().contains(inputContentbyUser))
 				.sorted((n1,n2) -> n1.getDateSent().compareTo(n2.getDateSent())).collect(Collectors.toList());
 	}
-	
-	public void deleteNotifycationByLeaderGroupForAll(String userName, int notifycationID, int groupID)
+
+	@Override
+	public String deleteNotifycationByLeaderGroupForAll(String userName, int notifycationID, int groupID)
 	{
-		var user = userRepository.getById(userName);
-		var notifycation = notifycationRepository.getById(notifycationID);
-		var group = groupStudyingRepository.getById(groupID);
-		
-		if (notifycation.getGroupStudying().equals(group) && group.getLeaderOfGroup().equals(user) && group.getLeaderOfGroup().getUserName().equals(user.getUserName()))
+		try
 		{
-			group.getNotifycations().remove(notifycation);
-			notifycation.setGroupStudying(null);
-			for (var p: notifycation.getUsers())
-			{
-				p.getNotifycations().remove(notifycation);
-			}
-			notifycation.setUsers(null);
-			notifycation.setUserSeenNotifycation(null);
+			var user = userRepository.getById(userName);
+			var notifycation = notifycationRepository.getById(notifycationID);
+			var group = groupStudyingRepository.getById(groupID);
 			
-			groupStudyingRepository.save(group);
-			userRepository.save(user);
-			notifycationRepository.delete(notifycation);
+			if (notifycation.getGroupStudying().equals(group) && group.getLeaderOfGroup().equals(user) && group.getLeaderOfGroup().getUserName().equals(user.getUserName()))
+			{
+				group.getNotifycations().remove(notifycation);
+				notifycation.setGroupStudying(null);
+				for (var p: notifycation.getUsers())
+				{
+					p.getNotifycations().remove(notifycation);
+				}
+				notifycation.setUsers(null);
+				notifycation.setUserSeenNotifycation(null);
+				
+				groupStudyingRepository.save(group);
+				userRepository.save(user);
+				
+				if (notifycation.getPublicID() != null)
+				{
+					this.cloudinary.uploader().destroy(notifycation.getPublicID(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+				}
+				notifycationRepository.delete(notifycation);
+				
+				return "Successful";
+			}
+			else
+			{
+				return "Failed";
+			}
 		}
-		else
+		catch (Exception e)
 		{
-			System.out.println("Bạn không phải trưởng nhóm nên không thể xoá");
+			e.printStackTrace();
+			return "failed";
 		}
 	}
-	
+
+	@Override
 	public void deleteNotifycationForMyAccount(String userName, int notifycationID, int groupID)
 	{
 		var user = userRepository.getById(userName);

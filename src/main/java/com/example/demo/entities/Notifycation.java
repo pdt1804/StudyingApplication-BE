@@ -37,6 +37,8 @@ public class Notifycation {
 	private String Content;
     private Date dateSent;
     private NotifycationType notifycationType;
+    private String image;
+    private String publicID;
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = true)
     @JsonIgnore

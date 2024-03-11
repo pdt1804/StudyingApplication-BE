@@ -3,6 +3,8 @@ package com.example.demo.entities;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,15 +31,18 @@ public class Information {
 	private String fulName;
 	private int PhoneNumber;
 	@Lob
-    private byte[] Image;
+    private String Image;
+	private String publicID;
 	private String Gender;
-	private Date dateOfBirth;
+	private int yearOfBirth;
 	@OneToMany(mappedBy = "information")
+	@JsonIgnore
 	private List<Upside> listUpside;
+	@JsonIgnore
 	@OneToMany(mappedBy = "information")
 	private List<Downside> listDownside;
 	
-	public Information(int infoID, String fulName, int phoneNumber, byte[] image, String gender, Date dateOfBirth,
+	public Information(int infoID, String fulName, int phoneNumber, String image, String gender, int yearOfBirth,
 			List<Upside> listUpside, List<Downside> listDownside) {
 		super();
 		InfoID = infoID;
@@ -45,7 +50,7 @@ public class Information {
 		PhoneNumber = phoneNumber;
 		Image = image;
 		Gender = gender;
-		this.dateOfBirth = dateOfBirth;
+		this.yearOfBirth = yearOfBirth;
 		this.listUpside = listUpside;
 		this.listDownside = listDownside;
 	}
@@ -54,5 +59,6 @@ public class Information {
 	{
 		
 	}
+
 	
 }

@@ -39,7 +39,6 @@ public class MessageGroup {
 	@JsonIgnore
 	private List<User> statusMessageWithUsers = new ArrayList<>();
 	@ManyToOne
-	@JsonIgnore
 	private User user;
 	@ManyToOne
 	@JoinColumn(name = "group_id", nullable = true)

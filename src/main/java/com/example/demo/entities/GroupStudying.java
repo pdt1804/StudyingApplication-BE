@@ -35,8 +35,10 @@ public class GroupStudying {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int groupID;
 	@Lob
-	private byte[] imageGroup;
+	private String imageGroup;
+	private String publicID;
 	private String nameGroup;
+	private String passWord;
 	private Date dateCreated;
 	private Date lastTimeEdited;
 	@JsonIgnore
@@ -62,8 +64,9 @@ public class GroupStudying {
 	@JsonIgnore
 	private List<Subject> subjects = new ArrayList<>();
 	
-	public GroupStudying(int groupID, byte[] imageGroup, String nameGroup, Date dateCreated, Set<User> users) {
+	public GroupStudying(int groupID, String imageGroup, String nameGroup, Date dateCreated, Set<User> users, String passWord) {
 		super();
+		this.passWord = passWord;
 		this.groupID = groupID;
 		this.imageGroup = imageGroup;
 		this.nameGroup = nameGroup;

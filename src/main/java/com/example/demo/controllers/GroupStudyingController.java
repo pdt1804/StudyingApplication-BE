@@ -16,7 +16,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.DTO.GroupStudyingDTO;
 import com.example.demo.entities.GroupStudying;
+import com.example.demo.entities.User;
 import com.example.demo.services.GroupStudyingService;
+import com.example.demo.services.JwtService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/groupStudying")
@@ -25,16 +29,26 @@ public class GroupStudyingController {
 	@Autowired
 	private GroupStudyingService groupStudyingService;
 	
-	@GetMapping("/getAllGroupofUser")
-	public List<GroupStudying> getAllGroupofUser(@RequestParam("myUserName") String myUserName)
+	@Autowired
+	private JwtService jwtService;
+	
+	public String extractTokenToGetUsername(HttpServletRequest request)
 	{
-		return groupStudyingService.getAllGroupofUser(myUserName);
+		String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        return jwtService.extractUsername(token);
+	}
+	
+	@GetMapping("/getAllGroupofUser")
+	public List<GroupStudying> getAllGroupofUser(HttpServletRequest request)
+	{
+		return groupStudyingService.getAllGroupofUser(extractTokenToGetUsername(request));
 	}
 	
 	@PostMapping("/checkNewMessage")
-	public boolean checkNewMessage(@RequestParam("myUserName") String myUserName, @RequestParam("groupID") int groupID)
+	public boolean checkNewMessage(HttpServletRequest request, @RequestParam("groupID") int groupID)
 	{
-		return groupStudyingService.checkNewMessageInGroup(myUserName, groupID);
+		return groupStudyingService.checkNewMessageInGroup(extractTokenToGetUsername(request), groupID);
 	}
 	
 	@GetMapping("/findGroupbyId")
@@ -42,17 +56,35 @@ public class GroupStudyingController {
 	{
 		return groupStudyingService.findGroupbyID(groupID);
 	}
+	
+	@GetMapping("/getGroupByDocumentID")
+	public GroupStudyingDTO getGroupByDocumentID(@RequestParam("documentID") int documentID)
+	{
+		return groupStudyingService.getGroupByDocumentID(documentID);
+	}
 
 	@GetMapping("/findGroupbyName")
-	public List<GroupStudying> findGroupbyName(@RequestParam("nameGroup") String nameGroup)
+	public List<GroupStudying> findGroupbyName(@RequestParam("nameGroup") String nameGroup, HttpServletRequest request)
 	{
-		return groupStudyingService.findGroupbyName(nameGroup);
+		return groupStudyingService.findGroupbyName(nameGroup, extractTokenToGetUsername(request));
+	}
+	
+	@GetMapping("/getUserAddInGroup")
+	public List<User> getUserAddInGroup(@RequestParam("groupID") int groupID, HttpServletRequest request)
+	{
+		return groupStudyingService.getUserToAddInGroup(groupID, extractTokenToGetUsername(request));
 	}
 	
 	@PostMapping("/createGroup")
-	public int createGroup(@RequestParam("userName") String userName, @RequestParam("nameGroup") String nameGroup)
+	public int createGroup(HttpServletRequest request, @RequestParam("nameGroup") String nameGroup, @RequestParam("passWord") String passWord, @RequestParam("image") String image)
 	{
-		return groupStudyingService.createGroup(userName, nameGroup);
+		return groupStudyingService.createGroup(extractTokenToGetUsername(request), nameGroup, passWord, image);
+	}
+	
+	@GetMapping("/getNameGroupByNotificationID")
+	public String getNameGroupByNotificationID(@RequestParam("notificationID") int id)
+	{
+		return groupStudyingService.getNameGroupByNotificationID(id);
 	}
 	
 	@PutMapping("/updateGroup")
@@ -62,26 +94,44 @@ public class GroupStudyingController {
 	}
 	
 	@DeleteMapping("/deleteGroup")
-	public void quitGroup(@RequestParam("myUserName") String myUserName, @RequestParam("groupID") int groupID)
+	public void quitGroup(HttpServletRequest request, @RequestParam("groupID") int groupID)
 	{
-		groupStudyingService.quitGroup(myUserName, groupID);
+		groupStudyingService.quitGroup(extractTokenToGetUsername(request), groupID);
+	}
+	
+	@DeleteMapping("/deleteUser")
+	public void deleteUser(@RequestParam("userName") String userName, @RequestParam("groupID") int groupID)
+	{
+		groupStudyingService.deleteUser(userName, groupID);
 	}
 	
 	@PutMapping("/changeAvatarGroup")
-	public void changeAvatarGroup(@RequestParam("file") MultipartFile file, @RequestParam("groupID") int groupID)
+	public void changeAvatarGroup(@RequestParam("image") MultipartFile image, @RequestParam("groupID") int groupID)
 	{
-		groupStudyingService.changeAvatarGroup(file, groupID);
+		groupStudyingService.changeAvatarGroup(image, groupID);
 	}
 	
 	@PutMapping("/changeLeaderofGroup")
-	public void changeLeaderofGroup(@RequestParam("currentUserName") String currentUserName, @RequestParam("newUserName") String newUserName, @RequestParam("groupID") int groupID)
+	public void changeLeaderofGroup(HttpServletRequest request, @RequestParam("newUserName") String newUserName, @RequestParam("groupID") int groupID)
 	{
-		groupStudyingService.changeLeaderofGroup(currentUserName, newUserName, groupID);
+		groupStudyingService.changeLeaderofGroup(extractTokenToGetUsername(request), newUserName, groupID);
 	}
 	
 	@PostMapping("/joinInGroup")
-	public void joinInGroup(@RequestParam("myUserName") String myUserName, @RequestParam("groupID") int groupID)
+	public void joinInGroup(HttpServletRequest request, @RequestParam("groupID") int groupID)
 	{
-		groupStudyingService.joinInGroup(myUserName, groupID);
+		groupStudyingService.joinInGroup(extractTokenToGetUsername(request), groupID);
+	}
+	
+	@PostMapping("/addFriendInGroup")
+	public void joinInGroup(@RequestParam("friendUserName") String friendUserName, @RequestParam("groupID") int groupID)
+	{
+		groupStudyingService.joinInGroup(friendUserName, groupID);
+	}
+	
+	@GetMapping("/getAllUserInGroup")
+	public List<User> getAllUserInGroup(@RequestParam("groupID") int groupID)
+	{
+		return groupStudyingService.getAllUserInGroup(groupID);
 	}
 }

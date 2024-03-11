@@ -9,15 +9,21 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.Information;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.InformationRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.serviceInterfaces.AccountManagement;
+import com.example.demo.serviceInterfaces.RecoveryAccount;
 
 @Service
-public class UserService {
+public class UserService implements AccountManagement, RecoveryAccount {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -28,31 +34,83 @@ public class UserService {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
+	@Autowired
+	private JwtService jwtService;
 	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Override
+	public boolean checkUserName(String userName)
+	{
+		var list = userRepository.findAll();
+		for (var p : list)
+		{
+			if (p.getUserName().equals(userName))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkEmail(String email)
+	{
+		var list = userRepository.findAll();
+		for (var p : list)
+		{
+			if (p.getEmail().equals(email))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public String Login(String userName, String passWord)
 	{
-		List<User> listUser = userRepository.findAll();
-		if (listUser.stream().anyMatch(user -> (user.getUserName().equals(userName) && user.getPassWord().equals(passWord))))
-		{
-			return userName;
+		try
+		{	
+
+			Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, passWord));
+			
+			if (authenticate.isAuthenticated())
+			{
+				return jwtService.generateToken(userName);
+			}
+			else
+			{
+				return "Failed";
+			}
+			
 		}
-		else
+		catch (Exception e)
 		{
-			return "Sai tài khoản hoặc mật khẩu";
+			e.printStackTrace();
+			return "Failed";
 		}
 	}
 		
-	public String CreateAccount(User user)
+	@Override
+	public String CreateAccount(User user, String image)
 	{
 		try 
 		{
 			boolean checkExist = userRepository.findAll().stream().anyMatch(p -> p.getUserName().toLowerCase().equals(user.getUserName().toLowerCase()));
-			
+
 			if (checkExist == false)
 			{
 				Information information = new Information();
+				information.setImage(image);
+				information.setFulName("user" + userRepository.findAll().size() + 1);
 				informationRepository.save(information);
 				user.setInformation(information);
+				user.setPassWord(passwordEncoder.encode(user.getPassWord()));
 				userRepository.save(user); 
 				return user.getUserName();
 			}
@@ -88,12 +146,14 @@ public class UserService {
 		return userRepository.findAll().stream().filter(user -> user.getUserName().equals(userName)).findFirst().orElse(null);
 	}
 	
+	@Override
 	public int sendOTP(String userName) 
 	{
         int otp = generateRandomNumber();
         return sendOTPByEmail(userName, otp);
     }
 	
+	@Override
 	public int sendOTPtoEmail(String email) 
 	{
         int otp = generateRandomNumber();
@@ -143,6 +203,19 @@ public class UserService {
 			return -1;
 		}
     }
+	
+	@Override
+	public User getUser(String userName)
+	{
+		for (var p : userRepository.findAll())
+		{
+			if (p.getUserName().equals(userName))
+			{
+				return p;
+			}
+		}
+		return null;
+	}
 
 	public boolean ChangePasswordAfterOTP(String userName, String passWord) 
 	{
@@ -150,7 +223,7 @@ public class UserService {
 		
 		if (user != null)
 		{
-			user.setPassWord(passWord);
+			user.setPassWord(passwordEncoder.encode(passWord));
 			userRepository.save(user);
 			return true;
 		}

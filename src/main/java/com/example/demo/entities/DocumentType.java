@@ -8,6 +8,7 @@ public enum DocumentType {
 	pdf,
 	video,
 	image,
-	unidentify
+	unidentify,
+	txt,
 	
 }

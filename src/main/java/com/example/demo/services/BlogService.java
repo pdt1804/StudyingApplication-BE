@@ -3,11 +3,14 @@ package com.example.demo.services;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
 import com.example.demo.entities.Notifycation;
@@ -21,9 +24,13 @@ import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.ReplyRepository;
 import com.example.demo.repositories.SubjectRepository;
 import com.example.demo.repositories.UserRepository;
+import com.example.demo.serviceInterfaces.BlogManagement;
+import com.example.demo.serviceInterfaces.CommentManagement;
+import com.example.demo.serviceInterfaces.ReplyManagement;
+import com.example.demo.serviceInterfaces.SubjectManagement;
 
 @Service
-public class BlogService {
+public class BlogService implements SubjectManagement, BlogManagement, CommentManagement, ReplyManagement {
 
 	@Autowired
 	private BlogRepository blogRepository;
@@ -33,6 +40,9 @@ public class BlogService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private Cloudinary cloudinary;
 	
 	@Autowired 
 	private NotifycationRepository notifycationRepository;
@@ -46,45 +56,149 @@ public class BlogService {
 	@Autowired 
 	private ReplyRepository replyRepository;
 	
+	@Override
+	public int getNumberOfBlogBySubject(int subjectID, int groupID)
+	{
+		int i = 0;
+		for (var p : groupStudyingRepository.getById(groupID).getBlogs())
+		{
+			if (p.getSubject().getSubjectID() == subjectID)
+			{
+				i++;
+			}
+		}
+		return i;
+	}
 	
+	@Override
+	public Blog getBlogById(long id)
+	{
+		try
+		{
+			var blog = blogRepository.getById(id);
+			if (blog != null)
+			{
+				return blogRepository.getById(id);
+			}
+			else
+			{
+				return null;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@Override
 	public List<Subject> getAllSubject(int groupID)
 	{
 		return groupStudyingRepository.getById(groupID).getSubjects();
 	}
-	
+
+	@Override
 	public List<Blog> getAllBlogInGroup(int groupID)
 	{
-		return groupStudyingRepository.getById(groupID).getBlogs().stream().sorted((b1,b2) -> b1.getDateCreated().compareTo(b2.getDateCreated())).toList();
+		return groupStudyingRepository.getById(groupID).getBlogs().stream().sorted((b1,b2) -> b2.getDateCreated().compareTo(b1.getDateCreated())).toList();
 	}
-	
+
+	@Override
 	public List<Blog> getAllBlogInGroupBySubject(int groupID, int subjectID)
 	{
 		return groupStudyingRepository.getById(groupID).getBlogs().stream()
 				.filter(p -> p.getSubject().getSubjectID() == subjectID)
-				.sorted((b1,b2) -> b1.getDateCreated().compareTo(b2.getDateCreated())).toList();
+				.sorted((b1,b2) -> b2.getDateCreated().compareTo(b1.getDateCreated())).toList();
 	}
-	
+
+	@Override
 	public List<Blog> getAllBlogInGroupByContent(int groupID, String input)
 	{
 		return groupStudyingRepository.getById(groupID).getBlogs().stream()
 				.filter(p -> p.getContent().contains(input))
-				.sorted((b1,b2) -> b1.getDateCreated().compareTo(b2.getDateCreated())).toList();
+				.sorted((b1,b2) -> b2.getDateCreated().compareTo(b1.getDateCreated())).toList();
+	}
+
+	@Override
+	public void likeBlog(String userName, long blogID) {
+	    var user = userRepository.getById(userName);
+	    var blog = blogRepository.getById(blogID);
+	    
+	    List<String> likes = blog.getLikes();
+	    
+	    if (likes == null) {
+	        likes = new ArrayList<>();
+	        blog.setLikes(likes);
+	    }
+	    
+	    boolean check = false;
+	    
+	    for (var p : likes) {
+	        if (p.equals(user.getUserName())) {
+	            likes.remove(p);
+	            check = true;
+	            break;
+	        }
+	    }
+	    
+	    if (!check) {
+	        likes.add(user.getUserName());
+	    }
+
+	    blogRepository.save(blog);
+	    userRepository.save(user);
+	}
+
+
+	@Override
+	public boolean checkLikeBlog(String userName, long blogID)
+	{
+		boolean check = false;
+		
+		var blog = blogRepository.getById(blogID);
+		
+		if (blog.getLikes() == null)
+		{
+			return false;
+		}
+		
+		for (var p : blog.getLikes())
+		{
+			if (p.equals(userName))
+			{
+				check = true;
+				break;
+			}
+		}
+		
+		return check;
 	}
 	
+	@Override
 	public void insertImageInBlog(long blogID, MultipartFile file)
 	{
 		try
 		{
 			var blog = blogRepository.getById(blogID);
-			blog.setImages(file.getBytes());
+			
+			if (blog.getPublicID() != null)
+			{
+				this.cloudinary.uploader().destroy(blog.getPublicID(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+			}
+			
+			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
+			blog.setImage(data.get("url"));
+			blog.setPublicID(data.get("public_id"));
 			blogRepository.save(blog);
-		}
+		}        
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
 	
+	@Override
 	public void createSubject(int groupID, String nameSubject)
 	{
 		var group = groupStudyingRepository.getById(groupID);
@@ -97,7 +211,8 @@ public class BlogService {
 		groupStudyingRepository.save(group);
 		
 	}
-	
+
+	@Override
 	public void updateSubject(int subjectID, String newNameSubject)
 	{
 		var subject = subjectRepository.getById(subjectID);
@@ -105,6 +220,7 @@ public class BlogService {
 		subjectRepository.save(subject);
 	}
 	
+	@Override
 	public void sureToDeleteSubject(int groupID, int subjectID)
 	{
 		var subject = subjectRepository.getById(subjectID);
@@ -158,28 +274,32 @@ public class BlogService {
 		subjectRepository.delete(subject);
 	}
 	
+	@Override
 	public List<Subject> findSubjectByName(int groupID, String input)
 	{
 		return groupStudyingRepository.getById(groupID).getSubjects().stream().filter(p -> p.getNameSubject().contains(input)).toList();
 	}
 	
-	public long createBlog(int GroupID, String userName, Blog blog)
+	@Override
+	public long createBlog(int GroupID, String userName, int subjectID, Blog blog)
 	{
 		var user = userRepository.getById(userName);
 		var group = groupStudyingRepository.getById(GroupID);
+		var subject = subjectRepository.getById(subjectID);
 		
 		try
 		{
 			blog.setDateCreated(new Date());
-			blog.setLikeCount(0);
+			//blog.setLikeCount(0);
 			blog.setUserCreated(user);
 			blog.setGroup(group);
+			blog.setSubject(subject);
 						
 			blogRepository.save(blog);
 			
 			Notifycation notifycation = new Notifycation().builder()
-					 .Header("New Blog !!!")
-					 .Content("Group " + group.getNameGroup() + " has new blog ")
+					 .Header("Bài thảo luận mới !!!")
+					 .Content("Nhóm " + group.getNameGroup() + " có bài thảo luận mới với mã thảo luận là " + blog.getBlogID() + ", click vào đây để xem ")
 					 .dateSent(new Date()).notifycationType(NotifycationType.admin)
 					 .groupStudying(group).build();
 		
@@ -217,31 +337,43 @@ public class BlogService {
 		blogRepository.save(blog);
 	}*/
 	
-	public void updateBlog(long blogID, Blog blog)
+	@Override
+	public void updateBlog(long blogID, String content)
 	{
 		var existingBlog = blogRepository.getById(blogID);
-		existingBlog.setContent(blog.getContent());
+		existingBlog.setContent(content);
 		existingBlog.setDateCreated(new Date());
-		existingBlog.setSubject(blog.getSubject());
-		existingBlog.setLikeCount(blog.getLikeCount());
 		blogRepository.save(existingBlog);
 	}
 	
+	@Override
 	public void deleteBlog(long blogID)
 	{
-		var blog = blogRepository.getById(blogID);
-		blog.getGroup().getBlogs().remove(blog);
-		blog.setGroup(null);
-		blog.setUserCreated(null);
-		blog.setSubject(null);
-		for (var p : blog.getComments())
+		try
 		{
-			deleteComment(p.getCommentID());
+			var blog = blogRepository.getById(blogID);
+			blog.getGroup().getBlogs().remove(blog);
+			blog.setGroup(null);
+			blog.setUserCreated(null);
+			blog.setSubject(null);
+			for (var p : blog.getComments())
+			{
+				deleteComment(p.getCommentID());
+			}
+			blog.setComments(null);
+			if(blog.getPublicID() != null)
+			{
+				this.cloudinary.uploader().destroy(blog.getPublicID(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+			}
+			blogRepository.delete(blog);
 		}
-		blog.setComments(null);
-		blogRepository.delete(blog);
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
+	@Override
 	public void commentBlog(long blogID, String userName, Comment cmt)
 	{
 		var blog = blogRepository.getById(blogID);
@@ -257,8 +389,8 @@ public class BlogService {
 		blogRepository.save(blog);
 		
 		Notifycation notifycation = new Notifycation().builder()
-				 .Header("Your Blog " + blog.getBlogID() + " in group " + blog.getGroup().getNameGroup() + " has new comment !!!")
-				 .Content("Group " + blog.getGroup().getNameGroup() + ", blog " + blog.getContent() + " has new comment ")
+				 .Content("Bài thảo luận có mã thảo luận là " + blog.getBlogID() + ", trong nhóm " + blog.getGroup().getNameGroup() + " có bình luận mới: " + cmt.getContent())
+				 .Header("Nhóm " + blog.getGroup().getNameGroup() + ", blog " + blog.getContent() + " có bình luận mới ")
 				 .dateSent(new Date()).notifycationType(NotifycationType.admin)
 				 .groupStudying(blog.getGroup()).build();
 		
@@ -297,16 +429,19 @@ public class BlogService {
 		commentRepository.delete(cmt);
 	}
 	
+	@Override
 	public List<Comment> getAllCommentOfBlog(long blogID)
 	{
 		return blogRepository.getById(blogID).getComments();
 	}
 	
+	@Override
 	public List<Reply> getAllReplyOfComment(int commentID)
 	{
 		return commentRepository.getById(commentID).getReplies();
 	}
 	
+	@Override
 	public void replyComment(int commentID, String userName, Reply reply)
 	{
 		var cmt = commentRepository.getById(commentID);
@@ -322,8 +457,8 @@ public class BlogService {
 		commentRepository.save(cmt);
 		
 		Notifycation notifycation = new Notifycation().builder()
-				 .Header("Your Comment " + cmt.getCommentID() + " in group " + cmt.getBlog().getGroup().getNameGroup() + ", in blog " + cmt.getBlog().getBlogID() + " has new reply !!!")
-				 .Content("Group " + cmt.getBlog().getGroup().getNameGroup() + ", blog " + cmt.getBlog().getContent() + ", in comment " + cmt.getContent() + " has new reply ")
+				 .Content("Bình luận " + cmt.getContent() + " trong nhóm " + cmt.getBlog().getGroup().getNameGroup() + ", trong bài thảo luận có mã thảo luận là " + cmt.getBlog().getBlogID() + ", có phản hồi mới !!!")
+				 .Header("Nhóm " + cmt.getBlog().getGroup().getNameGroup() + ", bài thảo luận " + cmt.getBlog().getContent() + ", bình luận " + cmt.getContent() + " có phản hồi mới ")
 				 .dateSent(new Date()).notifycationType(NotifycationType.admin)
 				 .groupStudying(cmt.getBlog().getGroup()).build();
 		

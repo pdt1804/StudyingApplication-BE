@@ -15,11 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.DTO.BlogDTO;
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
 import com.example.demo.entities.Reply;
 import com.example.demo.entities.Subject;
 import com.example.demo.services.BlogService;
+import com.example.demo.services.JwtService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/v1/blog")
@@ -27,6 +31,16 @@ public class BlogController {
 
 	@Autowired
 	private BlogService blogService;
+	
+	@Autowired
+	private JwtService jwtService;
+	
+	public String extractTokenToGetUsername(HttpServletRequest request)
+	{
+		String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring(7);
+        return jwtService.extractUsername(token);
+	}
 	
 	@GetMapping("/getAllSubject")
 	public List<Subject> getAllSubject(@RequestParam("groupID") int groupID)
@@ -44,6 +58,42 @@ public class BlogController {
 	public List<Blog> getAllBlogByContent(@RequestParam("groupID") int groupID, @RequestParam("input") String input)
 	{
 		return blogService.getAllBlogInGroupByContent(groupID, input);
+	}
+	
+	@PostMapping("/insertImageInBlog")
+	public void insertImageInBlog(@RequestParam("blogID") long blogID, @RequestParam("file") MultipartFile file)
+	{
+		blogService.insertImageInBlog(blogID, file);
+	}
+	
+	@GetMapping("/getBlogById")
+	public ResponseEntity<BlogDTO> getBlogById(@RequestParam("blogID") long id)
+	{
+		var blog = blogService.getBlogById(id);
+
+	    if (blog != null) {
+	        return ResponseEntity.ok(new BlogDTO(blog));
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
+	}
+	
+	@GetMapping("/getNumberOfBlogBySubject")
+	public int getNumberOfBlogBySubject(@RequestParam("subjectID") int subjectID, @RequestParam("groupID") int groupID)
+	{
+		return blogService.getNumberOfBlogBySubject(subjectID, groupID);
+	}
+	
+	@GetMapping("/checkLikeBlog")
+	public boolean checkLikeBlog(HttpServletRequest request, @RequestParam("blogID") long blogID)
+	{
+		return blogService.checkLikeBlog(extractTokenToGetUsername(request), blogID);
+	}
+	
+	@PostMapping("/likeBlog")
+	public void likeBlog(HttpServletRequest request, @RequestParam("blogID") long blogID)
+	{
+		blogService.likeBlog(extractTokenToGetUsername(request), blogID);
 	}
 	
 	@GetMapping("/getAllBlogBySubject")
@@ -92,16 +142,16 @@ public class BlogController {
 		}
 		catch (Exception e)
 		{
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
 	}
 	
 	@PostMapping("/createNewBlog")
-	public long createNewBlog(@RequestParam("groupID") int groupID, @RequestParam("userName") String userName, @RequestBody Blog blog)
+	public long createNewBlog(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("subjectID") int subjectID, @RequestBody Blog blog)
 	{
-		System.out.println(blog.getContent());
-		return blogService.createBlog(groupID, userName, blog);
+		return blogService.createBlog(groupID, extractTokenToGetUsername(request), subjectID, blog);
 	}
 	
 	@PostMapping("/insertImage")
@@ -111,9 +161,9 @@ public class BlogController {
 	}
 	
 	@PutMapping("/updateBlog")
-	public void updateBlog(@RequestParam("blogID") long blogID, Blog blog)
+	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content)
 	{
-		blogService.updateBlog(blogID, blog);
+		blogService.updateBlog(blogID, content);
 	}
 	
 	@DeleteMapping("/deleteBlog")
@@ -136,9 +186,9 @@ public class BlogController {
 	}*/
 	
 	@PostMapping("/commentBlog")
-	public void commentBlog(@RequestParam("blogID") long blogID, @RequestParam("userName") String userName, @RequestBody Comment comment)
+	public void commentBlog(@RequestParam("blogID") long blogID, HttpServletRequest request, @RequestBody Comment comment)
 	{
-		blogService.commentBlog(blogID, userName, comment);
+		blogService.commentBlog(blogID, extractTokenToGetUsername(request), comment);
 	}
 	
 	@PutMapping("/updateComment")
@@ -154,9 +204,9 @@ public class BlogController {
 	}
 	
 	@PostMapping("/replyComment")
-	public void replyComment(@RequestParam("commentID") int commentID, @RequestParam("userName") String userName, @RequestBody Reply reply)
+	public void replyComment(@RequestParam("commentID") int commentID, HttpServletRequest request, @RequestBody Reply reply)
 	{
-		blogService.replyComment(commentID, userName, reply);
+		blogService.replyComment(commentID, extractTokenToGetUsername(request), reply);
 	}
 	
 	@PutMapping("/updateReply")

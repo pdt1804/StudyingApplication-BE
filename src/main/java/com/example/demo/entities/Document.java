@@ -30,9 +30,10 @@ public class Document {
 	private int documentID;
 	private String Header;
 	@Lob
-	private byte[] File;
+	private String File;
 	private Date dateUploaded;
 	private DocumentType type;
+	private String publicID;
 	@ManyToOne
 	@JoinColumn(name = "group_id", nullable = true)
 	@JsonIgnore

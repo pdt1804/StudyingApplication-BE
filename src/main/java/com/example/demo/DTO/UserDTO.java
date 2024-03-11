@@ -16,6 +16,7 @@ public class UserDTO {
 	private String userName;
     private String passWord;
 	private String Email;
+	private String fulName;
  
     public UserDTO() {
     	
@@ -25,6 +26,7 @@ public class UserDTO {
         this.userName = user.getUserName();
         this.passWord = user.getPassWord();
         this.Email = user.getEmail();
+        this.fulName = user.getInformation().getFulName();
     }
 
 }

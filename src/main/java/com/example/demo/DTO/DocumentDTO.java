@@ -17,7 +17,7 @@ public class DocumentDTO {
 
 	private int documentID;
 	private String Header;
-	private byte[] File;
+	private String File;
 	private Date dateUploaded;
 	private DocumentType type;
     private UserDTO user;
