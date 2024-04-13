@@ -63,6 +63,9 @@ public class User {
 //	@OneToMany
 //    @JoinColumn(name="username_notifycation", nullable = true)
 //    private List<User> userSeenNotifycation = new ArrayList<>();
+	
+	@ManyToMany(mappedBy = "users")
+    private List<Topic> topics = new ArrayList<>();
   
 	
     public User(String userName, String passWord, String Email) {
