@@ -1,4 +1,4 @@
-package com.example.demo.services;
+ package com.example.demo.services;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -14,6 +14,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.config.CloudinaryService;
 import com.example.demo.entities.Information;
+import com.example.demo.entities.Topic;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.InformationRepository;
 import com.example.demo.repositories.UserRepository;
@@ -33,6 +34,9 @@ public class InformationService implements InformationManagement {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private TopicService topicService;
 	
 	@Override
 	public String changeAvatarCloud(MultipartFile image, String userName)
@@ -103,10 +107,64 @@ public class InformationService implements InformationManagement {
 		existingInformation.setFulName(information.getFulName());
 		existingInformation.setYearOfBirth(information.getYearOfBirth());
 		existingInformation.setGender(information.getGender());
-		//existingInformation.setListDownside(information.getListDownside());
-		//existingInformation.setListUpside(information.getListUpside());
 		existingInformation.setPhoneNumber(information.getPhoneNumber());
-		//existingInformation.setImage(information.getImage());
+		informationRepository.save(existingInformation);
+	}
+	
+// VERSION CŨ, VẪN CÓ THỂ SỬ DỤNG SAU NÀY
+//	@Override 
+//	public void Initialize(int yearOfBirth, int phoneNumber, String gender, List<Topic> topics, int infoID)
+//	{
+//		var existingInformation = getInformationbyID(infoID);
+//		existingInformation.setYearOfBirth(yearOfBirth);
+//		existingInformation.setGender(gender);
+//		existingInformation.setPhoneNumber(phoneNumber);
+//		existingInformation.setTopics(topics);
+//		informationRepository.save(existingInformation);
+//	} 
+	
+	@Override
+	public void Initialize(int yearOfBirth, int phoneNumber, String gender, List<Integer> topics, int infoID)
+	{
+		var existingInformation = getInformationbyID(infoID);
+		existingInformation.setYearOfBirth(yearOfBirth);
+		existingInformation.setGender(gender);
+		existingInformation.setPhoneNumber(phoneNumber);
+		for (var p : topics)
+		{
+			var topic = topicService.GetTopic(p);
+			existingInformation.getTopics().add(topic);
+			topic.getUsers().add(existingInformation);
+			topicService.AddTopic(topic);
+		}
+		informationRepository.save(existingInformation);
+	}
+	
+	@Override
+	public void AddTopic(List<Integer> topics, int infoID)
+	{
+		var existingInformation = getInformationbyID(infoID);
+		for (var p : topics)
+		{
+			var topic = topicService.GetTopic(p);
+			existingInformation.getTopics().add(topic);
+			topic.getUsers().add(existingInformation);
+			topicService.AddTopic(topic);
+		}
+		informationRepository.save(existingInformation);
+	}
+	
+	@Override
+	public void RemoveTopic(List<Integer> topics, int infoID)
+	{
+		var existingInformation = getInformationbyID(infoID);
+		for (var p : topics)
+		{
+			var topic = topicService.GetTopic(p);
+			existingInformation.getTopics().remove(topic);
+			topic.getUsers().remove(existingInformation);
+			topicService.AddTopic(topic);
+		}
 		informationRepository.save(existingInformation);
 	}
 	

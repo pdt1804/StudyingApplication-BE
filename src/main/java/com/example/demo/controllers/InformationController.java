@@ -16,10 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entities.Downside;
 import com.example.demo.entities.Information;
+import com.example.demo.entities.Topic;
 import com.example.demo.entities.Upside;
 import com.example.demo.entities.User;
 import com.example.demo.services.InformationService;
 import com.example.demo.services.JwtService;
+import com.example.demo.services.TopicService;
 import com.example.demo.services.UpsideAndDownsideService;
 import com.example.demo.services.UserService;
 
@@ -41,6 +43,9 @@ public class InformationController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private TopicService topicService;
+	
 	public String extractTokenToGetUsername(HttpServletRequest request)
 	{
 		String authHeader = request.getHeader("Authorization");
@@ -48,10 +53,58 @@ public class InformationController {
         return jwtService.extractUsername(token);
 	}
 	
+//	@GetMapping("/getAllTopics")
+//	public List<Topic> getAllTopics()
+//	{
+//		return topicService.getAllTopics();
+//	}
+	
+	@GetMapping("/getAllFavoriteTopics")
+	public List<Topic> getAllFavoriteTopics(@RequestParam("infoID") int infoID)
+	{
+		return topicService.getAllFavoriteTopics(infoID);
+	}
+	
+	@GetMapping("/getAllTopics")
+	public ResponseEntity<List<Topic>> getAllTopics()
+	{
+		return ResponseEntity.ok(topicService.getAllTopics());
+	}
+	
+	@GetMapping("/getAllUnfavourateTopics")
+	public List<Topic> getAllUnfavourateTopics(@RequestParam("infoID") int infoID)
+	{
+		return topicService.getAllUnfavourateTopics(infoID);
+	}
+	
 	@PostMapping("/updateInformation")
 	public void updateInformation(@RequestBody Information information)
 	{
 		informationService.updateInformation(information);
+	}
+	
+	@PostMapping("/initialize")
+	public void initialize(@RequestParam("yearOfBirth") int yearOfBirth, 
+						   @RequestParam("gender") String gender, 
+						   @RequestParam("phoneNumber") int phoneNumber, 
+						   @RequestParam("topics") List<Integer> topics,
+						   @RequestParam("infoID") int infoID)
+	{
+		informationService.Initialize(yearOfBirth, phoneNumber, gender, topics, infoID);
+	}
+	
+	@PostMapping("/AddTopic")
+	public void AddTopic(@RequestParam("topics") List<Integer> topics,
+						 @RequestParam("infoID") int infoID)
+	{
+		informationService.AddTopic(topics, infoID);
+	}
+	
+	@PostMapping("/RemoveTopic")
+	public void RemoveTopic(@RequestParam("topics") List<Integer> topics,
+						    @RequestParam("infoID") int infoID)
+	{
+		informationService.RemoveTopic(topics, infoID);
 	}
 	
 	@GetMapping("/getInformation")

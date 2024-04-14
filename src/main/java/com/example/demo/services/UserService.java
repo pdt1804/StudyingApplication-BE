@@ -112,7 +112,7 @@ public class UserService implements AccountManagement, RecoveryAccount {
 				user.setInformation(information);
 				user.setPassWord(passwordEncoder.encode(user.getPassWord()));
 				userRepository.save(user); 
-				return user.getUserName();
+				return jwtService.generateToken(user.getUserName());
 			}
 			else
 			{

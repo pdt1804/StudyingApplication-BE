@@ -35,13 +35,14 @@ public class Topic {
     private String Image;
 	
 	@ManyToMany
+	@JsonIgnore
 	@JoinTable
 	(
-		name = "user_topic",
-	    joinColumns = @JoinColumn(name = "user_id"),
+		name = "information_topic",
+	    joinColumns = @JoinColumn(name = "info_id"),
 	    inverseJoinColumns = @JoinColumn(name = "topicID")
     )
-    private List<User> users = new ArrayList<>();
+    private List<Information> users = new ArrayList<>();
 	
 	public Topic(String name, String image)
 	{

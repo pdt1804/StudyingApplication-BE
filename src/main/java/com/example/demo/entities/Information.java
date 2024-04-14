@@ -1,5 +1,6 @@
 package com.example.demo.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -41,6 +43,9 @@ public class Information {
 	@JsonIgnore
 	@OneToMany(mappedBy = "information")
 	private List<Downside> listDownside;
+	
+	@ManyToMany(mappedBy = "users")
+    private List<Topic> topics = new ArrayList<>();
 	
 	public Information(int infoID, String fulName, int phoneNumber, String image, String gender, int yearOfBirth,
 			List<Upside> listUpside, List<Downside> listDownside) {

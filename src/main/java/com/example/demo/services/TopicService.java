@@ -2,12 +2,15 @@ package com.example.demo.services;
 
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.Topic;
+import com.example.demo.repositories.InformationRepository;
 import com.example.demo.repositories.TopicRepository;
 
 import jakarta.annotation.PostConstruct;
@@ -17,6 +20,9 @@ public class TopicService {
 
 	@Autowired
 	private TopicRepository topicRepository;
+	
+	@Autowired
+	private InformationRepository informationRepository;
 	
 	public void AddTopic(Topic topic)
 	{
@@ -36,6 +42,41 @@ public class TopicService {
 	public List<Topic> getAllTopics() 
 	{
 		return topicRepository.findAll().stream().sorted((t1,t2) -> (t2.getUsers().size() > t1.getUsers().size() ? 1 : 0)).toList();
+	}
+	
+	public List<Topic> getAllUnfavourateTopics(int infoID)
+	{
+		List<Topic> topics = new ArrayList<>(getAllTopics());
+		//System.out.println(topics.get(0).hashCode());
+		for (Topic p : getAllFavoriteTopics(infoID))
+		{
+			//System.out.println(p.hashCode());
+			topics.remove(GetTopic(p.getTopicID()));
+		}
+		return topics;
+	}
+	
+//	public List<Topic> getAllUnfavourateTopics(int infoID) {
+//	    List<Topic> topics = new ArrayList<Topic>(getAllTopics()); // Tạo một bản sao của danh sách để xử lý.
+//	    List<Topic> favoriteTopics = getAllFavoriteTopics(infoID);
+//	    
+//	    Iterator<Topic> iterator = topics.iterator();
+//	    while (iterator.hasNext()) {
+//	        Topic currentTopic = iterator.next();
+//	        for (Topic favTopic : favoriteTopics) {
+//	            if (currentTopic.getTopicID() == favTopic.getTopicID()) {
+//	                iterator.remove(); // Xóa nếu là một topic yêu thích
+//	                break; // Ngừng kiểm tra các topic yêu thích còn lại
+//	            }
+//	        }
+//	    }
+//	    return topics;
+//	}
+
+	
+	public List<Topic> getAllFavoriteTopics(int infoID)
+	{
+		return informationRepository.getById(infoID).getTopics();
 	}
 	
 	@PostConstruct
