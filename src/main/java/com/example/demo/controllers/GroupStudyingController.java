@@ -76,9 +76,9 @@ public class GroupStudyingController {
 	}
 	
 	@PostMapping("/createGroup")
-	public int createGroup(HttpServletRequest request, @RequestParam("nameGroup") String nameGroup, @RequestParam("passWord") String passWord, @RequestParam("image") String image)
+	public int createGroup(HttpServletRequest request, @RequestParam("nameGroup") String nameGroup, @RequestParam("passWord") String passWord, @RequestParam("image") String image, @RequestParam("topics") List<Integer> topics)
 	{
-		return groupStudyingService.createGroup(extractTokenToGetUsername(request), nameGroup, passWord, image);
+		return groupStudyingService.createGroup(extractTokenToGetUsername(request), nameGroup, passWord, image, topics);
 	}
 	
 	@GetMapping("/getNameGroupByNotificationID")
@@ -87,10 +87,22 @@ public class GroupStudyingController {
 		return groupStudyingService.getNameGroupByNotificationID(id);
 	}
 	
+	@GetMapping("/getAllGroupByTopics")
+	public List<GroupStudying> getAllGroupByTopics(HttpServletRequest request, @RequestParam("topics") List<Integer> topics)
+	{
+		return groupStudyingService.filterGroupByTopics(extractTokenToGetUsername(request), topics);
+	}
+	
 	@PutMapping("/updateGroup")
 	public int updateGroup(@RequestBody GroupStudying group)
 	{
 		return groupStudyingService.updateGroup(group);
+	}
+	
+	@PutMapping("/updateTopics")
+	public int updateTopics(@RequestParam("groupID") int groupID, @RequestParam("topics") List<Integer> topics)
+	{
+		return groupStudyingService.updateTopics(groupID, topics);
 	}
 	
 	@DeleteMapping("/deleteGroup")

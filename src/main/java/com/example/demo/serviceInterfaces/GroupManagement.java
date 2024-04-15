@@ -23,7 +23,7 @@ public interface GroupManagement {
 	
 	public String getNameGroupByNotificationID(int id);
 	
-	public int createGroup(String userName, String nameGroup, String passWord, String image);
+	public int createGroup(String userName, String nameGroup, String passWord, String image, List<Integer> topics);
 	
 	public long sendMessage(MessageGroup mess, int groupID, String userName);
 	
@@ -46,4 +46,10 @@ public interface GroupManagement {
 	public List<GroupStudying> getAllGroupofUser(String myUserName);
 	
 	public boolean checkNewMessageInGroup(String myUserName, int groupID);
+	
+	public int updateTopics(int groupID, List<Integer> newTopics);
+	
+	public List<GroupStudying> filterGroupByTopics(String userName, List<Integer> topics);
+	
+	public List<GroupStudying> GetRecommendedGroup(String myUserName);
 }

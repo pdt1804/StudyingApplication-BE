@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.DTO.Token;
 import com.example.demo.entities.Information;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.InformationRepository;
@@ -97,7 +98,7 @@ public class UserService implements AccountManagement, RecoveryAccount {
 	}
 		
 	@Override
-	public String CreateAccount(User user, String image)
+	public Token CreateAccount(User user, String image)
 	{
 		try 
 		{
@@ -112,17 +113,17 @@ public class UserService implements AccountManagement, RecoveryAccount {
 				user.setInformation(information);
 				user.setPassWord(passwordEncoder.encode(user.getPassWord()));
 				userRepository.save(user); 
-				return jwtService.generateToken(user.getUserName());
+				return new Token(jwtService.generateToken(user.getUserName()), information.getInfoID());
 			}
 			else
 			{
-				return "Không tạo thành công";
+				return null;
 			}
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			return "Không tạo thành công"; // Failed to create account
+			return null; // Failed to create account
 		}
 	}
 	

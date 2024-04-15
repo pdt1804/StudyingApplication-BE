@@ -44,7 +44,7 @@ public class GroupStudying {
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_name", nullable = true)
-	private User leaderOfGroup;
+	private User leaderOfGroup; 
 	@JsonIgnore
 	@ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
@@ -63,6 +63,8 @@ public class GroupStudying {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "group")
 	@JsonIgnore
 	private List<Subject> subjects = new ArrayList<>();
+	@ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
+    private List<Topic> topics = new ArrayList<>();
 	
 	public GroupStudying(int groupID, String imageGroup, String nameGroup, Date dateCreated, Set<User> users, String passWord) {
 		super();

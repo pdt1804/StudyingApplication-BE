@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.DTO.Token;
 import com.example.demo.entities.Topic;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.UserRepository;
@@ -85,7 +86,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/CreateAccount")
-	public String CreateAccount(@RequestParam("userName") String userName, @RequestParam("passWord") String passWord, @RequestParam("email") String email, @RequestParam("image") String image)
+	public Token CreateAccount(@RequestParam("userName") String userName, @RequestParam("passWord") String passWord, @RequestParam("email") String email, @RequestParam("image") String image)
 	{
 		
 		var user = new User();

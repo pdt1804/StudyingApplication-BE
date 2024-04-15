@@ -8,6 +8,7 @@ import org.hibernate.annotations.GeneratorType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -44,9 +45,20 @@ public class Topic {
     )
     private List<Information> users = new ArrayList<>();
 	
+	@ManyToMany
+	@JsonIgnore
+	@JoinTable
+	(
+		name = "group_topic",
+	    joinColumns = @JoinColumn(name = "groupID"),
+	    inverseJoinColumns = @JoinColumn(name = "topicID")
+    )
+    private List<GroupStudying> groups = new ArrayList<>();
+	
 	public Topic(String name, String image)
 	{
 		topicName = name;
 		this.Image = image;
 	}
+	
 }
