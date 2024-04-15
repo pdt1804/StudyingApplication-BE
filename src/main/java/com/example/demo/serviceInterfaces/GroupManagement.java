@@ -51,5 +51,5 @@ public interface GroupManagement {
 	
 	public List<GroupStudying> filterGroupByTopics(String userName, List<Integer> topics);
 	
-	public List<GroupStudying> GetRecommendedGroup(String myUserName);
+	public List<GroupStudying> getRecommendedGroup(String myUserName);
 }

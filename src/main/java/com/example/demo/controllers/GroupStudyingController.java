@@ -93,6 +93,12 @@ public class GroupStudyingController {
 		return groupStudyingService.filterGroupByTopics(extractTokenToGetUsername(request), topics);
 	}
 	
+	@GetMapping("/getAllRecommendedGroup")
+	public List<GroupStudying> getAllRecommendedGroup(HttpServletRequest request)
+	{
+		return groupStudyingService.getRecommendedGroup(extractTokenToGetUsername(request));
+	}
+	
 	@PutMapping("/updateGroup")
 	public int updateGroup(@RequestBody GroupStudying group)
 	{

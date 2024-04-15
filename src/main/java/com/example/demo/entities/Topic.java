@@ -40,8 +40,8 @@ public class Topic {
 	@JoinTable
 	(
 		name = "information_topic",
-	    joinColumns = @JoinColumn(name = "info_id"),
-	    inverseJoinColumns = @JoinColumn(name = "topicID")
+	    joinColumns = @JoinColumn(name = "topicID"),
+	    inverseJoinColumns = @JoinColumn(name = "infoID")
     )
     private List<Information> users = new ArrayList<>();
 	
@@ -50,8 +50,8 @@ public class Topic {
 	@JoinTable
 	(
 		name = "group_topic",
-	    joinColumns = @JoinColumn(name = "groupID"),
-	    inverseJoinColumns = @JoinColumn(name = "topicID")
+	    joinColumns = @JoinColumn(name = "topicID"),
+	    inverseJoinColumns = @JoinColumn(name = "groupID")
     )
     private List<GroupStudying> groups = new ArrayList<>();
 	

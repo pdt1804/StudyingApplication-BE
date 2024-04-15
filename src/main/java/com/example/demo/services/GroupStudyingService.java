@@ -1,6 +1,8 @@
 package com.example.demo.services;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -305,6 +307,23 @@ public class GroupStudyingService implements GroupManagement {
 		if (index == topics.size()) return true;
 		return false;
 	}
+	
+	private int NumberTopicsRelated(GroupStudying p, List<Integer> topics) {
+		int index = 0;
+		for (var topic : p.getTopics())
+		{
+			for (var requiredTopic : topics)
+			{
+				if (requiredTopic == topic.getTopicID())
+				{
+					index++;
+					break;
+				}
+			}
+		}
+
+		return index;
+	}
 
 	@Override
 	public void changeAvatarGroup(MultipartFile image, int groupID)
@@ -374,24 +393,215 @@ public class GroupStudyingService implements GroupManagement {
 	}
 	
 	@Override
-	public List<GroupStudying> GetRecommendedGroup(String myUserName)
+	public List<GroupStudying> getRecommendedGroup(String myUserName)
 	{
+		
+		var allGroups = new ArrayList<>(groupStudyingRepository.findAll());
+		allGroups.removeAll(userRepository.getById(myUserName).getGroups());
+		
 		List<GroupStudying> recommendedGroup = new ArrayList<GroupStudying>();
-		recommendedGroup.addAll(recommenderSystemByFavoriteTopic(getFavoriteTopicsOfUser(myUserName), 8));
-		recommendedGroup.addAll(recommenderSystemByGroup(getMostMessageGroup(myUserName), 6));
-		recommendedGroup.addAll(recommenderSystemByGroup(getMostBlogCommentReplyGroup(myUserName), 6));
+		recommendedGroup.addAll(recommenderSystemByFavoriteTopic(getFavoriteTopicsOfUser(myUserName), 8, allGroups));
+		recommendedGroup.addAll(recommenderSystemByGroup(getMostMessageGroup(myUserName), 6, allGroups));
+		recommendedGroup.addAll(recommenderSystemByGroup(getMostBlogCommentReplyGroup(myUserName), 6, allGroups));
 		
 		Collections.shuffle(recommendedGroup);
 		return recommendedGroup;
 
 	}
-
-	private Collection<? extends GroupStudying> recommenderSystemByFavoriteTopic(List<Topic> favoriteTopicsOfUser, int i) {
-		if (favoriteTopicsOfUser.size() == 0) return new ArrayList<GroupStudying>();
-		return null;
+	
+	private Collection<? extends GroupStudying> recommenderSystemByGroup(GroupStudying group, int i, List<GroupStudying> groups) {
+		if (group == null) return new ArrayList<GroupStudying>();
+		
+		List<Integer> list = new ArrayList<>();
+		
+		for (var p : group.getTopics())
+		{
+			list.add(p.getTopicID());
+		}
+		
+		return recommenderSystemByFavoriteTopic(list, i, groups);
 	}
 
-	private Object getFavoriteTopicsOfUser(String myUserName) {
+	private Collection<? extends GroupStudying> recommenderSystemByFavoriteTopic(List<Integer> favoriteTopicsOfUser, int i, List<GroupStudying> groups) {
+		if (favoriteTopicsOfUser.size() == 0) return new ArrayList<GroupStudying>();
+		
+		final int RANGEFOR1TOPIC = 60;
+		final int RANGEFOR2TOPIC = 97;
+		final int RANGEFOR3TOPIC = 119;
+		
+		var recommendedGroup = new ArrayList<GroupStudying>();
+		Collections.shuffle(groups);
+		for(var p : groups)
+		{
+			if (p.getPassWord() == null || p.getPassWord().isBlank() || p.getPassWord().isEmpty())
+			{
+				int relatedTopic = NumberTopicsRelated(p, favoriteTopicsOfUser);
+				int points = CaculatingPoint(p, favoriteTopicsOfUser, relatedTopic);
+				
+				if (relatedTopic == 1 && points >= RANGEFOR1TOPIC)
+				{
+					recommendedGroup.add(p);
+				}
+				else if (relatedTopic == 2 && points >= RANGEFOR2TOPIC)
+				{
+					recommendedGroup.add(p);
+				}
+				else if (relatedTopic == 3 && points >= RANGEFOR3TOPIC)
+				{
+					recommendedGroup.add(p);
+
+				}
+				
+				if (recommendedGroup.size() == i)
+				{
+					break;
+				}
+			}
+		}
+		
+		return recommendedGroup;
+	}
+
+	private int CaculatingPoint(GroupStudying group, List<Integer> favoriteTopicsOfUser, int relatedTopic) {
+		int point = 0;
+		
+		point += PointOfTopic(group, relatedTopic);
+		point += PointOfDateCreated(group);
+		point += PointOfLastTimeEdited(group);
+		point += PointOfUsersSize(group);
+		point += PointOfQuantityDocument(group);
+		point += PointOfQuantitySubject(group);
+		point += PointOfQuantityBlog(group);
+		point += PointOfQuantityMessage(group);
+		
+		return point;
+	}
+
+	private int PointOfTopic(GroupStudying group, int relatedTopic) {
+		if (relatedTopic == 1)
+		{
+			return 30;
+		}
+		else if (relatedTopic == 2)
+		{
+			return 65;
+		}
+		else if (relatedTopic == 3)
+		{
+			return 105;
+		}
+		else
+		{
+			return 0;
+		}		
+	}
+
+	private int PointOfQuantityMessage(GroupStudying group) {
+		if (group.getMessages().size() <= 30)
+		{
+			return 3;
+		}
+		else if (30 < group.getMessages().size() && group.getUsers().size() <= 100)
+		{
+			return 6;
+		}
+		else if (100 < group.getMessages().size() && group.getUsers().size() <= 200)
+		{
+			return 14;
+		}
+		return 25;	
+	}
+
+	private int PointOfQuantityBlog(GroupStudying group) {
+		if (group.getBlogs().size() <= 10)
+		{
+			return 3;
+		}
+		else if (10 < group.getBlogs().size() && group.getUsers().size() <= 30)
+		{
+			return 9;
+		}
+		else if (30 < group.getBlogs().size() && group.getUsers().size() <= 60)
+		{
+			return 20;
+		}
+		return 35;	
+	}
+
+	private int PointOfQuantitySubject(GroupStudying group) {
+		return group.getSubjects().size();
+	}
+
+	private int PointOfQuantityDocument(GroupStudying group) {
+		if (group.getDocuments().size() <= 5)
+		{
+			return 3;
+		}
+		else if (5 < group.getDocuments().size() && group.getUsers().size() <= 15)
+		{
+			return 9;
+		}
+		else if (15 < group.getDocuments().size() && group.getUsers().size() <= 30)
+		{
+			return 20;
+		}
+		return 35;	
+	}
+
+	private int PointOfUsersSize(GroupStudying group) {
+		if (group.getUsers().size() <= 10)
+		{
+			return 2;
+		}
+		else if (10 < group.getUsers().size() && group.getUsers().size() <= 25)
+		{
+			return 5;
+		}
+		else if (25 < group.getUsers().size() && group.getUsers().size() <= 75)
+		{
+			return 18;
+		}
+		else if (75 < group.getUsers().size() && group.getUsers().size() <= 150)
+		{
+			return 40;
+		}
+		return 60;
+	}
+
+	private int PointOfLastTimeEdited(GroupStudying group) {
+		long days = ChronoUnit.DAYS.between(LocalDate.of(group.getLastTimeEdited().getYear(), group.getLastTimeEdited().getMonth() + 1, group.getLastTimeEdited().getDate()), LocalDate.of(new Date().getYear(), new Date().getMonth(), new Date().getDate()));
+		if (days <= 2)
+		{
+			return 2;
+		}
+		else if (2 < days && days <= 5)
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+	private int PointOfDateCreated(GroupStudying group) {
+		long days = ChronoUnit.DAYS.between(LocalDate.of(group.getDateCreated().getYear(), group.getDateCreated().getMonth() + 1, group.getDateCreated().getDate()), LocalDate.of(new Date().getYear(), new Date().getMonth(), new Date().getDate()));
+		if (days < 90)
+		{
+			return 2;
+		}
+		else if (90 <= days && days < 180)
+		{
+			return 4;
+		}
+		else if (180 <= days && days < 360)
+		{
+			return 8;
+		}
+		else 
+		{
+			return 10;
+		}
+	}
+
+	private List<Integer> getFavoriteTopicsOfUser(String myUserName) {
 		List<Integer> favoriteTopic = new ArrayList<>();
 		for(var p : userRepository.getById(myUserName).getInformation().getTopics())
 		{
@@ -400,7 +610,7 @@ public class GroupStudyingService implements GroupManagement {
 		return favoriteTopic;
 	}
 
-	private Object getMostBlogCommentReplyGroup(String myUserName) {
+	private GroupStudying getMostBlogCommentReplyGroup(String myUserName) {
 		GroupStudying group = null;
 		var maxInteraction = 0;
 		for (var p : userRepository.getById(myUserName).getGroups())
@@ -425,13 +635,7 @@ public class GroupStudyingService implements GroupManagement {
 		return group;
 	}
 
-	private Collection<? extends GroupStudying> recommenderSystemByGroup(Object group, int i) {
-		if (group == null) return new ArrayList<GroupStudying>();
-		
-		return null;
-	}
-
-	private Object getMostMessageGroup(String myUserName) {
+	private GroupStudying getMostMessageGroup(String myUserName) {
 		GroupStudying group = null;
 		var maxMessages = 0;
 		for (var p : userRepository.getById(myUserName).getGroups())
