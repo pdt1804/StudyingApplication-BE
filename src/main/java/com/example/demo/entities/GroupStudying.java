@@ -65,6 +65,10 @@ public class GroupStudying {
 	private List<Subject> subjects = new ArrayList<>();
 	@ManyToMany(mappedBy = "groups", fetch = FetchType.LAZY)
     private List<Topic> topics = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "group")
+	@JsonIgnore
+	private List<Review> reviews = new ArrayList<>();
+	private List<String> userNameReviewed = new ArrayList<>();
 	
 	public GroupStudying(int groupID, String imageGroup, String nameGroup, Date dateCreated, Set<User> users, String passWord) {
 		super();
