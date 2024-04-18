@@ -33,7 +33,6 @@ public class Document {
 	private String File;
 	private Date dateUploaded;
 	private DocumentType type;
-	private String publicID;
 	@ManyToOne
 	@JoinColumn(name = "group_id", nullable = true)
 	@JsonIgnore

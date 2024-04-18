@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -25,9 +27,13 @@ import com.example.demo.repositories.GroupStudyingRepository;
 import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.serviceInterfaces.DocumentManagement;
+import com.google.api.client.googleapis.util.Utils;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Bucket;
+import com.google.firebase.cloud.StorageClient;
 
 @Service
-public class DocumentService implements DocumentManagement{
+public class DocumentService implements DocumentManagement {
 
 	@Autowired
 	private DocumentRepository documentRepository;
@@ -51,9 +57,9 @@ public class DocumentService implements DocumentManagement{
 	}
 	 
 	@Override
-	public int addDocument(String file ,int groupID, String userName, String name)
+	public int addDocument(MultipartFile file ,int groupID, String userName)
 	{
-		//String url = file.getOriginalFilename();
+		String name = file.getName();
 		DocumentType type;
 		if (name.endsWith(".doc") || name.endsWith(".docx")) type = DocumentType.word;
 		else if (name.endsWith(".xls") || name.endsWith(".xlsx")) type = DocumentType.excel;
@@ -70,16 +76,18 @@ public class DocumentService implements DocumentManagement{
 
 		try
 		{
-			//Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
-			
-			//Map<String, String> params = ObjectUtils.asMap("folder", "","resource_type", "auto");
-			
-			//Map<String, String> data = cloudinary.uploader().upload(file.getBytes(), params);
 
+			Random rd = new Random();
+			String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+			String url = "https://firebasestorage.googleapis.com/v0/b/findingfriendapplication.appspot.com/o/" + nameOnCloud + "?alt=media";
+			
 			var user = userRepository.getById(userName);
 			var group = groupStudyingRepository.getById(groupID);
 			var doc = new Document().builder()
-					 .user(user).group(group).dateUploaded(new Date()).File(file).type(type).Header(name).build();
+					 .user(user).group(group).dateUploaded(new Date()).File(url).type(type).Header(nameOnCloud).build();
+			
+			Bucket bucket = StorageClient.getInstance().bucket();
+			var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
 			
 			group.getDocuments().add(doc);
 			
@@ -106,7 +114,6 @@ public class DocumentService implements DocumentManagement{
 			}
 			
 			notifycationRepository.save(notifycation);						
-			//int i = documentRepository.save(doc).getDocumentID();
 			userRepository.save(user);
 			
 			return i;
@@ -133,13 +140,16 @@ public class DocumentService implements DocumentManagement{
 			var group = groupStudyingRepository.getById(groupID);
 			var document = documentRepository.getById(documentID);
 			
+			Bucket bucket = StorageClient.getInstance().bucket();
+			Blob blob = bucket.get(document.getHeader());
+	        blob.delete();
+			
 			group.getDocuments().remove(document);
 			groupStudyingRepository.save(group);
 			
 			document.setUser(null);
 			document.setGroup(null);
 			
-			cloudinary.api().deleteResources(Arrays.asList(document.getPublicID()), ObjectUtils.asMap("type", "upload", "resource_type", "raw"));
 			documentRepository.delete(document);
 			
 			return documentID;

@@ -16,7 +16,7 @@ public interface DocumentManagement {
 
 	public Document getDocumentById(int id);
 	
-	public int addDocument(String file ,int groupID, String userName, String name);
+	public int addDocument(MultipartFile file ,int groupID, String userName);
 	
 	public List<Document> getAllDocumentOfGroup(int groupID);
 	

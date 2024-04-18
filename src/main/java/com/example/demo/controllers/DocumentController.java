@@ -33,12 +33,6 @@ public class DocumentController {
 	private DocumentService documentService;
 	
 	@Autowired
-	private Cloudinary cloudinary;
-	
-	@Autowired
-	private DocumentRepository documentRepository;
-	
-	@Autowired
 	private JwtService jwtService;
 	
 	public String extractTokenToGetUsername(HttpServletRequest request)
@@ -62,11 +56,11 @@ public class DocumentController {
 	
 	
 	@PostMapping("/addDocument")
-	public int addDocument(@RequestParam("file") String file, @RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("fileName") String fileName)
+	public int addDocument(@RequestParam("file") MultipartFile file, @RequestParam("groupID") int groupID, HttpServletRequest request)
 	{
 		try
 		{
-			return documentService.addDocument(file, groupID, extractTokenToGetUsername(request), fileName);
+			return documentService.addDocument(file, groupID, extractTokenToGetUsername(request));
 		}
 		catch (Exception e)
 		{
