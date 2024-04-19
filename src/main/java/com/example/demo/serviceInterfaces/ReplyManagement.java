@@ -12,5 +12,5 @@ public interface ReplyManagement {
 
 	public List<Reply> getAllReplyOfComment(int commentID);
 	
-	public void replyComment(int commentID, String userName, Reply reply);
+	public void replyComment(int commentID, String userName, Reply reply, List<String> userNames);
 }

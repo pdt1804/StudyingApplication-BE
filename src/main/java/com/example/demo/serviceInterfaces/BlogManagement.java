@@ -28,7 +28,7 @@ public interface BlogManagement {
 	
 	public void insertImageInBlog(long blogID, MultipartFile file);
 	
-	public long createBlog(int GroupID, String userName, int subjectID, Blog blog);
+	public long createBlog(int GroupID, String userName, int subjectID, Blog blog, List<String> userNames);
 	
 	public void updateBlog(long blogID, String content);
 	

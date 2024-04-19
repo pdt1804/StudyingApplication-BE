@@ -10,7 +10,7 @@ import com.example.demo.entities.NotifycationType;
 
 public interface CommentManagement {
 
-	public void commentBlog(long blogID, String userName, Comment cmt);
+	public void commentBlog(long blogID, String userName, Comment cmt, List<String> userNames);
 	
 	public List<Comment> getAllCommentOfBlog(long blogID);
 }

@@ -38,6 +38,7 @@ public class Notifycation {
     private Date dateSent;
     private NotifycationType notifycationType;
     private String image;
+    private int contentID;
     private String publicID;
     @ManyToOne
     @JoinColumn(name = "group_id", nullable = true)

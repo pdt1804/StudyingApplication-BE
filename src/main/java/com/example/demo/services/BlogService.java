@@ -17,6 +17,7 @@ import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.NotifycationType;
 import com.example.demo.entities.Reply;
 import com.example.demo.entities.Subject;
+import com.example.demo.entities.TagType;
 import com.example.demo.repositories.BlogRepository;
 import com.example.demo.repositories.CommentRepository;
 import com.example.demo.repositories.GroupStudyingRepository;
@@ -281,7 +282,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public long createBlog(int GroupID, String userName, int subjectID, Blog blog)
+	public long createBlog(int GroupID, String userName, int subjectID, Blog blog, List<String> userNames)
 	{
 		var user = userRepository.getById(userName);
 		var group = groupStudyingRepository.getById(GroupID);
@@ -296,6 +297,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 			blog.setSubject(subject);
 						
 			blogRepository.save(blog);
+			
+			sendNotification(userNames, userName, blog.getBlogID(), TagType.BLOG, group.getNameGroup());
 			
 			Notifycation notifycation = new Notifycation().builder()
 					 .Header("Bài thảo luận mới !!!")
@@ -374,7 +377,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public void commentBlog(long blogID, String userName, Comment cmt)
+	public void commentBlog(long blogID, String userName, Comment cmt, List<String> userNames)
 	{
 		var blog = blogRepository.getById(blogID);
 		var sentUser = userRepository.getById(userName);
@@ -384,6 +387,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.setUserComment(sentUser);
 		cmt.setDateComment(new Date());
 		commentRepository.save(cmt);
+		
+		sendNotification(userNames, userName, cmt.getCommentID(), TagType.COMMENT, blog.getGroup().getNameGroup());
 		
 		blog.getComments().add(cmt);
 		blogRepository.save(blog);
@@ -442,7 +447,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public void replyComment(int commentID, String userName, Reply reply)
+	public void replyComment(int commentID, String userName, Reply reply, List<String> userNames)
 	{
 		var cmt = commentRepository.getById(commentID);
 		var sentUser = userRepository.getById(userName);
@@ -454,6 +459,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.getReplies().add(reply);
 		
 		replyRepository.save(reply);
+		sendNotification(userNames, userName, reply.getReplyID(), TagType.REPLY, cmt.getBlog().getGroup().getNameGroup());
+
 		commentRepository.save(cmt);
 		
 		Notifycation notifycation = new Notifycation().builder()
@@ -489,4 +496,45 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		reply.setComment(null);
 		replyRepository.delete(reply);
 	}
+	
+	private void sendNotification(List<String> userNames, String userNameTag, Object id, TagType type, String groupName)
+	{
+		if (userNames.size() == 0) return;
+		
+		String typeName;
+		if (type == TagType.BLOG) typeName = "bài blog";
+		else if (type == TagType.COMMENT) typeName = "1 comment";
+		else typeName = "1 reply";
+		
+		var userTag = userRepository.getById(userNameTag);
+		
+		Notifycation notifycation = new Notifycation().builder()
+				 .Content(userTag.getInformation().getFulName() + " tag bạn vào " + typeName + " trong nhóm " + groupName + ".")
+				 .Header("Bạn đã được tag tên !!!").contentID((int) id)
+				 .dateSent(new Date()).notifycationType(NotifycationType.user).build();	
+		
+		if (notifycation.getUserSeenNotifycation() == null) notifycation.setUserSeenNotifycation(new ArrayList<>());
+		if (notifycation.getUsers() == null) notifycation.setUsers(new ArrayList<>());
+		
+		for (var p : userNames)
+		{
+			var user = userRepository.getById(p);
+			
+			user.getNotifycations().add(notifycation);
+			notifycation.getUsers().add(user);
+			notifycation.getUserSeenNotifycation().add(user);
+			
+			userRepository.save(user);
+		}
+		
+		notifycationRepository.save(notifycation);
+	}
+	
+//	private Notifycation Clone(Notifycation notifycation)
+//	{
+//		return  new Notifycation().builder()
+//				 .Content(notifycation.getContent())
+//				 .Header(notifycation.getHeader()).contentID(notifycation.getContentID())
+//				 .dateSent(new Date()).notifycationType(NotifycationType.user).build();	
+//	}
 }

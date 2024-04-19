@@ -149,9 +149,9 @@ public class BlogController {
 	}
 	
 	@PostMapping("/createNewBlog")
-	public long createNewBlog(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("subjectID") int subjectID, @RequestBody Blog blog)
+	public long createNewBlog(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("subjectID") int subjectID, @RequestBody Blog blog, @RequestParam("userNames") List<String> userNames)
 	{
-		return blogService.createBlog(groupID, extractTokenToGetUsername(request), subjectID, blog);
+		return blogService.createBlog(groupID, extractTokenToGetUsername(request), subjectID, blog, userNames);
 	}
 	
 	@PostMapping("/insertImage")
@@ -186,9 +186,9 @@ public class BlogController {
 	}*/
 	
 	@PostMapping("/commentBlog")
-	public void commentBlog(@RequestParam("blogID") long blogID, HttpServletRequest request, @RequestBody Comment comment)
+	public void commentBlog(@RequestParam("blogID") long blogID, HttpServletRequest request, @RequestBody Comment comment, @RequestParam("userNames") List<String> userNames)
 	{
-		blogService.commentBlog(blogID, extractTokenToGetUsername(request), comment);
+		blogService.commentBlog(blogID, extractTokenToGetUsername(request), comment, userNames);
 	}
 	
 	@PutMapping("/updateComment")
@@ -204,9 +204,9 @@ public class BlogController {
 	}
 	
 	@PostMapping("/replyComment")
-	public void replyComment(@RequestParam("commentID") int commentID, HttpServletRequest request, @RequestBody Reply reply)
+	public void replyComment(@RequestParam("commentID") int commentID, HttpServletRequest request, @RequestBody Reply reply, @RequestParam("userNames") List<String> userNames)
 	{
-		blogService.replyComment(commentID, extractTokenToGetUsername(request), reply);
+		blogService.replyComment(commentID, extractTokenToGetUsername(request), reply, userNames);
 	}
 	
 	@PutMapping("/updateReply")
