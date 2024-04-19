@@ -25,7 +25,7 @@ public interface InformationManagement {
 	
 	public String changeAvatarCloud(MultipartFile image, String userName);
 	
-	public void Initialize(int yearOfBirth, int phoneNumber, String gender, List<Integer> topics, int infoID);
+	public void Initialize(int yearOfBirth, int phoneNumber, String gender, String description, List<Integer> topics, int infoID);
 	
 	public void AddTopic(List<Integer> topics, int infoID);
 	

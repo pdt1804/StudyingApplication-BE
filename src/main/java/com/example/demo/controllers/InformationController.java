@@ -86,11 +86,12 @@ public class InformationController {
 	@PostMapping("/initialize")
 	public void initialize(@RequestParam("yearOfBirth") int yearOfBirth, 
 						   @RequestParam("gender") String gender, 
+						   @RequestParam("description") String description, 
 						   @RequestParam("phoneNumber") int phoneNumber, 
 						   @RequestParam("topics") List<Integer> topics,
 						   @RequestParam("infoID") int infoID)
 	{
-		informationService.Initialize(yearOfBirth, phoneNumber, gender, topics, infoID);
+		informationService.Initialize(yearOfBirth, phoneNumber, gender, description, topics, infoID);
 	}
 	
 	@PostMapping("/AddTopic")

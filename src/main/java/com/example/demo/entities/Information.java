@@ -31,6 +31,8 @@ public class Information {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int InfoID;
 	private String fulName;
+	@Lob
+	private String description;
 	private int PhoneNumber;
 	@Lob
     private String Image;

@@ -106,6 +106,7 @@ public class InformationService implements InformationManagement {
 		var existingInformation = getInformationbyID(information.getInfoID());
 		existingInformation.setFulName(information.getFulName());
 		existingInformation.setYearOfBirth(information.getYearOfBirth());
+		existingInformation.setDescription(information.getDescription());
 		existingInformation.setGender(information.getGender());
 		existingInformation.setPhoneNumber(information.getPhoneNumber());
 		informationRepository.save(existingInformation);
@@ -124,11 +125,12 @@ public class InformationService implements InformationManagement {
 //	} 
 	
 	@Override
-	public void Initialize(int yearOfBirth, int phoneNumber, String gender, List<Integer> topics, int infoID)
+	public void Initialize(int yearOfBirth, int phoneNumber, String gender, String description, List<Integer> topics, int infoID)
 	{
 		var existingInformation = getInformationbyID(infoID);
 		existingInformation.setYearOfBirth(yearOfBirth);
 		existingInformation.setGender(gender);
+		existingInformation.setDescription(description);
 		existingInformation.setPhoneNumber(phoneNumber);
 		for (var p : topics)
 		{
