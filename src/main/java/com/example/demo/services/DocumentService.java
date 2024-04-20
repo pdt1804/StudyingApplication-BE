@@ -108,7 +108,7 @@ public class DocumentService implements DocumentManagement {
 
 			for (var p: group.getUsers())
 			{
-				notifycation.getUserSeenNotifycation().add(p);
+				notifycation.getUserSeenNotifycation().add(p.getUserName());
 				notifycation.getUsers().add(p);
 				p.getNotifycations().add(notifycation);
 			}

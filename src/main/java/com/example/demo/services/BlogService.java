@@ -13,6 +13,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
+import com.example.demo.entities.GroupStudying;
 import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.NotifycationType;
 import com.example.demo.entities.Reply;
@@ -47,6 +48,9 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	
 	@Autowired 
 	private NotifycationRepository notifycationRepository;
+	
+	@Autowired 
+	private NotifycationService notifycationService;
 	
 	@Autowired
 	private GroupStudyingRepository groupStudyingRepository;
@@ -298,8 +302,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 						
 			blogRepository.save(blog);
 			
-			sendNotification(userNames, userName, blog.getBlogID(), TagType.BLOG, group.getNameGroup());
-			
+			sendNotification(userNames, userName, blog.getBlogID(), TagType.BLOG, group);
+						
 			Notifycation notifycation = new Notifycation().builder()
 					 .Header("Bài thảo luận mới !!!")
 					 .Content("Nhóm " + group.getNameGroup() + " có bài thảo luận mới với mã thảo luận là " + blog.getBlogID() + ", click vào đây để xem ")
@@ -315,7 +319,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	
 			for (var p: group.getUsers())
 			{
-				notifycation.getUserSeenNotifycation().add(p);
+				notifycation.getUserSeenNotifycation().add(p.getUserName());
 				notifycation.getUsers().add(p);
 				p.getNotifycations().add(notifycation);
 			}
@@ -388,7 +392,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.setDateComment(new Date());
 		commentRepository.save(cmt);
 		
-		sendNotification(userNames, userName, cmt.getCommentID(), TagType.COMMENT, blog.getGroup().getNameGroup());
+		sendNotification(userNames, userName, cmt.getCommentID(), TagType.COMMENT, blog.getGroup());
 		
 		blog.getComments().add(cmt);
 		blogRepository.save(blog);
@@ -404,7 +408,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		
 		receivedUser.getNotifycations().add(notifycation);
 		notifycation.getUsers().add(receivedUser);
-		notifycation.getUserSeenNotifycation().add(receivedUser);
+		notifycation.getUserSeenNotifycation().add(receivedUser.getUserName());
 		
 		notifycationRepository.save(notifycation); 
 		userRepository.save(sentUser);
@@ -459,7 +463,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.getReplies().add(reply);
 		
 		replyRepository.save(reply);
-		sendNotification(userNames, userName, reply.getReplyID(), TagType.REPLY, cmt.getBlog().getGroup().getNameGroup());
+		sendNotification(userNames, userName, reply.getReplyID(), TagType.REPLY, cmt.getBlog().getGroup());
 
 		commentRepository.save(cmt);
 		
@@ -474,7 +478,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		
 		receivedUser.getNotifycations().add(notifycation);
 		notifycation.getUsers().add(receivedUser);
-		notifycation.getUserSeenNotifycation().add(receivedUser);
+		notifycation.getUserSeenNotifycation().add(receivedUser.getUserName());
 		
 		notifycationRepository.save(notifycation);
 		userRepository.save(sentUser);
@@ -497,7 +501,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		replyRepository.delete(reply);
 	}
 	
-	private void sendNotification(List<String> userNames, String userNameTag, Object id, TagType type, String groupName)
+	private void sendNotification(List<String> userNames, String userNameTag, int id, TagType type, GroupStudying group)
 	{
 		if (userNames.size() == 0) return;
 		
@@ -509,24 +513,29 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		var userTag = userRepository.getById(userNameTag);
 		
 		Notifycation notifycation = new Notifycation().builder()
-				 .Content(userTag.getInformation().getFulName() + " tag bạn vào " + typeName + " trong nhóm " + groupName + ".")
-				 .Header("Bạn đã được tag tên !!!").contentID((int) id)
-				 .dateSent(new Date()).notifycationType(NotifycationType.user).build();	
-		
+				 .Content(userTag.getInformation().getFulName() + " tag bạn vào " + typeName + " trong nhóm " + group.getNameGroup() + ".")
+				 .Header("Bạn đã được tag tên !!!").contentID(id)
+				 .groupStudying(group)
+				 .dateSent(new Date()).notifycationType(NotifycationType.user).build();
+				
 		if (notifycation.getUserSeenNotifycation() == null) notifycation.setUserSeenNotifycation(new ArrayList<>());
 		if (notifycation.getUsers() == null) notifycation.setUsers(new ArrayList<>());
 		
+		notifycationRepository.save(notifycation);
+				
 		for (var p : userNames)
 		{
 			var user = userRepository.getById(p);
 			
 			user.getNotifycations().add(notifycation);
 			notifycation.getUsers().add(user);
-			notifycation.getUserSeenNotifycation().add(user);
+			notifycation.getUserSeenNotifycation().add(user.getUserName());
 			
-			userRepository.save(user);
-		}
-		
+			System.out.println(user.getUserName());
+			System.out.println(notifycation.getNotifycationID());
+
+			userRepository.save(user);			
+		}		
 		notifycationRepository.save(notifycation);
 	}
 	

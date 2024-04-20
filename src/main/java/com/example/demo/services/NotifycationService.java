@@ -68,7 +68,7 @@ public class NotifycationService implements NotificationManagement{
 			for (var p: group.getUsers())
 			{
 				notifycation.getUsers().add(p);
-				notifycation.getUserSeenNotifycation().add(p);
+				notifycation.getUserSeenNotifycation().add(p.getUserName());
 				p.getNotifycations().add(notifycation);
 			}
 			notifycation.setDateSent(new Date());
@@ -121,7 +121,7 @@ public class NotifycationService implements NotificationManagement{
 		var user = userRepository.getById(userName);
 		var notifycation = notifycationRepository.getById(notifycationID);
 		
-		notifycation.getUserSeenNotifycation().remove(user);
+		notifycation.getUserSeenNotifycation().remove(userName);
 		notifycationRepository.save(notifycation);
 		
 		return new NotifycationDTO(notifycation);
@@ -130,8 +130,12 @@ public class NotifycationService implements NotificationManagement{
 	@Override
 	public boolean checkNewNotifycation(String userName, int notifycationID)
 	{
+		System.out.println(notifycationID);
+		System.out.println(userName);
+		System.out.println(notifycationRepository.getById(notifycationID).getUserSeenNotifycation().size());
+		
 		return notifycationRepository.getById(notifycationID).getUserSeenNotifycation()
-				.stream().anyMatch(p -> p.getUserName().equals(userName));
+				.stream().anyMatch(p -> p.equals(userName));
 	}
 
 	@Override

@@ -83,7 +83,7 @@ public class GroupStudyingService implements GroupManagement {
 		notification.setNotifycationType(NotifycationType.admin);
 		notification.getUsers().add(user);
 		notification.setGroupStudying(group);
-		notification.getUserSeenNotifycation().add(user);
+		notification.getUserSeenNotifycation().add(user.getUserName());
 		user.getNotifycations().add(notification);
 		
 		group.getNotifycations().add(notification);

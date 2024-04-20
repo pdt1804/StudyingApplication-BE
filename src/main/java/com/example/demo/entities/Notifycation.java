@@ -48,9 +48,6 @@ public class Notifycation {
     @Column(nullable = true)
     @JsonIgnore
     private List<User> users = new ArrayList<>();
-    @OneToMany
-    @JsonIgnore
-    @JoinColumn(name="username_notifycation", nullable = true)
-    private List<User> userSeenNotifycation = new ArrayList<>();
+    private List<String> userSeenNotifycation = new ArrayList<>();
 	
 }

@@ -33,7 +33,7 @@ public class Blog {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long blogID;
+	private int blogID;
 	@Column(columnDefinition = "TEXT")
 	private String Content;
 	@Lob
