@@ -36,9 +36,7 @@ public class Blog {
 	private int blogID;
 	@Column(columnDefinition = "TEXT")
 	private String Content;
-	@Lob
-	private String image;
-	private String publicID;
+	private List<String> image = new ArrayList<String>();
 	private List<String> likes = new ArrayList<String>();
 	private Date dateCreated;
 	@ManyToOne

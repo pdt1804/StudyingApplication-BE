@@ -3,12 +3,14 @@ package com.example.demo.serviceInterfaces;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.NotifycationType;
+import com.example.demo.entities.UpdateBlogRequest;
 
 public interface BlogManagement {
 
@@ -28,9 +30,9 @@ public interface BlogManagement {
 	
 	public void insertImageInBlog(long blogID, MultipartFile file);
 	
-	public long createBlog(int GroupID, String userName, int subjectID, Blog blog, List<String> userNames);
+	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames, List<MultipartFile> files);
 	
-	public void updateBlog(long blogID, String content);
+	public void updateBlog(long blogID, String content, List<UpdateBlogRequest> requests) throws java.io.IOException;
 	
 	public void deleteBlog(long blogID);
 }

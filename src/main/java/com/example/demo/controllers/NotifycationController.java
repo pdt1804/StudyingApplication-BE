@@ -37,9 +37,12 @@ public class NotifycationController {
 	}
 	
 	@PostMapping("/create")
-	public int createNotifycation(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestBody Notifycation notifycation)
+	public int createNotifycation(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("header") String header, @RequestParam("content") String content, @RequestParam("files") List<MultipartFile> files)
 	{
-		return notifycationService.createNotifycation(groupID, extractTokenToGetUsername(request), notifycation);
+		Notifycation notification = new Notifycation();
+		notification.setContent(content);
+		notification.setHeader(header);
+		return notifycationService.createNotifycation(groupID, extractTokenToGetUsername(request), notification, files);
 	}
 	
 	@PostMapping("/insertImage")

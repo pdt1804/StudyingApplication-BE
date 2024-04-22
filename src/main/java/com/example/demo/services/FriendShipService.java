@@ -165,6 +165,9 @@ public class FriendShipService implements FriendShipManagement{
 	@Override
 	public void acceptToAddFriend(String sentUserName, String myUserName)
 	{
+		System.out.println(sentUserName);
+		System.out.println(myUserName);
+
 		var friendShip = friendShipRepository.findAll().stream().filter(p -> 
 		{
 			return (p.getFriend().getUserName().equals(myUserName) 

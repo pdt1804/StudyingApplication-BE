@@ -3,6 +3,9 @@ package com.example.demo.services;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +19,18 @@ import com.example.demo.DTO.NotifycationDTO;
 import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.NotifycationStatus;
 import com.example.demo.entities.NotifycationType;
+import com.example.demo.entities.Reply;
 import com.example.demo.repositories.GroupStudyingRepository;
 import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.UserRepository;
 import com.example.demo.serviceInterfaces.NotificationManagement;
+import com.google.cloud.storage.Bucket;
+import com.google.firebase.cloud.StorageClient;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class NotifycationService implements NotificationManagement{
 
 	@Autowired
@@ -45,7 +54,7 @@ public class NotifycationService implements NotificationManagement{
 			if (notification != null)
 			{
 		        Map<String, String> data = this.cloudinary.uploader().upload(image.getBytes(), Map.of());
-		        notification.setImage(data.get("url"));
+		        notification.getImages().add(data.get("url"));
 		        notification.setPublicID(data.get("public_id"));
 		        notifycationRepository.save(notification);
 			}
@@ -55,7 +64,7 @@ public class NotifycationService implements NotificationManagement{
 	}
 	
 	@Override
-	public int createNotifycation(int groupID, String userName, Notifycation notifycation)
+	public int createNotifycation(int groupID, String userName, Notifycation notifycation, List<MultipartFile> files)
 	{
 		try
 		{
@@ -73,6 +82,8 @@ public class NotifycationService implements NotificationManagement{
 			}
 			notifycation.setDateSent(new Date());
 			notifycationRepository.save(notifycation);
+			
+			UploadImageToFirebaseForNotification(notifycation.getNotifycationID(), files);
 			userRepository.save(user);
 			groupStudyingRepository.save(group);
 			
@@ -82,6 +93,26 @@ public class NotifycationService implements NotificationManagement{
 		{
 			e.printStackTrace();
 			return -1;
+		}
+	}
+	
+	private void UploadImageToFirebaseForNotification(int id, List<MultipartFile> files) throws java.io.IOException
+	{
+		Notifycation obj = notifycationRepository.getById(id);;
+		
+		if (obj != null)
+		{
+			for (var file : files)
+			{
+				Random rd = new Random();
+				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+				Bucket bucket = StorageClient.getInstance().bucket();
+				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+				
+				obj.getImages().add(nameOnCloud);
+			}
+			
+			notifycationRepository.save(obj);
 		}
 	}
 
@@ -155,7 +186,7 @@ public class NotifycationService implements NotificationManagement{
 			var notifycation = notifycationRepository.getById(notifycationID);
 			var group = groupStudyingRepository.getById(groupID);
 			
-			if (notifycation.getGroupStudying().equals(group) && group.getLeaderOfGroup().equals(user) && group.getLeaderOfGroup().getUserName().equals(user.getUserName()))
+			if (notifycation.getGroupStudying().getGroupID() == group.getGroupID() && group.getLeaderOfGroup().getUserName().equals(user.getUserName()) && group.getLeaderOfGroup().getUserName().equals(user.getUserName()))
 			{
 				group.getNotifycations().remove(notifycation);
 				notifycation.setGroupStudying(null);
@@ -169,10 +200,14 @@ public class NotifycationService implements NotificationManagement{
 				groupStudyingRepository.save(group);
 				userRepository.save(user);
 				
-				if (notifycation.getPublicID() != null)
+				if (notifycation.getImages().size() > 0)
 				{
-					this.cloudinary.uploader().destroy(notifycation.getPublicID(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+					for (var p : notifycation.getImages())
+					{
+						StorageClient.getInstance().bucket().get(p).delete();											
+					}
 				}
+								
 				notifycationRepository.delete(notifycation);
 				
 				return "Successful";

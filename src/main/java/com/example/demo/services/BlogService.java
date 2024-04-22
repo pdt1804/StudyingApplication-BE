@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,12 +15,15 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
+import com.example.demo.entities.Document;
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.NotifycationType;
 import com.example.demo.entities.Reply;
 import com.example.demo.entities.Subject;
 import com.example.demo.entities.TagType;
+import com.example.demo.entities.TypeRequest;
+import com.example.demo.entities.UpdateBlogRequest;
 import com.example.demo.repositories.BlogRepository;
 import com.example.demo.repositories.CommentRepository;
 import com.example.demo.repositories.GroupStudyingRepository;
@@ -30,6 +35,11 @@ import com.example.demo.serviceInterfaces.BlogManagement;
 import com.example.demo.serviceInterfaces.CommentManagement;
 import com.example.demo.serviceInterfaces.ReplyManagement;
 import com.example.demo.serviceInterfaces.SubjectManagement;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Bucket;
+import com.google.firebase.cloud.StorageClient;
+
+import io.jsonwebtoken.io.IOException;
 
 @Service
 public class BlogService implements SubjectManagement, BlogManagement, CommentManagement, ReplyManagement {
@@ -186,15 +196,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		try
 		{
 			var blog = blogRepository.getById(blogID);
-			
-			if (blog.getPublicID() != null)
-			{
-				this.cloudinary.uploader().destroy(blog.getPublicID(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
-			}
-			
 			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
-			blog.setImage(data.get("url"));
-			blog.setPublicID(data.get("public_id"));
+			blog.getImage().add(data.get("url"));
 			blogRepository.save(blog);
 		}        
 		catch (Exception e)
@@ -286,7 +289,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public long createBlog(int GroupID, String userName, int subjectID, Blog blog, List<String> userNames)
+	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames, List<MultipartFile> files)
 	{
 		var user = userRepository.getById(userName);
 		var group = groupStudyingRepository.getById(GroupID);
@@ -294,6 +297,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		
 		try
 		{
+			var blog = new Blog();
+			blog.setContent(content);
 			blog.setDateCreated(new Date());
 			//blog.setLikeCount(0);
 			blog.setUserCreated(user);
@@ -301,6 +306,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 			blog.setSubject(subject);
 						
 			blogRepository.save(blog);
+			
+			UploadImageToFirebaseForBlog(blog.getBlogID(), files);
 			
 			sendNotification(userNames, userName, blog.getBlogID(), TagType.BLOG, group);
 						
@@ -336,6 +343,65 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		}
 	}
 	
+	private void UploadImageToFirebaseForBlog(long id, List<MultipartFile> files) throws java.io.IOException
+	{
+		Blog obj = blogRepository.getById(id);;
+		
+		if (obj != null)
+		{
+			for (var file : files)
+			{
+				Random rd = new Random();
+				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+				Bucket bucket = StorageClient.getInstance().bucket();
+				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+				
+				obj.getImage().add(nameOnCloud);
+				blogRepository.save(obj);
+			}
+		}
+	}
+	
+	private void UploadImageToFirebaseForComment(int id, List<MultipartFile> files) throws java.io.IOException
+	{
+		Comment obj = commentRepository.getById(id);;
+		
+		if (obj != null)
+		{
+			for (var file : files)
+			{
+				Random rd = new Random();
+				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+				Bucket bucket = StorageClient.getInstance().bucket();
+				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+				
+				obj.getImages().add(nameOnCloud);
+			}
+			
+			commentRepository.save(obj);
+		}
+	}
+	
+	private void UploadImageToFirebaseForReply(int id, List<MultipartFile> files) throws java.io.IOException
+	{
+		Reply obj = replyRepository.getById(id);;
+		
+		if (obj != null)
+		{
+			for (var file : files)
+			{
+				Random rd = new Random();
+				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+				Bucket bucket = StorageClient.getInstance().bucket();
+				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+				
+				obj.getImages().add(nameOnCloud);
+			}
+			
+			replyRepository.save(obj);
+		}
+	}
+	
 	/*
 	public void likeBlog(long blogID)
 	{
@@ -345,14 +411,48 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}*/
 	
 	@Override
-	public void updateBlog(long blogID, String content)
+	public void updateBlog(long blogID, String content, List<UpdateBlogRequest> requests) throws java.io.IOException
 	{
 		var existingBlog = blogRepository.getById(blogID);
-		existingBlog.setContent(content);
-		existingBlog.setDateCreated(new Date());
-		blogRepository.save(existingBlog);
+
+		if (existingBlog != null)
+		{
+			if (requests.size() > 0)
+			{
+				for (var p : requests)
+				{
+					ExecuteRequest(existingBlog, p);
+				}
+			}
+			
+			if (content != null)
+			{	
+				existingBlog.setContent(content);
+			}
+			
+			existingBlog.setDateCreated(new Date());
+			blogRepository.save(existingBlog);
+		}
 	}
 	
+	private void ExecuteRequest(Blog blog, UpdateBlogRequest p) throws java.io.IOException {
+		Bucket bucket = StorageClient.getInstance().bucket();
+		
+		if (p.getType() == TypeRequest.ADD)
+		{
+			Random rd = new Random();
+			String nameOnCloud = p.getFile().getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+			bucket.create(nameOnCloud, p.getFile().getBytes(), p.getFile().getContentType());
+			
+			blog.getImage().add(nameOnCloud);
+		}
+		else if (p.getType() == TypeRequest.REMOVE)
+		{
+			bucket.get(p.getFileName()).delete();
+			blog.getImage().remove(p.getFileName());
+		}
+	}
+
 	@Override
 	public void deleteBlog(long blogID)
 	{
@@ -368,11 +468,10 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 				deleteComment(p.getCommentID());
 			}
 			blog.setComments(null);
-			if(blog.getPublicID() != null)
-			{
-				this.cloudinary.uploader().destroy(blog.getPublicID(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
-			}
 			blogRepository.delete(blog);
+			
+			deleteFiles(blog.getImage());
+
 		}
 		catch (Exception e)
 		{
@@ -381,16 +480,28 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public void commentBlog(long blogID, String userName, Comment cmt, List<String> userNames)
+	public void commentBlog(long blogID, String userName, String content, List<String> userNames, List<MultipartFile> files)
 	{
 		var blog = blogRepository.getById(blogID);
 		var sentUser = userRepository.getById(userName);
 		var receivedUser = blog.getUserCreated();
 		
+		var cmt = new Comment();
+		cmt.setContent(content);
+		
 		cmt.setBlog(blog);
 		cmt.setUserComment(sentUser);
 		cmt.setDateComment(new Date());
+		cmt.setImages(new ArrayList<>());
+
 		commentRepository.save(cmt);
+		
+		try {
+			UploadImageToFirebaseForComment(cmt.getCommentID(), files);
+		} catch (java.io.IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		sendNotification(userNames, userName, cmt.getCommentID(), TagType.COMMENT, blog.getGroup());
 		
@@ -436,6 +547,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		
 		cmt.setReplies(null);
 		commentRepository.delete(cmt);
+		
+		deleteFiles(cmt.getImages());
 	}
 	
 	@Override
@@ -451,18 +564,30 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public void replyComment(int commentID, String userName, Reply reply, List<String> userNames)
+	public void replyComment(int commentID, String userName, String content, List<String> userNames, List<MultipartFile> files)
 	{
 		var cmt = commentRepository.getById(commentID);
 		var sentUser = userRepository.getById(userName);
 		var receivedUser = cmt.getUserComment();
 		
+		var reply = new Reply();
+		reply.setContent(content);
+		
 		reply.setDateReplied(new Date());
 		reply.setUserReplied(sentUser);
 		reply.setComment(cmt);
 		cmt.getReplies().add(reply);
+		reply.setImages(new ArrayList<>());
 		
 		replyRepository.save(reply);
+		
+		try {
+			UploadImageToFirebaseForReply(reply.getReplyID(), files);
+		} catch (java.io.IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		sendNotification(userNames, userName, reply.getReplyID(), TagType.REPLY, cmt.getBlog().getGroup());
 
 		commentRepository.save(cmt);
@@ -499,8 +624,21 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		reply.setUserReplied(null);
 		reply.setComment(null);
 		replyRepository.delete(reply);
+		
+		deleteFiles(reply.getImages());
 	}
 	
+	private void deleteFiles(List<String> images) {
+		if (images.size() == 0) return;
+		
+		for (var p : images)
+		{
+			Bucket bucket = StorageClient.getInstance().bucket();
+			Blob blob = bucket.get(p);
+	        blob.delete();
+		}
+	}
+
 	private void sendNotification(List<String> userNames, String userNameTag, int id, TagType type, GroupStudying group)
 	{
 		if (userNames.size() == 0) return;
@@ -530,9 +668,37 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 			user.getNotifycations().add(notifycation);
 			notifycation.getUsers().add(user);
 			notifycation.getUserSeenNotifycation().add(user.getUserName());
+
+			userRepository.save(user);			
+		}		
+		notifycationRepository.save(notifycation);
+	}
+	
+	public void resendNotificationForBlog(List<String> userNames, String userNameTag, int groupID, int blogID)
+	{
+		if (userNames.size() == 0) return;
+		
+		var userTag = userRepository.getById(userNameTag);
+		var group = groupStudyingRepository.getById(groupID);
+		
+		Notifycation notifycation = new Notifycation().builder()
+				 .Content(userTag.getInformation().getFulName() + " tag bạn vào 1 bài viết trong nhóm " + group.getNameGroup() + ".")
+				 .Header("Bạn đã được tag tên !!!").contentID(blogID)
+				 .groupStudying(group)
+				 .dateSent(new Date()).notifycationType(NotifycationType.user).build();
+				
+		if (notifycation.getUserSeenNotifycation() == null) notifycation.setUserSeenNotifycation(new ArrayList<>());
+		if (notifycation.getUsers() == null) notifycation.setUsers(new ArrayList<>());
+		
+		notifycationRepository.save(notifycation);
+				
+		for (var p : userNames)
+		{
+			var user = userRepository.getById(p);
 			
-			System.out.println(user.getUserName());
-			System.out.println(notifycation.getNotifycationID());
+			user.getNotifycations().add(notifycation);
+			notifycation.getUsers().add(user);
+			notifycation.getUserSeenNotifycation().add(user.getUserName());
 
 			userRepository.save(user);			
 		}		

@@ -1,6 +1,8 @@
 package com.example.demo.entities;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -32,6 +34,7 @@ public class MessageUser {
 	@Lob
 	private String Content;
 	private Date dateSent;
+    private List<String> images = new ArrayList<>();
 	private MessageUserStatus status;
     @ManyToOne
     @JoinColumn(name = "sent_username")

@@ -20,6 +20,7 @@ import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
 import com.example.demo.entities.Reply;
 import com.example.demo.entities.Subject;
+import com.example.demo.entities.UpdateBlogRequest;
 import com.example.demo.services.BlogService;
 import com.example.demo.services.JwtService;
 
@@ -149,9 +150,9 @@ public class BlogController {
 	}
 	
 	@PostMapping("/createNewBlog")
-	public long createNewBlog(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("subjectID") int subjectID, @RequestBody Blog blog, @RequestParam("userNames") List<String> userNames)
+	public long createNewBlog(@RequestParam("groupID") int groupID, @RequestParam("content") String content, HttpServletRequest request, @RequestParam("subjectID") int subjectID, @RequestParam("userNames") List<String> userNames, @RequestParam("files") List<MultipartFile> files)
 	{
-		return blogService.createBlog(groupID, extractTokenToGetUsername(request), subjectID, blog, userNames);
+		return blogService.createBlog(groupID, extractTokenToGetUsername(request), content, subjectID, userNames, files);
 	}
 	
 	@PostMapping("/insertImage")
@@ -160,16 +161,22 @@ public class BlogController {
 		blogService.insertImageInBlog(blogID, file);
 	}
 	
-	@PutMapping("/updateBlog")
-	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content)
+	@PutMapping("/updateBlog") 
+	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, @RequestParam("requestImages") List<UpdateBlogRequest> requests) throws java.io.IOException
 	{
-		blogService.updateBlog(blogID, content);
+		blogService.updateBlog(blogID, content, requests);
 	}
 	
 	@DeleteMapping("/deleteBlog")
 	public void deleteBlog(@RequestParam("blogID") long blogID)
 	{
 		blogService.deleteBlog(blogID);
+	}
+	
+	@PostMapping("/reSendNotificationForBlog")
+	public void resendNotificationForBlog(@RequestParam("blogID") int blogID, @RequestParam("groupID") int groupID, @RequestParam("userNames") List<String> userNames, HttpServletRequest request)
+	{
+		blogService.resendNotificationForBlog(userNames, extractTokenToGetUsername(request), groupID, blogID);
 	}
 	
 	@DeleteMapping("/sureToDeleteSubject")
@@ -186,9 +193,9 @@ public class BlogController {
 	}*/
 	
 	@PostMapping("/commentBlog")
-	public void commentBlog(@RequestParam("blogID") long blogID, HttpServletRequest request, @RequestBody Comment comment, @RequestParam("userNames") List<String> userNames)
+	public void commentBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, HttpServletRequest request , @RequestParam("userNames") List<String> userNames, @RequestParam("files") List<MultipartFile> files)
 	{
-		blogService.commentBlog(blogID, extractTokenToGetUsername(request), comment, userNames);
+		blogService.commentBlog(blogID, extractTokenToGetUsername(request), content, userNames, files);
 	}
 	
 	@PutMapping("/updateComment")
@@ -204,9 +211,9 @@ public class BlogController {
 	}
 	
 	@PostMapping("/replyComment")
-	public void replyComment(@RequestParam("commentID") int commentID, HttpServletRequest request, @RequestBody Reply reply, @RequestParam("userNames") List<String> userNames)
+	public void replyComment(@RequestParam("commentID") int commentID, HttpServletRequest request, @RequestParam("content") String content, @RequestParam("userNames") List<String> userNames, @RequestParam("files") List<MultipartFile> files)
 	{
-		blogService.replyComment(commentID, extractTokenToGetUsername(request), reply, userNames);
+		blogService.replyComment(commentID, extractTokenToGetUsername(request), content, userNames, files);
 	}
 	
 	@PutMapping("/updateReply")

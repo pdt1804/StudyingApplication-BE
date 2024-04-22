@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.DTO.MessageGroupPayload;
 import com.example.demo.entities.MessageUser;
@@ -66,12 +67,12 @@ public class MessageUserController {
 	}
 	
 	@PostMapping("/sendMessageForUser")
-	public long sendMessageForUser(@RequestParam("messContent") String content, HttpServletRequest request, @RequestParam("toUserName") String toUserName)
+	public long sendMessageForUser(@RequestParam("messContent") String content, HttpServletRequest request, @RequestParam("toUserName") String toUserName, @RequestParam("files") List<MultipartFile> files)
 	{
 		var mess = new MessageUser();
 		mess.setContent(content);
 		
-		return messageUserService.sendMessage(mess, extractTokenToGetUsername(request), toUserName);
+		return messageUserService.sendMessage(mess, extractTokenToGetUsername(request), toUserName, files);
 	}
 	
 	@MessageMapping("/sendMessForUser")

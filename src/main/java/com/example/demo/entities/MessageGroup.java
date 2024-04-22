@@ -34,6 +34,7 @@ public class MessageGroup {
 	@Lob
 	private String Content;
 	private Date dateSent;
+    private List<String> images = new ArrayList<>();
 	@OneToMany
 	@JoinColumn(name = "status_user_name", nullable = true)
 	@JsonIgnore

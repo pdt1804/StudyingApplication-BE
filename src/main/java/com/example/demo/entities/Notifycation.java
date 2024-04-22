@@ -37,7 +37,7 @@ public class Notifycation {
 	private String Content;
     private Date dateSent;
     private NotifycationType notifycationType;
-    private String image;
+    private List<String> images = new ArrayList<>();
     private int contentID;
     private String publicID;
     @ManyToOne

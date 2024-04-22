@@ -1,6 +1,7 @@
 package com.example.demo.DTO;
 
 import java.util.Date;
+import java.util.List;
 
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.entities.Notifycation;
@@ -15,7 +16,7 @@ public class NotifycationDTO {
 	private int notifycationID;
 	private String Header;
 	private String Content;
-	private String image;
+	private List<String> images;
     private Date dateSent;
     private GroupStudyingDTO group;
     private int documentID;
@@ -27,7 +28,7 @@ public class NotifycationDTO {
     	this.Header = notifycation.getHeader();
     	this.Content = notifycation.getContent();
     	this.dateSent = notifycation.getDateSent();
-    	this.image = notifycation.getImage();
+    	this.images = notifycation.getImages();
 
         if (notifycation.getGroupStudying() != null) {
         	this.group = new GroupStudyingDTO(notifycation.getGroupStudying());
