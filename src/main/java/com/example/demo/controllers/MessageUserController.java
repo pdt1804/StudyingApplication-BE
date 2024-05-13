@@ -1,5 +1,6 @@
 package com.example.demo.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +68,18 @@ public class MessageUserController {
 	}
 	
 	@PostMapping("/sendMessageForUser")
-	public long sendMessageForUser(@RequestParam("messContent") String content, HttpServletRequest request, @RequestParam("toUserName") String toUserName, @RequestParam("files") List<MultipartFile> files)
+	public long sendMessageForUser(@RequestParam("messContent") String content, HttpServletRequest request, @RequestParam("toUserName") String toUserName)
 	{
 		var mess = new MessageUser();
 		mess.setContent(content);
 		
-		return messageUserService.sendMessage(mess, extractTokenToGetUsername(request), toUserName, files);
+		return messageUserService.sendMessage(mess, extractTokenToGetUsername(request), toUserName);
+	}
+	
+	@PostMapping("/uploadImages")
+	public void uploadImages(@RequestParam("messId") long messId, @RequestParam("files") List<MultipartFile> files) throws IOException
+	{	
+		messageUserService.UploadImageToFirebaseForMessage(messId, files);
 	}
 	
 	@MessageMapping("/sendMessForUser")

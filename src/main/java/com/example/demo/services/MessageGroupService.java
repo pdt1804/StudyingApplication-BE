@@ -36,7 +36,7 @@ public class MessageGroupService implements MessageGroupManagement {
 	private UserRepository userRepository;
 	
 	@Override
-	public long sendMessage(MessageGroup mess, int groupID, String userName, List<MultipartFile> files)
+	public long sendMessage(MessageGroup mess, int groupID, String userName)
 	{
 		try
 		{
@@ -53,9 +53,7 @@ public class MessageGroupService implements MessageGroupManagement {
 			mess.setUser(user);
 			mess.setDateSent(new Date());
 			messageGroupRepository.save(mess);
-			
-			UploadImageToFirebaseForMessage(mess.getID(), files);
-			
+						
 			group.getMessages().add(mess);
 			group.setLastTimeEdited(new Date());
 			groupStudyingRepository.save(group);
@@ -70,9 +68,11 @@ public class MessageGroupService implements MessageGroupManagement {
 		}
 	}
 	
-	private void UploadImageToFirebaseForMessage(long id, List<MultipartFile> files) throws java.io.IOException
+	public void UploadImageToFirebaseForMessage(long id, List<MultipartFile> files) throws java.io.IOException
 	{
 		MessageGroup obj = messageGroupRepository.getById(id);;
+		
+		if (files.size() == 0) return;
 		
 		if (obj != null)
 		{

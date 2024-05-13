@@ -11,7 +11,7 @@ import com.example.demo.entities.User;
 
 public interface MessageGroupManagement {
 
-	public long sendMessage(MessageGroup mess, int groupID, String userName, List<MultipartFile> files);
+	public long sendMessage(MessageGroup mess, int groupID, String userName);
 	
 	public List<MessageGroup> loadMessage(String myUserName, int groupID);
 	

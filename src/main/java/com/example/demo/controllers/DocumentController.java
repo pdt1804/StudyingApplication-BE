@@ -51,6 +51,7 @@ public class DocumentController {
 	@GetMapping("/getDocumentById")
 	public DocumentDTO getDocumentById(@RequestParam("documentID") int documentID)
 	{
+		System.out.println(documentID);
 		return new DocumentDTO(documentService.getDocumentById(documentID));
 	}
 	

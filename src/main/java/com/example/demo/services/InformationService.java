@@ -33,6 +33,9 @@ public class InformationService implements InformationManagement {
 	private Cloudinary cloudinary;
 	
 	@Autowired
+	private CloudinaryService cloudinaryService;
+	
+	@Autowired
 	private UserService userService;
 	
 	@Autowired
@@ -41,30 +44,7 @@ public class InformationService implements InformationManagement {
 	@Override
 	public String changeAvatarCloud(MultipartFile image, String userName)
 	{
-		try{
-           Map<String, String> data = this.cloudinary.uploader().upload(image.getBytes(), Map.of());
-           User user = userService.GetUserByUsername(userName);
-			if (user == null)
-			{ 
-				return "Không tồn tại tài khoản";
-			}
-			else
-			{
-				if (user.getInformation().getPublicID() != null)
-				{
-					this.cloudinary.uploader().destroy(user.getInformation().getPublicID(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
-				}
-				
-				user.getInformation().setPublicID(data.get("public_id"));
-				user.getInformation().setImage(data.get("url"));
-				userService.changeAvatar(user);
-				System.out.println("thanhf coong");
-				return "Thay đổi ảnh thành công";
-			}
-        }catch (IOException io){
-            throw new RuntimeException("Image upload fail");
-            //return "That bai";
-        }
+		return cloudinaryService.uploadImageAvatar(image, userName);
 	}
 	
 	@Override

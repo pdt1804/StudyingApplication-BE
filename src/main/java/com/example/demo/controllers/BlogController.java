@@ -1,9 +1,11 @@
 package com.example.demo.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -150,9 +152,20 @@ public class BlogController {
 	}
 	
 	@PostMapping("/createNewBlog")
-	public long createNewBlog(@RequestParam("groupID") int groupID, @RequestParam("content") String content, HttpServletRequest request, @RequestParam("subjectID") int subjectID, @RequestParam("userNames") List<String> userNames, @RequestParam("files") List<MultipartFile> files)
+	public long createNewBlog(@RequestParam("groupID") int groupID, 
+							  @RequestParam("content") String content, HttpServletRequest request, 
+							  @RequestParam("subjectID") int subjectID, 
+							  @RequestParam("userNames") List<String> userNames)
 	{
-		return blogService.createBlog(groupID, extractTokenToGetUsername(request), content, subjectID, userNames, files);
+		return blogService.createBlog(groupID, extractTokenToGetUsername(request), content, subjectID, userNames);
+	}
+	
+	@PostMapping(value = "/uploadImage")
+	public void uploadBlogImage(@RequestParam("blogID") int blogID, 
+				     			@RequestParam("file") MultipartFile file) throws IOException
+	{
+		System.out.println(file);
+		blogService.UploadImageToCloudinaryForBlog(blogID, file);
 	}
 	
 	@PostMapping("/insertImage")
@@ -193,9 +206,15 @@ public class BlogController {
 	}*/
 	
 	@PostMapping("/commentBlog")
-	public void commentBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, HttpServletRequest request , @RequestParam("userNames") List<String> userNames, @RequestParam("files") List<MultipartFile> files)
+	public int commentBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, HttpServletRequest request , @RequestParam("userNames") List<String> userNames)
 	{
-		blogService.commentBlog(blogID, extractTokenToGetUsername(request), content, userNames, files);
+		return blogService.commentBlog(blogID, extractTokenToGetUsername(request), content, userNames);
+	}
+	
+	@PostMapping("/insertImageInComment")
+	public void insertImageInComment(@RequestParam("commentID") int commentID, @RequestParam("file") MultipartFile file)
+	{
+		blogService.insertImageInComment(commentID, file);
 	}
 	
 	@PutMapping("/updateComment")
@@ -205,15 +224,21 @@ public class BlogController {
 	}
 	
 	@DeleteMapping("/deleteComment")
-	public void deleteComment(@RequestParam("commentID") int commentID)
+	public void deleteComment(@RequestParam("commentID") int commentID) throws IOException
 	{
 		blogService.deleteComment(commentID);
 	}
 	
 	@PostMapping("/replyComment")
-	public void replyComment(@RequestParam("commentID") int commentID, HttpServletRequest request, @RequestParam("content") String content, @RequestParam("userNames") List<String> userNames, @RequestParam("files") List<MultipartFile> files)
+	public int replyComment(@RequestParam("commentID") int commentID, HttpServletRequest request, @RequestParam("content") String content, @RequestParam("userNames") List<String> userNames)
 	{
-		blogService.replyComment(commentID, extractTokenToGetUsername(request), content, userNames, files);
+		return blogService.replyComment(commentID, extractTokenToGetUsername(request), content, userNames);
+	}
+	
+	@PostMapping("/insertImageInReply")
+	public void insertImageInReply(@RequestParam("replyID") int replyID, @RequestParam("file") MultipartFile file)
+	{
+		blogService.insertImageInReply(replyID, file);
 	}
 	
 	@PutMapping("/updateReply")
@@ -223,7 +248,7 @@ public class BlogController {
 	}
 	
 	@DeleteMapping("/deleteReply")
-	public void deleteReply(@RequestParam("replyID") int replyID)
+	public void deleteReply(@RequestParam("replyID") int replyID) throws IOException
 	{
 		blogService.deleteReply(replyID);
 	}

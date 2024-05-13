@@ -15,7 +15,7 @@ public interface MessageUserManagement {
 
 	public User getSentUser(long id);
 	
-	public long sendMessage(MessageUser mess, String fromUserName, String toUserName, List<MultipartFile> files);
+	public long sendMessage(MessageUser mess, String fromUserName, String toUserName);
 	
 	public List<MessageUser> loadMessageInUser(String fromUserName, String toUserName);
 	

@@ -41,6 +41,7 @@ public class SecurityConfig {
         return http.csrf().disable().cors().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/user/**").permitAll()
+                .requestMatchers("/api/v1/information/getAllTopics").permitAll()
                 .requestMatchers("/ws").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/api/v1/group/messagegroup/sendMess").permitAll()

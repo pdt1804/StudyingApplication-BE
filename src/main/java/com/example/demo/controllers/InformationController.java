@@ -91,6 +91,7 @@ public class InformationController {
 						   @RequestParam("topics") List<Integer> topics,
 						   @RequestParam("infoID") int infoID)
 	{
+		System.out.println(yearOfBirth);
 		informationService.Initialize(yearOfBirth, phoneNumber, gender, description, topics, infoID);
 	}
 	

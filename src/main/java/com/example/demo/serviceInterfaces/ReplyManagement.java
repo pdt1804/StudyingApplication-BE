@@ -14,5 +14,5 @@ public interface ReplyManagement {
 
 	public List<Reply> getAllReplyOfComment(int commentID);
 	
-	public void replyComment(int commentID, String userName, String content, List<String> userNames, List<MultipartFile> files);
+	public int replyComment(int commentID, String userName, String content, List<String> userNames);
 }

@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.demo.config.CloudinaryService;
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
 import com.example.demo.entities.Document;
@@ -49,6 +50,9 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	
 	@Autowired
 	private SubjectRepository subjectRepository;
+	
+	@Autowired
+	private CloudinaryService cloudinaryService;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -197,8 +201,38 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		{
 			var blog = blogRepository.getById(blogID);
 			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
-			blog.getImage().add(data.get("url"));
+			blog.getImage().add(data.get("url") + "-" + data.get("public_id"));
 			blogRepository.save(blog);
+		}        
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void insertImageInComment(int commentID, MultipartFile file)
+	{
+		try
+		{
+			var cmt = commentRepository.getById(commentID);
+			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
+			cmt.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			commentRepository.save(cmt);
+		}        
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void insertImageInReply(int replyID, MultipartFile file)
+	{
+		try
+		{
+			var rep = replyRepository.getById(replyID);
+			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
+			rep.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			replyRepository.save(rep);
 		}        
 		catch (Exception e)
 		{
@@ -289,7 +323,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames, List<MultipartFile> files)
+	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames)
 	{
 		var user = userRepository.getById(userName);
 		var group = groupStudyingRepository.getById(GroupID);
@@ -306,9 +340,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 			blog.setSubject(subject);
 						
 			blogRepository.save(blog);
-			
-			UploadImageToFirebaseForBlog(blog.getBlogID(), files);
-			
+						
 			sendNotification(userNames, userName, blog.getBlogID(), TagType.BLOG, group);
 						
 			Notifycation notifycation = new Notifycation().builder()
@@ -343,23 +375,10 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		}
 	}
 	
-	private void UploadImageToFirebaseForBlog(long id, List<MultipartFile> files) throws java.io.IOException
+	public void UploadImageToCloudinaryForBlog(long id, MultipartFile file) throws java.io.IOException
 	{
-		Blog obj = blogRepository.getById(id);;
-		
-		if (obj != null)
-		{
-			for (var file : files)
-			{
-				Random rd = new Random();
-				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
-				Bucket bucket = StorageClient.getInstance().bucket();
-				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
-				
-				obj.getImage().add(nameOnCloud);
-				blogRepository.save(obj);
-			}
-		}
+		if (file == null) return;
+		else cloudinaryService.uploadFilesBlog(file, id);
 	}
 	
 	private void UploadImageToFirebaseForComment(int id, List<MultipartFile> files) throws java.io.IOException
@@ -480,7 +499,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public void commentBlog(long blogID, String userName, String content, List<String> userNames, List<MultipartFile> files)
+	public int commentBlog(long blogID, String userName, String content, List<String> userNames)
 	{
 		var blog = blogRepository.getById(blogID);
 		var sentUser = userRepository.getById(userName);
@@ -495,13 +514,6 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.setImages(new ArrayList<>());
 
 		commentRepository.save(cmt);
-		
-		try {
-			UploadImageToFirebaseForComment(cmt.getCommentID(), files);
-		} catch (java.io.IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		sendNotification(userNames, userName, cmt.getCommentID(), TagType.COMMENT, blog.getGroup());
 		
@@ -524,6 +536,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		notifycationRepository.save(notifycation); 
 		userRepository.save(sentUser);
 		userRepository.save(receivedUser);
+		
+		return cmt.getCommentID();
 	}
 	
 	public void updateComment(int commentID, Comment cmt)
@@ -534,7 +548,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		commentRepository.save(existingComment);
 	}
 	
-	public void deleteComment(int commentID)
+	public void deleteComment(int commentID) throws java.io.IOException
 	{
 		var cmt = commentRepository.getById(commentID);
 		cmt.setBlog(null);
@@ -564,7 +578,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public void replyComment(int commentID, String userName, String content, List<String> userNames, List<MultipartFile> files)
+	public int replyComment(int commentID, String userName, String content, List<String> userNames)
 	{
 		var cmt = commentRepository.getById(commentID);
 		var sentUser = userRepository.getById(userName);
@@ -580,13 +594,6 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		reply.setImages(new ArrayList<>());
 		
 		replyRepository.save(reply);
-		
-		try {
-			UploadImageToFirebaseForReply(reply.getReplyID(), files);
-		} catch (java.io.IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		sendNotification(userNames, userName, reply.getReplyID(), TagType.REPLY, cmt.getBlog().getGroup());
 
@@ -608,6 +615,8 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		notifycationRepository.save(notifycation);
 		userRepository.save(sentUser);
 		userRepository.save(receivedUser);
+		
+		return reply.getReplyID();
 	}
 	
 	public void updateReply(int replyID, Reply reply)
@@ -618,7 +627,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		replyRepository.save(existingReply);
 	}
 	
-	public void deleteReply(int replyID)
+	public void deleteReply(int replyID) throws java.io.IOException
 	{
 		var reply = replyRepository.getById(replyID);
 		reply.setUserReplied(null);
@@ -628,14 +637,14 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		deleteFiles(reply.getImages());
 	}
 	
-	private void deleteFiles(List<String> images) {
+	private void deleteFiles(List<String> images) throws java.io.IOException {
 		if (images.size() == 0) return;
 		
 		for (var p : images)
 		{
-			Bucket bucket = StorageClient.getInstance().bucket();
-			Blob blob = bucket.get(p);
-	        blob.delete();
+			String[] parts = p.split("-");
+			System.out.println(parts[1]);
+			cloudinary.uploader().destroy(parts[1], ObjectUtils.asMap("type", "upload", "resource_type", "image"));
 		}
 	}
 

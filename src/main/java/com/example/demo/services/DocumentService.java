@@ -59,7 +59,7 @@ public class DocumentService implements DocumentManagement {
 	@Override
 	public int addDocument(MultipartFile file ,int groupID, String userName)
 	{
-		String name = file.getName();
+		String name = file.getOriginalFilename();
 		DocumentType type;
 		if (name.endsWith(".doc") || name.endsWith(".docx")) type = DocumentType.word;
 		else if (name.endsWith(".xls") || name.endsWith(".xlsx")) type = DocumentType.excel;

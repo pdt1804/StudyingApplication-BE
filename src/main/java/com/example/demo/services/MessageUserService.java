@@ -45,7 +45,7 @@ public class MessageUserService implements MessageUserManagement{
 	}
 	
 	@Override
-	public long sendMessage(MessageUser mess, String fromUserName, String toUserName, List<MultipartFile> files)
+	public long sendMessage(MessageUser mess, String fromUserName, String toUserName)
 	{
 		try 
 		{
@@ -82,9 +82,7 @@ public class MessageUserService implements MessageUserManagement{
 					friendShipRepository.save(friendShip);
 					
 					var message = messageUserRepository.save(mess);
-					
-					UploadImageToFirebaseForMessage(mess.getID(), files);
-					
+										
 					messagingTemplate.convertAndSend("/private/queue/" + friendShip.getFriendShip_ID(), message);
 					return message.getID();
 				}
@@ -101,9 +99,14 @@ public class MessageUserService implements MessageUserManagement{
 		}
 	}
 	
-	private void UploadImageToFirebaseForMessage(long id, List<MultipartFile> files) throws java.io.IOException
+	public void UploadImageToFirebaseForMessage(long id, List<MultipartFile> files) throws java.io.IOException
 	{
-		MessageUser obj = messageUserRepository.getById(id);;
+		MessageUser obj = messageUserRepository.getById(id);
+		
+		if (files.size() == 0)
+		{
+			return;
+		}
 		
 		if (obj != null)
 		{

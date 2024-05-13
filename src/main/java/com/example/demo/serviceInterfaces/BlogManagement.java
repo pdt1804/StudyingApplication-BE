@@ -30,7 +30,7 @@ public interface BlogManagement {
 	
 	public void insertImageInBlog(long blogID, MultipartFile file);
 	
-	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames, List<MultipartFile> files);
+	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames);
 	
 	public void updateBlog(long blogID, String content, List<UpdateBlogRequest> requests) throws java.io.IOException;
 	
