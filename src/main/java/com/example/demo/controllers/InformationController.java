@@ -78,9 +78,9 @@ public class InformationController {
 	}
 	
 	@PostMapping("/updateInformation")
-	public void updateInformation(@RequestBody Information information)
+	public void updateInformation(@RequestBody Information information, HttpServletRequest request, @RequestParam("email") String email)
 	{
-		informationService.updateInformation(information);
+		informationService.updateInformation(information, extractTokenToGetUsername(request), email);
 	}
 	
 	@PostMapping("/initialize")

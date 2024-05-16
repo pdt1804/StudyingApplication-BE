@@ -39,6 +39,9 @@ public class InformationService implements InformationManagement {
 	private UserService userService;
 	
 	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
 	private TopicService topicService;
 	
 	@Override
@@ -81,7 +84,7 @@ public class InformationService implements InformationManagement {
 	}
 	
 	@Override
-	public void updateInformation(Information information)
+	public void updateInformation(Information information, String userName, String email)
 	{
 		var existingInformation = getInformationbyID(information.getInfoID());
 		existingInformation.setFulName(information.getFulName());
@@ -90,6 +93,10 @@ public class InformationService implements InformationManagement {
 		existingInformation.setGender(information.getGender());
 		existingInformation.setPhoneNumber(information.getPhoneNumber());
 		informationRepository.save(existingInformation);
+		
+		var user = userRepository.getById(userName);
+		user.setEmail(email);
+		userRepository.save(user);
 	}
 	
 // VERSION CŨ, VẪN CÓ THỂ SỬ DỤNG SAU NÀY

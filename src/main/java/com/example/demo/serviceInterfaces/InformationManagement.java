@@ -17,7 +17,7 @@ public interface InformationManagement {
 	
 	public Information createInformation();
 	
-	public void updateInformation(Information information);
+	public void updateInformation(Information information, String userName, String email);
 	
 	public String changePassword(String userName, String newPassWord, String currentPassWord);
 	
