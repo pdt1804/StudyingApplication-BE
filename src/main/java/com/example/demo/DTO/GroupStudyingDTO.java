@@ -1,8 +1,11 @@
 package com.example.demo.DTO;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.example.demo.entities.GroupStudying;
+import com.example.demo.entities.Topic;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +21,7 @@ public class GroupStudyingDTO {
 	private String image;
 	private int numberOfMembers;
 	private String passWord;
+	private List<Topic> topics = new ArrayList<>();
 	
     public GroupStudyingDTO() {
     	
@@ -33,6 +37,11 @@ public class GroupStudyingDTO {
         
         if (groupStudying.getLeaderOfGroup() != null) {
             this.leaderOfGroup = new UserDTO(groupStudying.getLeaderOfGroup());
+        }
+        
+        if (groupStudying.getTopics() != null)
+        {
+        	this.topics = groupStudying.getTopics();
         }
     }
 
