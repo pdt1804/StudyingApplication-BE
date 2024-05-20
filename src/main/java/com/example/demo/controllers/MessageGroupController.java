@@ -55,15 +55,15 @@ public class MessageGroupController {
 	}
 	
 	@PostMapping("/uploadImages")
-	public void uploadImages(@RequestParam("messId") long messId, @RequestParam("files") List<MultipartFile> files) throws IOException
+	public void uploadImages(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("files") List<MultipartFile> files) throws IOException
 	{	
-		messageGroupService.UploadImageForMessage(messId, files);
+		messageGroupService.uploadImagesForMessage(groupID, files, extractTokenToGetUsername(request));
 	}
 	
 	@PostMapping("/uploadImage")
-	public void uploadImage(@RequestParam("messId") long messId, @RequestParam("file") MultipartFile file) throws IOException
-	{	
-		messageGroupService.uploadFileToCloudinary(file, messId);
+	public void uploadImage(@RequestParam("groupID") int groupID, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException
+	{
+		messageGroupService.uploadOneFileToCloudinary(groupID, file, extractTokenToGetUsername(request));
 	}
 	
 	@MessageMapping("/sendMess")

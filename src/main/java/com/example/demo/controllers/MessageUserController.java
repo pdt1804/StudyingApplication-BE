@@ -77,15 +77,15 @@ public class MessageUserController {
 	}
 	
 	@PostMapping("/uploadImages")
-	public void uploadImages(@RequestParam("messId") long messId, @RequestParam("files") List<MultipartFile> files) throws IOException
+	public void uploadImages(HttpServletRequest request, @RequestParam("toUserName") String toUserName, @RequestParam("files") List<MultipartFile> files) throws IOException
 	{	
-		messageUserService.UploadImageForMessage(messId, files);
+		messageUserService.UploadImageForMessage(files, extractTokenToGetUsername(request), toUserName);
 	}
 	
 	@PostMapping("/uploadImage")
-	public void uploadImage(@RequestParam("messId") long messId, @RequestParam("file") MultipartFile file) throws IOException
+	public void uploadImage(HttpServletRequest request, @RequestParam("toUserName") String toUserName, @RequestParam("file") MultipartFile file) throws IOException
 	{	
-		messageUserService.uploadFileToCloudinary(file, messId);
+		messageUserService.uploadFileToCloudinary(file, extractTokenToGetUsername(request), toUserName);
 	}
 	
 	@MessageMapping("/sendMessForUser")

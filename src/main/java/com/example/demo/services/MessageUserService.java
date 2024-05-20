@@ -50,11 +50,11 @@ public class MessageUserService implements MessageUserManagement{
 		return messageUserRepository.getById(id).getSentUser();
 	}
 	
-	public void uploadFileToCloudinary(MultipartFile file, long messID) throws IOException
+	public void uploadFileToCloudinary(MultipartFile file, String fromUserName, String toUserName) throws IOException
 	{
 		try
 		{
-			var mess = messageUserRepository.getById(messID);
+			var mess = messageUserRepository.getById(sendMessage(new MessageUser(), fromUserName, toUserName));
 			Map<String, String> data = cloudinary.uploader().upload(file.getBytes(), Map.of());
 			mess.getImages().add(data.get("url") + "-" + data.get("public_id"));
 			messageUserRepository.save(mess);
@@ -120,16 +120,16 @@ public class MessageUserService implements MessageUserManagement{
 		}
 	}
 	
-	public void UploadImageForMessage(long id, List<MultipartFile> files) throws java.io.IOException
-	{
-		MessageUser obj = messageUserRepository.getById(id);
-		
+	public void UploadImageForMessage(List<MultipartFile> files, String fromUserName, String toUserName) throws java.io.IOException
+	{		
 		if (files.size() == 0)
 		{
 			return;
 		}
 		
-		if (obj != null)
+		var mess = messageUserRepository.getById(sendMessage(new MessageUser(), fromUserName, toUserName));
+		
+		if (mess != null)
 		{
 			for (var file : files)
 			{
@@ -140,7 +140,7 @@ public class MessageUserService implements MessageUserManagement{
 //				
 //				obj.getImages().add(nameOnCloud);
 				
-				uploadFileToCloudinary(file, id);
+				uploadFileToCloudinary(file, fromUserName, toUserName);;
 			}
 			
 			//messageUserRepository.save(obj);

@@ -74,13 +74,13 @@ public class MessageGroupService implements MessageGroupManagement {
 		}
 	}
 	
-	public void UploadImageForMessage(long id, List<MultipartFile> files) throws java.io.IOException
-	{
-		MessageGroup obj = messageGroupRepository.getById(id);;
-		
+	public void uploadImagesForMessage(int groupID, List<MultipartFile> files, String userName) throws java.io.IOException
+	{		
 		if (files.size() == 0) return;
 		
-		if (obj != null)
+		var mess = messageGroupRepository.getById(sendMessage(new MessageGroup(), groupID, userName));
+		
+		if (mess != null)
 		{
 			for (var file : files)
 			{
@@ -91,18 +91,18 @@ public class MessageGroupService implements MessageGroupManagement {
 //				
 //				obj.getImages().add(nameOnCloud);
 				
-				uploadFileToCloudinary(file, id);
+				uploadOneFileToCloudinary(groupID, file, userName);
 			}
 			
 			//messageGroupRepository.save(obj);
 		}
 	}
 	
-	public void uploadFileToCloudinary(MultipartFile file, long messID) throws IOException
+	public void uploadOneFileToCloudinary(int groupID, MultipartFile file, String userName) throws IOException
 	{
 		try
 		{
-			var mess = messageGroupRepository.getById(messID);
+			var mess = messageGroupRepository.getById(sendMessage(new MessageGroup(), groupID, userName));
 			Map<String, String> data = cloudinary.uploader().upload(file.getBytes(), Map.of());
 			mess.getImages().add(data.get("url") + "-" + data.get("public_id"));
 			messageGroupRepository.save(mess);
