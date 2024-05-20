@@ -79,7 +79,13 @@ public class MessageUserController {
 	@PostMapping("/uploadImages")
 	public void uploadImages(@RequestParam("messId") long messId, @RequestParam("files") List<MultipartFile> files) throws IOException
 	{	
-		messageUserService.UploadImageToFirebaseForMessage(messId, files);
+		messageUserService.UploadImageForMessage(messId, files);
+	}
+	
+	@PostMapping("/uploadImage")
+	public void uploadImage(@RequestParam("messId") long messId, @RequestParam("file") MultipartFile file) throws IOException
+	{	
+		messageUserService.uploadFileToCloudinary(file, messId);
 	}
 	
 	@MessageMapping("/sendMessForUser")

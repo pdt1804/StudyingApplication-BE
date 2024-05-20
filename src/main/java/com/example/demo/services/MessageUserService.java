@@ -1,8 +1,10 @@
 package com.example.demo.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -12,6 +14,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
 import com.example.demo.entities.MessageUser;
 import com.example.demo.entities.MessageUserStatus;
 import com.example.demo.entities.Notifycation;
@@ -38,10 +41,28 @@ public class MessageUserService implements MessageUserManagement{
 	@Autowired 
 	private FriendShipRepository friendShipRepository;
 	
+	@Autowired
+	private Cloudinary cloudinary;
+	
 	@Override
 	public User getSentUser(long id)
 	{
 		return messageUserRepository.getById(id).getSentUser();
+	}
+	
+	public void uploadFileToCloudinary(MultipartFile file, long messID) throws IOException
+	{
+		try
+		{
+			var mess = messageUserRepository.getById(messID);
+			Map<String, String> data = cloudinary.uploader().upload(file.getBytes(), Map.of());
+			mess.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			messageUserRepository.save(mess);
+		}        
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -99,7 +120,7 @@ public class MessageUserService implements MessageUserManagement{
 		}
 	}
 	
-	public void UploadImageToFirebaseForMessage(long id, List<MultipartFile> files) throws java.io.IOException
+	public void UploadImageForMessage(long id, List<MultipartFile> files) throws java.io.IOException
 	{
 		MessageUser obj = messageUserRepository.getById(id);
 		
@@ -112,15 +133,17 @@ public class MessageUserService implements MessageUserManagement{
 		{
 			for (var file : files)
 			{
-				Random rd = new Random();
-				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
-				Bucket bucket = StorageClient.getInstance().bucket();
-				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+//				Random rd = new Random();
+//				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+//				Bucket bucket = StorageClient.getInstance().bucket();
+//				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+//				
+//				obj.getImages().add(nameOnCloud);
 				
-				obj.getImages().add(nameOnCloud);
+				uploadFileToCloudinary(file, id);
 			}
 			
-			messageUserRepository.save(obj);
+			//messageUserRepository.save(obj);
 		}
 	}
 	

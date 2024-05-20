@@ -14,6 +14,8 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.BlogRepository;
+import com.example.demo.repositories.CommentRepository;
+import com.example.demo.repositories.ReplyRepository;
 import com.example.demo.services.BlogService;
 import com.example.demo.services.UserService;
 
@@ -25,6 +27,12 @@ public class CloudinaryService {
 	
 	@Autowired 
 	private BlogRepository blogRepository;
+	
+	@Autowired
+	private CommentRepository commentRepository;
+	
+	@Autowired
+	private ReplyRepository replyRepository;
 
 	@Bean
 	public Cloudinary getCloudinary()
@@ -79,4 +87,36 @@ public class CloudinaryService {
 			e.printStackTrace();
 		}
 	}
+	
+	public void uploadFilesComment(MultipartFile file, int cmtID)
+	{
+		try
+		{
+			var cmt = commentRepository.getById(cmtID);
+			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
+			cmt.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			commentRepository.save(cmt);
+		}        
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public void uploadFilesReply(MultipartFile file, int blogID)
+	{
+		try
+		{
+			var rep = replyRepository.getById(blogID);
+			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
+			rep.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			replyRepository.save(rep);
+		}        
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	
 }

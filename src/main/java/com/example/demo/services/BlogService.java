@@ -210,35 +210,35 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		}
 	}
 	
-	public void insertImageInComment(int commentID, MultipartFile file)
-	{
-		try
-		{
-			var cmt = commentRepository.getById(commentID);
-			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
-			cmt.getImages().add(data.get("url") + "-" + data.get("public_id"));
-			commentRepository.save(cmt);
-		}        
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void insertImageInReply(int replyID, MultipartFile file)
-	{
-		try
-		{
-			var rep = replyRepository.getById(replyID);
-			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
-			rep.getImages().add(data.get("url") + "-" + data.get("public_id"));
-			replyRepository.save(rep);
-		}        
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+//	public void insertImageInComment(int commentID, MultipartFile file)
+//	{
+//		try
+//		{
+//			var cmt = commentRepository.getById(commentID);
+//			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
+//			cmt.getImages().add(data.get("url") + "-" + data.get("public_id"));
+//			commentRepository.save(cmt);
+//		}        
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//	}
+//	
+//	public void insertImageInReply(int replyID, MultipartFile file)
+//	{
+//		try
+//		{
+//			var rep = replyRepository.getById(replyID);
+//			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
+//			rep.getImages().add(data.get("url") + "-" + data.get("public_id"));
+//			replyRepository.save(rep);
+//		}        
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//	}
 	
 	@Override
 	public void createSubject(int groupID, String nameSubject)
@@ -381,6 +381,18 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		else cloudinaryService.uploadFilesBlog(file, id);
 	}
 	
+	public void UploadImageToCloudinaryForComment(int id, MultipartFile file) throws java.io.IOException
+	{
+		if (file == null) return;
+		else cloudinaryService.uploadFilesComment(file, id);
+	}
+	
+	public void UploadImageToCloudinaryForReply(int id, MultipartFile file) throws java.io.IOException
+	{
+		if (file == null) return;
+		else cloudinaryService.uploadFilesReply(file, id);
+	}
+	
 	private void UploadImageToFirebaseForComment(int id, List<MultipartFile> files) throws java.io.IOException
 	{
 		Comment obj = commentRepository.getById(id);;
@@ -389,15 +401,17 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		{
 			for (var file : files)
 			{
-				Random rd = new Random();
-				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
-				Bucket bucket = StorageClient.getInstance().bucket();
-				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+//				Random rd = new Random();
+//				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+//				Bucket bucket = StorageClient.getInstance().bucket();
+//				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+//				
+//				obj.getImages().add(nameOnCloud);
 				
-				obj.getImages().add(nameOnCloud);
+				UploadImageToCloudinaryForComment(id, file);
 			}
 			
-			commentRepository.save(obj);
+			//commentRepository.save(obj);
 		}
 	}
 	
@@ -409,15 +423,17 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		{
 			for (var file : files)
 			{
-				Random rd = new Random();
-				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
-				Bucket bucket = StorageClient.getInstance().bucket();
-				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+//				Random rd = new Random();
+//				String nameOnCloud = file.getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
+//				Bucket bucket = StorageClient.getInstance().bucket();
+//				var blob = bucket.create(nameOnCloud, file.getBytes(), file.getContentType());
+//				
+//				obj.getImages().add(nameOnCloud);
 				
-				obj.getImages().add(nameOnCloud);
+				UploadImageToCloudinaryForReply(id, file);
 			}
 			
-			replyRepository.save(obj);
+			//replyRepository.save(obj);
 		}
 	}
 	

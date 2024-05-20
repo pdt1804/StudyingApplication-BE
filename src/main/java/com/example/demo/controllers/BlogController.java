@@ -168,11 +168,11 @@ public class BlogController {
 		blogService.UploadImageToCloudinaryForBlog(blogID, file);
 	}
 	
-	@PostMapping("/insertImage")
-	public void insertImage(@RequestParam("blogID") long blogID, @RequestParam("file") MultipartFile file)
-	{
-		blogService.insertImageInBlog(blogID, file);
-	}
+//	@PostMapping("/insertImage")
+//	public void insertImage(@RequestParam("blogID") long blogID, @RequestParam("file") MultipartFile file)
+//	{
+//		blogService.insertImageInBlog(blogID, file);
+//	}
 	
 	@PutMapping("/updateBlog") 
 	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, @RequestParam("requestImages") List<UpdateBlogRequest> requests) throws java.io.IOException
@@ -212,9 +212,9 @@ public class BlogController {
 	}
 	
 	@PostMapping("/insertImageInComment")
-	public void insertImageInComment(@RequestParam("commentID") int commentID, @RequestParam("file") MultipartFile file)
+	public void insertImageInComment(@RequestParam("commentID") int commentID, @RequestParam("file") MultipartFile file) throws IOException
 	{
-		blogService.insertImageInComment(commentID, file);
+		blogService.UploadImageToCloudinaryForComment(commentID, file);
 	}
 	
 	@PutMapping("/updateComment")
@@ -236,9 +236,9 @@ public class BlogController {
 	}
 	
 	@PostMapping("/insertImageInReply")
-	public void insertImageInReply(@RequestParam("replyID") int replyID, @RequestParam("file") MultipartFile file)
+	public void insertImageInReply(@RequestParam("replyID") int replyID, @RequestParam("file") MultipartFile file) throws IOException
 	{
-		blogService.insertImageInReply(replyID, file);
+		blogService.UploadImageToCloudinaryForReply(replyID, file);
 	}
 	
 	@PutMapping("/updateReply")

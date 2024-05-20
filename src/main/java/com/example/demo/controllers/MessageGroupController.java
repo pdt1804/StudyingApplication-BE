@@ -57,7 +57,13 @@ public class MessageGroupController {
 	@PostMapping("/uploadImages")
 	public void uploadImages(@RequestParam("messId") long messId, @RequestParam("files") List<MultipartFile> files) throws IOException
 	{	
-		messageGroupService.UploadImageToFirebaseForMessage(messId, files);
+		messageGroupService.UploadImageForMessage(messId, files);
+	}
+	
+	@PostMapping("/uploadImage")
+	public void uploadImage(@RequestParam("messId") long messId, @RequestParam("file") MultipartFile file) throws IOException
+	{	
+		messageGroupService.uploadFileToCloudinary(file, messId);
 	}
 	
 	@MessageMapping("/sendMess")
