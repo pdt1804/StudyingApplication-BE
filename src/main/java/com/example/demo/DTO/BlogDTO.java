@@ -27,7 +27,7 @@ public class BlogDTO {
 
 	private long blogID;
 	private String Content;
-	private List<String> image;
+	private List<String> image = new ArrayList<>();
 	private int likeCount;
 	private Date dateCreated;
 	private Subject subject;

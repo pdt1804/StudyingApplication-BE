@@ -515,7 +515,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public int commentBlog(long blogID, String userName, String content, List<String> userNames)
+	public int commentBlog(long blogID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws java.io.IOException
 	{
 		var blog = blogRepository.getById(blogID);
 		var sentUser = userRepository.getById(userName);
@@ -530,6 +530,11 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.setImages(new ArrayList<>());
 
 		commentRepository.save(cmt);
+		
+		for (var p : files)
+		{
+			UploadImageToCloudinaryForComment(cmt.getCommentID(), p);
+		}
 		
 		sendNotification(userNames, userName, cmt.getCommentID(), TagType.COMMENT, blog.getGroup());
 		
@@ -594,7 +599,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public int replyComment(int commentID, String userName, String content, List<String> userNames)
+	public int replyComment(int commentID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws java.io.IOException
 	{
 		var cmt = commentRepository.getById(commentID);
 		var sentUser = userRepository.getById(userName);
@@ -610,6 +615,11 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		reply.setImages(new ArrayList<>());
 		
 		replyRepository.save(reply);
+		
+		for (var p : files)
+		{
+			UploadImageToCloudinaryForReply(reply.getReplyID(), p);
+		}
 		
 		sendNotification(userNames, userName, reply.getReplyID(), TagType.REPLY, cmt.getBlog().getGroup());
 

@@ -1,5 +1,6 @@
 package com.example.demo.serviceInterfaces;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,5 +15,5 @@ public interface ReplyManagement {
 
 	public List<Reply> getAllReplyOfComment(int commentID);
 	
-	public int replyComment(int commentID, String userName, String content, List<String> userNames);
+	public int replyComment(int commentID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws IOException;
 }
