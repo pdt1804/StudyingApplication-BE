@@ -12,7 +12,7 @@ import com.example.demo.entities.NotifycationType;
 
 public interface NotificationManagement {
 
-	public int createNotifycation(int groupID, String userName, Notifycation notifycation, List<MultipartFile> files);
+	public int createNotifycation(int groupID, String userName, Notifycation notifycation);
 
 	public void insertImage(int notificationID, MultipartFile image);
 	

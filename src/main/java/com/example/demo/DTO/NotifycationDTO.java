@@ -3,6 +3,7 @@ package com.example.demo.DTO;
 import java.util.Date;
 import java.util.List;
 
+import com.example.demo.entities.File;
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.entities.Notifycation;
 
@@ -16,7 +17,7 @@ public class NotifycationDTO {
 	private int notifycationID;
 	private String Header;
 	private String Content;
-	private List<String> images;
+	private List<File> files;
     private Date dateSent;
     private GroupStudyingDTO group;
     private int documentID;
@@ -28,7 +29,7 @@ public class NotifycationDTO {
     	this.Header = notifycation.getHeader();
     	this.Content = notifycation.getContent();
     	this.dateSent = notifycation.getDateSent();
-    	this.images = notifycation.getImages();
+    	this.files = notifycation.getFiles();
 
         if (notifycation.getGroupStudying() != null) {
         	this.group = new GroupStudyingDTO(notifycation.getGroupStudying());

@@ -12,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.demo.entities.File;
 import com.example.demo.entities.User;
 import com.example.demo.repositories.BlogRepository;
 import com.example.demo.repositories.CommentRepository;
+import com.example.demo.repositories.FileRepository;
 import com.example.demo.repositories.ReplyRepository;
 import com.example.demo.services.BlogService;
 import com.example.demo.services.UserService;
@@ -30,6 +32,9 @@ public class CloudinaryService {
 	
 	@Autowired
 	private CommentRepository commentRepository;
+	
+	@Autowired
+	private FileRepository fileRepository;
 	
 	@Autowired
 	private ReplyRepository replyRepository;
@@ -79,7 +84,10 @@ public class CloudinaryService {
 		{
 			var blog = blogRepository.getById(blogID);
 			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
-			blog.getImage().add(data.get("url") + "-" + data.get("public_id"));
+			//blog.getImage().add(data.get("url") + "-" + data.get("public_id"));
+			var f = new File(data.get("url"), data.get("public_id"), blog);
+			fileRepository.save(f);
+			blog.getFiles().add(f);
 			blogRepository.save(blog);
 		}        
 		catch (Exception e)

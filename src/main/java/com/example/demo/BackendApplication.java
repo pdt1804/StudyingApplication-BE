@@ -3,6 +3,8 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -35,6 +37,11 @@ public class BackendApplication {
             }
         };
     }
+	
+//	@Bean
+//    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> containerCustomizer() {
+//        return factory -> factory.addConnectorCustomizers(connector -> connector.setMaxPostSize(15 * 1024 * 1024)); // 10 MB
+//    }
 	
 
 }

@@ -32,7 +32,7 @@ public interface BlogManagement {
 	
 	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames);
 	
-	public void updateBlog(long blogID, String content, List<UpdateBlogRequest> requests) throws java.io.IOException;
+	public void updateBlog(long blogID, String content, List<MultipartFile> newFiles, List<String> oldFiles) throws java.io.IOException;
 	
 	public void deleteBlog(long blogID);
 }

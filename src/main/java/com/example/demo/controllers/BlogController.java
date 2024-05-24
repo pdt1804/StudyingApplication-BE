@@ -27,6 +27,7 @@ import com.example.demo.services.BlogService;
 import com.example.demo.services.JwtService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Synchronized;
 
 @RestController
 @RequestMapping("/api/v1/blog")
@@ -64,9 +65,12 @@ public class BlogController {
 	}
 	
 	@PostMapping("/insertImageInBlog")
+	@Synchronized
 	public void insertImageInBlog(@RequestParam("blogID") long blogID, @RequestParam("file") MultipartFile file)
 	{
 		blogService.insertImageInBlog(blogID, file);
+		//System.out.println("finish");
+		//ResponseEntity.ok().build();
 	}
 	
 	@GetMapping("/getBlogById")
@@ -175,9 +179,21 @@ public class BlogController {
 //	}
 	
 	@PutMapping("/updateBlog") 
-	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, @RequestParam("requestImages") List<UpdateBlogRequest> requests) throws java.io.IOException
+	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, @RequestParam("addNewFiles") List<MultipartFile> newFiles, @RequestParam("removeOldFiles") List<String> oldFiles) throws java.io.IOException
 	{
-		blogService.updateBlog(blogID, content, requests);
+		blogService.updateBlog(blogID, content, newFiles, oldFiles);
+	}
+	
+	@PutMapping("/updateBlogRemovingImage") 
+	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content, @RequestParam("removeOldFiles") List<String> oldFiles) throws java.io.IOException
+	{
+		blogService.updateBlogRemovingImage(blogID, content, oldFiles);
+	}
+	
+	@PutMapping("/updateBlogContent") 
+	public void updateBlog(@RequestParam("blogID") long blogID, @RequestParam("content") String content) throws java.io.IOException
+	{
+		blogService.updateBlogContent(blogID, content);
 	}
 	
 	@DeleteMapping("/deleteBlog")

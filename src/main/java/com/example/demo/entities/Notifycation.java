@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,7 +38,7 @@ public class Notifycation {
 	private String Content;
     private Date dateSent;
     private NotifycationType notifycationType;
-    private List<String> images = new ArrayList<>();
+    //private List<String> images = new ArrayList<>();
     private int contentID;
     private String publicID;
     @ManyToOne
@@ -49,5 +50,7 @@ public class Notifycation {
     @JsonIgnore
     private List<User> users = new ArrayList<>();
     private List<String> userSeenNotifycation = new ArrayList<>();
+    @OneToMany(mappedBy = "notifycation", cascade = CascadeType.ALL)
+	private List<File> files = new ArrayList<>();
 	
 }

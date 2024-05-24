@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
+import com.example.demo.entities.File;
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.entities.Subject;
 import com.example.demo.entities.User;
@@ -27,7 +28,7 @@ public class BlogDTO {
 
 	private long blogID;
 	private String Content;
-	private List<String> image = new ArrayList<>();
+	private List<File> file = new ArrayList<>();
 	private int likeCount;
 	private Date dateCreated;
 	private Subject subject;
@@ -39,7 +40,7 @@ public class BlogDTO {
 	{
 		this.blogID = blog.getBlogID();
 		this.Content = blog.getContent();
-		this.image = blog.getImage();
+		this.file = blog.getFiles();
 		this.likeCount = blog.getLikes().size();
 		this.dateCreated = blog.getDateCreated();
 		this.subject = blog.getSubject();

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import org.hibernate.annotations.Synchronize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import com.example.demo.config.CloudinaryService;
 import com.example.demo.entities.Blog;
 import com.example.demo.entities.Comment;
 import com.example.demo.entities.Document;
+import com.example.demo.entities.File;
 import com.example.demo.entities.GroupStudying;
 import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.NotifycationType;
@@ -27,6 +29,7 @@ import com.example.demo.entities.TypeRequest;
 import com.example.demo.entities.UpdateBlogRequest;
 import com.example.demo.repositories.BlogRepository;
 import com.example.demo.repositories.CommentRepository;
+import com.example.demo.repositories.FileRepository;
 import com.example.demo.repositories.GroupStudyingRepository;
 import com.example.demo.repositories.NotifycationRepository;
 import com.example.demo.repositories.ReplyRepository;
@@ -41,6 +44,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 
 import io.jsonwebtoken.io.IOException;
+import lombok.Synchronized;
 
 @Service
 public class BlogService implements SubjectManagement, BlogManagement, CommentManagement, ReplyManagement {
@@ -50,6 +54,9 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	
 	@Autowired
 	private SubjectRepository subjectRepository;
+	
+	@Autowired
+	private FileRepository fileRepository;
 	
 	@Autowired
 	private CloudinaryService cloudinaryService;
@@ -195,13 +202,16 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
+	@Synchronized
 	public void insertImageInBlog(long blogID, MultipartFile file)
 	{
 		try
 		{
 			var blog = blogRepository.getById(blogID);
 			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
-			blog.getImage().add(data.get("url") + "-" + data.get("public_id"));
+			File f = new File(data.get("url").toString(), data.get("public_id").toString(), blog);
+			fileRepository.save(f);
+			blog.getFiles().add(f);
 			blogRepository.save(blog);
 		}        
 		catch (Exception e)
@@ -446,17 +456,25 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}*/
 	
 	@Override
-	public void updateBlog(long blogID, String content, List<UpdateBlogRequest> requests) throws java.io.IOException
+	public void updateBlog(long blogID, String content, List<MultipartFile> newFiles, List<String> oldFiles) throws java.io.IOException
 	{
 		var existingBlog = blogRepository.getById(blogID);
 
 		if (existingBlog != null)
 		{
-			if (requests.size() > 0)
+			if (newFiles.size() > 0)
 			{
-				for (var p : requests)
+				for (var p : newFiles)
 				{
-					ExecuteRequest(existingBlog, p);
+					ExecuteAddFileBlogRequest(existingBlog, p);
+				}
+			}
+			
+			if (oldFiles.size() > 0)
+			{
+				for (var p : oldFiles)
+				{
+					ExecuteRemoveFileBlogRequest(existingBlog, p);
 				}
 			}
 			
@@ -470,22 +488,55 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		}
 	}
 	
-	private void ExecuteRequest(Blog blog, UpdateBlogRequest p) throws java.io.IOException {
-		Bucket bucket = StorageClient.getInstance().bucket();
-		
-		if (p.getType() == TypeRequest.ADD)
-		{
-			Random rd = new Random();
-			String nameOnCloud = p.getFile().getName() + "-" + "-" + rd.nextInt(1, 9999999) + "-" + UUID.randomUUID();
-			bucket.create(nameOnCloud, p.getFile().getBytes(), p.getFile().getContentType());
+	public void updateBlogRemovingImage(long blogID, String content, List<String> oldFiles) throws java.io.IOException
+	{
+		var existingBlog = blogRepository.getById(blogID);
+
+		if (existingBlog != null)
+		{	
+			if (oldFiles.size() > 0)
+			{
+				for (var p : oldFiles)
+				{
+					ExecuteRemoveFileBlogRequest(existingBlog, p);
+				}
+			}
 			
-			blog.getImage().add(nameOnCloud);
+			if (content != null)
+			{	
+				existingBlog.setContent(content);
+			}
+			
+			existingBlog.setDateCreated(new Date());
+			blogRepository.save(existingBlog);
 		}
-		else if (p.getType() == TypeRequest.REMOVE)
-		{
-			bucket.get(p.getFileName()).delete();
-			blog.getImage().remove(p.getFileName());
+	}
+
+	public void updateBlogContent(long blogID, String content) throws java.io.IOException
+	{
+		var existingBlog = blogRepository.getById(blogID);
+
+		if (existingBlog != null)
+		{	
+			if (content != null)
+			{	
+				existingBlog.setContent(content);
+			}
+			
+			existingBlog.setDateCreated(new Date());
+			blogRepository.save(existingBlog);
 		}
+	}
+	
+	private void ExecuteAddFileBlogRequest(Blog blog, MultipartFile p) throws java.io.IOException {
+		UploadImageToCloudinaryForBlog(blog.getBlogID(), p);
+	}
+	
+	private void ExecuteRemoveFileBlogRequest(Blog blog, String url) throws java.io.IOException {
+		File file = fileRepository.getById(url);
+		cloudinary.uploader().destroy(file.getPublicId(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+		blog.getFiles().remove(file);
+		blogRepository.save(blog);
 	}
 
 	@Override
@@ -505,7 +556,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 			blog.setComments(null);
 			blogRepository.delete(blog);
 			
-			deleteFiles(blog.getImage());
+			deleteFilesForBlog(blog.getFiles());
 
 		}
 		catch (Exception e)
@@ -514,6 +565,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		}
 	}
 	
+
 	@Override
 	public int commentBlog(long blogID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws java.io.IOException
 	{
@@ -661,6 +713,15 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		replyRepository.delete(reply);
 		
 		deleteFiles(reply.getImages());
+	}
+	
+	private void deleteFilesForBlog(List<File> files) throws java.io.IOException {
+		if (files.size() == 0) return;
+		
+		for (var p : files)
+		{
+			cloudinary.uploader().destroy(p.getPublicId(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+		}
 	}
 	
 	private void deleteFiles(List<String> images) throws java.io.IOException {

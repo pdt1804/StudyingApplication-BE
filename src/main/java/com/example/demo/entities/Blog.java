@@ -36,7 +36,7 @@ public class Blog {
 	private int blogID;
 	@Column(columnDefinition = "TEXT")
 	private String Content;
-	private List<String> image = new ArrayList<String>();
+	//private List<String> image = new ArrayList<String>();
 	private List<String> likes = new ArrayList<String>();
 	private Date dateCreated;
 	@ManyToOne
@@ -51,5 +51,7 @@ public class Blog {
 	private GroupStudying group; 
 	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
 	private List<Comment> comments = new ArrayList<>();
+	@OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
+	private List<File> files = new ArrayList<>();
 	
 }
