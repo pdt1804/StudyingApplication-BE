@@ -70,6 +70,8 @@ public class MessageUserService implements MessageUserManagement{
 	{
 		try 
 		{
+			System.out.println("reach");
+
 			if (toUserName.equals("Chatbot") || fromUserName.equals("Chatbot"))
 			{
 				var fromUser = userRepository.getById(fromUserName);
