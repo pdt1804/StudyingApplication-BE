@@ -534,9 +534,15 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	
 	private void ExecuteRemoveFileBlogRequest(Blog blog, String url) throws java.io.IOException {
 		File file = fileRepository.getById(url);
+		System.out.println(file.getUrl());
+		System.out.println(blog.getFiles().size());
 		cloudinary.uploader().destroy(file.getPublicId(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
 		blog.getFiles().remove(file);
+		file.setBlog(null);
+		fileRepository.delete(file);
 		blogRepository.save(blog);
+		System.out.println(blog.getFiles().size());
+		System.out.println("finish");
 	}
 
 	@Override
@@ -567,7 +573,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	
 
 	@Override
-	public int commentBlog(long blogID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws java.io.IOException
+	public int commentBlog(long blogID, String userName, String content, List<String> userNames) throws java.io.IOException
 	{
 		var blog = blogRepository.getById(blogID);
 		var sentUser = userRepository.getById(userName);
@@ -582,11 +588,6 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.setImages(new ArrayList<>());
 
 		commentRepository.save(cmt);
-		
-		for (var p : files)
-		{
-			UploadImageToCloudinaryForComment(cmt.getCommentID(), p);
-		}
 		
 		sendNotification(userNames, userName, cmt.getCommentID(), TagType.COMMENT, blog.getGroup());
 		
@@ -651,7 +652,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	@Override
-	public int replyComment(int commentID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws java.io.IOException
+	public int replyComment(int commentID, String userName, String content, List<String> userNames) throws java.io.IOException
 	{
 		var cmt = commentRepository.getById(commentID);
 		var sentUser = userRepository.getById(userName);
@@ -667,11 +668,6 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		reply.setImages(new ArrayList<>());
 		
 		replyRepository.save(reply);
-		
-		for (var p : files)
-		{
-			UploadImageToCloudinaryForReply(reply.getReplyID(), p);
-		}
 		
 		sendNotification(userNames, userName, reply.getReplyID(), TagType.REPLY, cmt.getBlog().getGroup());
 

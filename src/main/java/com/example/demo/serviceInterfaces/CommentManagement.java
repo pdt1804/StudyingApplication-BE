@@ -13,7 +13,7 @@ import com.example.demo.entities.NotifycationType;
 
 public interface CommentManagement {
 
-	public int commentBlog(long blogID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws IOException;
+	public int commentBlog(long blogID, String userName, String content, List<String> userNames) throws IOException;
 	
 	public List<Comment> getAllCommentOfBlog(long blogID);
 }

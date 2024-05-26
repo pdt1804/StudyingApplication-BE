@@ -15,5 +15,5 @@ public interface ReplyManagement {
 
 	public List<Reply> getAllReplyOfComment(int commentID);
 	
-	public int replyComment(int commentID, String userName, String content, List<String> userNames, List<MultipartFile> files) throws IOException;
+	public int replyComment(int commentID, String userName, String content, List<String> userNames) throws IOException;
 }
