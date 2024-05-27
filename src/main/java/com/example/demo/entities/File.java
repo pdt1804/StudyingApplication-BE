@@ -32,6 +32,16 @@ public class File {
 	@JoinColumn(name = "notificationID", nullable = true)
 	@JsonIgnore
 	private Notifycation notifycation;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "commentID", nullable = true)
+	@JsonIgnore
+	private Comment comment;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "replyID", nullable = true)
+	@JsonIgnore
+	private Reply reply;
 	
 	public File(String url, String publicId, Blog blog)
 	{
@@ -40,6 +50,8 @@ public class File {
 		this.blog = blog;
 		
 		notifycation = null;
+		comment = null;
+		reply = null;
 	}
 	
 	public File(String url, String publicId, Notifycation notifycation)
@@ -49,6 +61,30 @@ public class File {
 		this.notifycation = notifycation;
 		
 		blog = null;
+		comment = null;
+		reply = null;
+	}
+	
+	public File(String url, String publicId, Comment comment)
+	{
+		this.url = url;
+		this.publicId = publicId;
+		this.comment = comment;
+		
+		blog = null;
+		notifycation = null;
+		reply = null;
+	}
+	
+	public File(String url, String publicId, Reply reply)
+	{
+		this.url = url;
+		this.publicId = publicId;
+		this.reply = reply;
+		
+		blog = null;
+		notifycation = null;
+		comment = null;
 	}
 	
 }

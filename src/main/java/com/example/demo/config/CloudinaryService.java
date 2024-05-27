@@ -102,7 +102,9 @@ public class CloudinaryService {
 		{
 			var cmt = commentRepository.getById(cmtID);
 			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
-			cmt.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			var f = new File(data.get("url"), data.get("public_id"), cmt);
+			fileRepository.save(f);
+			cmt.getFiles().add(f);
 			commentRepository.save(cmt);
 		}        
 		catch (Exception e)
@@ -117,7 +119,9 @@ public class CloudinaryService {
 		{
 			var rep = replyRepository.getById(blogID);
 			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
-			rep.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			var f = new File(data.get("url"), data.get("public_id"), rep);
+			fileRepository.save(f);
+			rep.getFiles().add(f);
 			replyRepository.save(rep);
 		}        
 		catch (Exception e)

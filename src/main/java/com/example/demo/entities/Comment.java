@@ -35,8 +35,6 @@ public class Comment {
 	private int commentID;
 	@Column(columnDefinition = "TEXT")
 	private String Content;
-	@Lob
-	private List<String> images;
 	private Date dateComment;
 	@ManyToOne
 	@JoinColumn(name = "user_comment_ID", nullable = true)
@@ -47,4 +45,6 @@ public class Comment {
 	private Blog blog;
 	@OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
 	private List<Reply> replies = new ArrayList<>();
+	@OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+	private List<File> files = new ArrayList<>();
 }

@@ -391,12 +391,14 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		else cloudinaryService.uploadFilesBlog(file, id);
 	}
 	
+	@Synchronized
 	public void UploadImageToCloudinaryForComment(int id, MultipartFile file) throws java.io.IOException
 	{
 		if (file == null) return;
 		else cloudinaryService.uploadFilesComment(file, id);
 	}
 	
+	@Synchronized
 	public void UploadImageToCloudinaryForReply(int id, MultipartFile file) throws java.io.IOException
 	{
 		if (file == null) return;
@@ -562,7 +564,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 			blog.setComments(null);
 			blogRepository.delete(blog);
 			
-			deleteFilesForBlog(blog.getFiles());
+			deleteFiles(blog.getFiles());
 
 		}
 		catch (Exception e)
@@ -585,7 +587,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.setBlog(blog);
 		cmt.setUserComment(sentUser);
 		cmt.setDateComment(new Date());
-		cmt.setImages(new ArrayList<>());
+		//cmt.setImages(new ArrayList<>());
 
 		commentRepository.save(cmt);
 		
@@ -636,7 +638,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		cmt.setReplies(null);
 		commentRepository.delete(cmt);
 		
-		deleteFiles(cmt.getImages());
+		deleteFiles(cmt.getFiles());
 	}
 	
 	@Override
@@ -665,7 +667,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		reply.setUserReplied(sentUser);
 		reply.setComment(cmt);
 		cmt.getReplies().add(reply);
-		reply.setImages(new ArrayList<>());
+		//reply.setImages(new ArrayList<>());
 		
 		replyRepository.save(reply);
 		
@@ -708,10 +710,19 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		reply.setComment(null);
 		replyRepository.delete(reply);
 		
-		deleteFiles(reply.getImages());
+		deleteFiles(reply.getFiles());
 	}
 	
-	private void deleteFilesForBlog(List<File> files) throws java.io.IOException {
+//	private void deleteFilesForBlog(List<File> files) throws java.io.IOException {
+//		if (files.size() == 0) return;
+//		
+//		for (var p : files)
+//		{
+//			cloudinary.uploader().destroy(p.getPublicId(), ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+//		}
+//	}
+	
+	private void deleteFiles(List<File> files) throws java.io.IOException {
 		if (files.size() == 0) return;
 		
 		for (var p : files)
@@ -720,16 +731,16 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		}
 	}
 	
-	private void deleteFiles(List<String> images) throws java.io.IOException {
-		if (images.size() == 0) return;
-		
-		for (var p : images)
-		{
-			String[] parts = p.split("-");
-			System.out.println(parts[1]);
-			cloudinary.uploader().destroy(parts[1], ObjectUtils.asMap("type", "upload", "resource_type", "image"));
-		}
-	}
+//	private void deleteFiles(List<String> images) throws java.io.IOException {
+//		if (images.size() == 0) return;
+//		
+//		for (var p : images)
+//		{
+//			String[] parts = p.split("-");
+//			System.out.println(parts[1]);
+//			cloudinary.uploader().destroy(parts[1], ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+//		}
+//	}
 
 	private void sendNotification(List<String> userNames, String userNameTag, int id, TagType type, GroupStudying group)
 	{
