@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
+import com.example.demo.entities.File;
 import com.example.demo.entities.MessageUser;
 import com.example.demo.entities.MessageUserStatus;
 import com.example.demo.entities.Notifycation;
 import com.example.demo.entities.User;
+import com.example.demo.repositories.FileRepository;
 import com.example.demo.repositories.FriendShipRepository;
 import com.example.demo.repositories.MessageUserRepository;
 import com.example.demo.repositories.UserRepository;
@@ -44,19 +46,24 @@ public class MessageUserService implements MessageUserManagement{
 	@Autowired
 	private Cloudinary cloudinary;
 	
+	@Autowired
+	private FileRepository fileRepository;
+	
 	@Override
 	public User getSentUser(long id)
 	{
 		return messageUserRepository.getById(id).getSentUser();
 	}
 	
-	public void uploadFileToCloudinary(MultipartFile file, String fromUserName, String toUserName) throws IOException
+	public void uploadFileToCloudinary(MultipartFile file, long messID) throws IOException
 	{
 		try
 		{
-			var mess = messageUserRepository.getById(sendMessage(new MessageUser(), fromUserName, toUserName));
+			var mess = messageUserRepository.getById(messID);
 			Map<String, String> data = cloudinary.uploader().upload(file.getBytes(), Map.of());
-			mess.getImages().add(data.get("url") + "-" + data.get("public_id"));
+			File f = new File(data.get("url"), data.get("public_id"), mess);
+			fileRepository.save(f);
+			mess.getFiles().add(f);
 			messageUserRepository.save(mess);
 		}        
 		catch (Exception e)
@@ -142,7 +149,7 @@ public class MessageUserService implements MessageUserManagement{
 //				
 //				obj.getImages().add(nameOnCloud);
 				
-				uploadFileToCloudinary(file, fromUserName, toUserName);;
+				//uploadFileToCloudinary(file, fromUserName, toUserName);;
 			}
 			
 			//messageUserRepository.save(obj);

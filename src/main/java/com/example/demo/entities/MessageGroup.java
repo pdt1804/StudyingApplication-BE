@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,7 +35,6 @@ public class MessageGroup {
 	@Lob
 	private String Content;
 	private Date dateSent;
-    private List<String> images = new ArrayList<>();
 	@OneToMany
 	@JoinColumn(name = "status_user_name", nullable = true)
 	@JsonIgnore
@@ -45,5 +45,6 @@ public class MessageGroup {
 	@JoinColumn(name = "group_id", nullable = true)
 	@JsonIgnore
 	private GroupStudying group;
-	
+	@OneToMany(mappedBy = "messageGroup", cascade = CascadeType.ALL)
+	private List<File> files = new ArrayList<>();
 }

@@ -42,6 +42,16 @@ public class File {
 	@JoinColumn(name = "replyID", nullable = true)
 	@JsonIgnore
 	private Reply reply;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "messageGroupID", nullable = true)
+	@JsonIgnore
+	private MessageGroup messageGroup;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "messageUserID", nullable = true)
+	@JsonIgnore
+	private MessageUser messageUser;
 	
 	public File(String url, String publicId, Blog blog)
 	{
@@ -52,6 +62,8 @@ public class File {
 		notifycation = null;
 		comment = null;
 		reply = null;
+		messageGroup = null;
+		messageUser = null;
 	}
 	
 	public File(String url, String publicId, Notifycation notifycation)
@@ -63,6 +75,8 @@ public class File {
 		blog = null;
 		comment = null;
 		reply = null;
+		messageGroup = null;
+		messageUser = null;
 	}
 	
 	public File(String url, String publicId, Comment comment)
@@ -74,6 +88,8 @@ public class File {
 		blog = null;
 		notifycation = null;
 		reply = null;
+		messageUser = null;
+		messageGroup = null;
 	}
 	
 	public File(String url, String publicId, Reply reply)
@@ -85,6 +101,34 @@ public class File {
 		blog = null;
 		notifycation = null;
 		comment = null;
+		messageGroup = null;
+		messageUser = null;
+	}
+	
+	public File(String url, String publicId, MessageGroup mess)
+	{
+		this.url = url;
+		this.publicId = publicId;
+		this.messageGroup = mess;
+		
+		blog = null;
+		notifycation = null;
+		comment = null;
+		reply = null;
+		messageUser = null;
+	}
+	
+	public File(String url, String publicId, MessageUser mess)
+	{
+		this.url = url;
+		this.publicId = publicId;
+		this.messageUser = mess;
+		
+		blog = null;
+		notifycation = null;
+		comment = null;
+		reply = null;
+		messageGroup = null;
 	}
 	
 }
