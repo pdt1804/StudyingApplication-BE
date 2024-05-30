@@ -289,6 +289,23 @@ public class GroupStudyingService implements GroupManagement {
 		
 		return filterGroups;
 	}
+	
+	public List<GroupStudying> filterGroupByTopic(String userName, Integer topic)
+	{
+		var filterGroups = new ArrayList<GroupStudying>();
+		var allGroups = new ArrayList<>(groupStudyingRepository.findAll());
+		allGroups.removeAll(userRepository.getById(userName).getGroups());
+		
+		for(var p : allGroups)
+		{
+			if (CheckGroupByTopic(p, topic))
+			{
+				filterGroups.add(p);
+			}
+		}
+		
+		return filterGroups;
+	}
 
 	private boolean CheckGroupByTopics(GroupStudying p, List<Integer> topics) {
 		int index = 0;
@@ -305,6 +322,18 @@ public class GroupStudyingService implements GroupManagement {
 		}
 		
 		if (index == topics.size()) return true;
+		return false;
+	}
+	
+	private boolean CheckGroupByTopic(GroupStudying p, Integer topic) {
+		for (var topicInGroup : p.getTopics())
+		{
+			if (topicInGroup.getTopicID() == topic)
+			{
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	

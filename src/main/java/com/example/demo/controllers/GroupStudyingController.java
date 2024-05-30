@@ -93,6 +93,12 @@ public class GroupStudyingController {
 		return groupStudyingService.filterGroupByTopics(extractTokenToGetUsername(request), topics);
 	}
 	
+	@GetMapping("/getAllGroupByTopic")
+	public List<GroupStudying> getAllGroupByTopics(HttpServletRequest request, @RequestParam("topic") Integer topic)
+	{
+		return groupStudyingService.filterGroupByTopic(extractTokenToGetUsername(request), topic);
+	}
+	
 	@GetMapping("/getAllRecommendedGroup")
 	public List<GroupStudying> getAllRecommendedGroup(HttpServletRequest request)
 	{
