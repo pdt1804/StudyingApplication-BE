@@ -61,10 +61,10 @@ public class MessageGroupController {
 	}
 	
 	@PostMapping("/uploadImage")
-	public void uploadImage(@RequestParam("messID") long messID, HttpServletRequest request, @RequestParam("file") MultipartFile file) throws IOException
+	public void uploadImage(@RequestParam("messID") long messID, HttpServletRequest request, @RequestParam("file") MultipartFile file, @RequestParam("width") int width, @RequestParam("height") int height) throws IOException
 	{
 		System.out.println("ab");
-		messageGroupService.uploadOneFileToCloudinary(messID, file, extractTokenToGetUsername(request));
+		messageGroupService.uploadOneFileToCloudinary(messID, file, extractTokenToGetUsername(request), width, height);
 	}
 	
 	@MessageMapping("/sendMess")

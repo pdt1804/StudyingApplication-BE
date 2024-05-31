@@ -55,13 +55,15 @@ public class MessageUserService implements MessageUserManagement{
 		return messageUserRepository.getById(id).getSentUser();
 	}
 	
-	public void uploadFileToCloudinary(MultipartFile file, long messID) throws IOException
+	public void uploadFileToCloudinary(MultipartFile file, long messID, int width, int height) throws IOException
 	{
 		try
 		{
 			var mess = messageUserRepository.getById(messID);
 			Map<String, String> data = cloudinary.uploader().upload(file.getBytes(), Map.of());
 			File f = new File(data.get("url"), data.get("public_id"), mess);
+			f.setHeight(height);
+			f.setWidth(width);
 			fileRepository.save(f);
 			mess.getFiles().add(f);
 			messageUserRepository.save(mess);

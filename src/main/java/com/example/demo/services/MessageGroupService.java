@@ -98,7 +98,7 @@ public class MessageGroupService implements MessageGroupManagement {
 //				
 //				obj.getImages().add(nameOnCloud);
 				
-				uploadOneFileToCloudinary(groupID, file, userName);
+				//uploadOneFileToCloudinary(groupID, file, userName);
 			}
 			
 			//messageGroupRepository.save(obj);
@@ -106,7 +106,7 @@ public class MessageGroupService implements MessageGroupManagement {
 	}
 	
 	@Synchronized
-	public void uploadOneFileToCloudinary(long messID, MultipartFile file, String userName) throws IOException
+	public void uploadOneFileToCloudinary(long messID, MultipartFile file, String userName, int width, int height) throws IOException
 	{
 		try
 		{
@@ -114,6 +114,8 @@ public class MessageGroupService implements MessageGroupManagement {
 			var mess = messageGroupRepository.getById(messID);
 			Map<String, String> data = cloudinary.uploader().upload(file.getBytes(), Map.of());
 			File f = new File(data.get("url"), data.get("public_id"), mess);
+			f.setHeight(height);
+			f.setWidth(width);
 			fileRepository.save(f);		
 			mess.getFiles().add(f);
 			messageGroupRepository.save(mess);

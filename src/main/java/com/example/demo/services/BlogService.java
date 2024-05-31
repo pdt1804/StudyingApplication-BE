@@ -385,24 +385,24 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 		}
 	}
 	
-	public void UploadImageToCloudinaryForBlog(long id, MultipartFile file) throws java.io.IOException
+	public void UploadImageToCloudinaryForBlog(long id, MultipartFile file, int width, int height) throws java.io.IOException
 	{
 		if (file == null) return;
-		else cloudinaryService.uploadFilesBlog(file, id);
+		else cloudinaryService.uploadFilesBlog(file, id, width, height);
 	}
 	
 	@Synchronized
-	public void UploadImageToCloudinaryForComment(int id, MultipartFile file) throws java.io.IOException
+	public void UploadImageToCloudinaryForComment(int id, MultipartFile file, int width, int height) throws java.io.IOException
 	{
 		if (file == null) return;
-		else cloudinaryService.uploadFilesComment(file, id);
+		else cloudinaryService.uploadFilesComment(file, id, width, height);
 	}
 	
 	@Synchronized
-	public void UploadImageToCloudinaryForReply(int id, MultipartFile file) throws java.io.IOException
+	public void UploadImageToCloudinaryForReply(int id, MultipartFile file, int width, int height) throws java.io.IOException
 	{
 		if (file == null) return;
-		else cloudinaryService.uploadFilesReply(file, id);
+		else cloudinaryService.uploadFilesReply(file, id, width, height);
 	}
 	
 	private void UploadImageToFirebaseForComment(int id, List<MultipartFile> files) throws java.io.IOException
@@ -420,7 +420,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 //				
 //				obj.getImages().add(nameOnCloud);
 				
-				UploadImageToCloudinaryForComment(id, file);
+				//UploadImageToCloudinaryForComment(id, file);
 			}
 			
 			//commentRepository.save(obj);
@@ -442,7 +442,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 //				
 //				obj.getImages().add(nameOnCloud);
 				
-				UploadImageToCloudinaryForReply(id, file);
+				//UploadImageToCloudinaryForReply(id, file);
 			}
 			
 			//replyRepository.save(obj);
@@ -531,7 +531,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	}
 	
 	private void ExecuteAddFileBlogRequest(Blog blog, MultipartFile p) throws java.io.IOException {
-		UploadImageToCloudinaryForBlog(blog.getBlogID(), p);
+		//UploadImageToCloudinaryForBlog(blog.getBlogID(), p);
 	}
 	
 	private void ExecuteRemoveFileBlogRequest(Blog blog, String url) throws java.io.IOException {

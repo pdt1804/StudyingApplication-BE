@@ -83,9 +83,9 @@ public class MessageUserController {
 	}
 	
 	@PostMapping("/uploadImage")
-	public void uploadImage(@RequestParam("messID") long messID, @RequestParam("file") MultipartFile file) throws IOException
+	public void uploadImage(@RequestParam("messID") long messID, @RequestParam("file") MultipartFile file, @RequestParam("width") int width, @RequestParam("height") int height) throws IOException
 	{	
-		messageUserService.uploadFileToCloudinary(file, messID);
+		messageUserService.uploadFileToCloudinary(file, messID, width, height);
 	}
 	
 	@MessageMapping("/sendMessForUser")

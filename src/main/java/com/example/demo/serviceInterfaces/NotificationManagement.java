@@ -14,7 +14,7 @@ public interface NotificationManagement {
 
 	public int createNotifycation(int groupID, String userName, Notifycation notifycation);
 
-	public void insertImage(int notificationID, MultipartFile image);
+	public void insertImage(int notificationID, MultipartFile image, int width, int height);
 	
 	public List<Notifycation> getAllNotifycationByUserName(String userName);
 	

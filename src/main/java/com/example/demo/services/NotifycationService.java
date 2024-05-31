@@ -54,7 +54,7 @@ public class NotifycationService implements NotificationManagement{
 	
 	@Override
 	@Synchronized
-	public void insertImage(int notificationID, MultipartFile image)
+	public void insertImage(int notificationID, MultipartFile image, int width, int height)
 	{
 		try {
 			var notification = notifycationRepository.getById(notificationID);
@@ -63,6 +63,8 @@ public class NotifycationService implements NotificationManagement{
 			{
 		        Map<String, String> data = this.cloudinary.uploader().upload(image.getBytes(), Map.of());
 		        var file = new File(data.get("url"), data.get("public_id"), notification);
+		        file.setHeight(height);
+		        file.setWidth(width);
 		        fileRepository.save(file);
 		        notification.getFiles().add(file);
 		        notifycationRepository.save(notification);

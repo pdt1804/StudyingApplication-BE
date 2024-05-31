@@ -78,7 +78,7 @@ public class CloudinaryService {
 	        }
 	}
 
-	public void uploadFilesBlog(MultipartFile file, long blogID)
+	public void uploadFilesBlog(MultipartFile file, long blogID, int width, int height)
 	{
 		try
 		{
@@ -86,6 +86,8 @@ public class CloudinaryService {
 			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
 			//blog.getImage().add(data.get("url") + "-" + data.get("public_id"));
 			var f = new File(data.get("url"), data.get("public_id"), blog);
+			f.setHeight(height);
+			f.setWidth(width);
 			fileRepository.save(f);
 			blog.getFiles().add(f);
 			blogRepository.save(blog);
@@ -96,13 +98,15 @@ public class CloudinaryService {
 		}
 	}
 	
-	public void uploadFilesComment(MultipartFile file, int cmtID)
+	public void uploadFilesComment(MultipartFile file, int cmtID, int width, int height)
 	{
 		try
 		{
 			var cmt = commentRepository.getById(cmtID);
 			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
 			var f = new File(data.get("url"), data.get("public_id"), cmt);
+			f.setHeight(height);
+			f.setWidth(width);
 			fileRepository.save(f);
 			cmt.getFiles().add(f);
 			commentRepository.save(cmt);
@@ -113,13 +117,15 @@ public class CloudinaryService {
 		}
 	}
 	
-	public void uploadFilesReply(MultipartFile file, int blogID)
+	public void uploadFilesReply(MultipartFile file, int blogID, int width, int height)
 	{
 		try
 		{
 			var rep = replyRepository.getById(blogID);
 			Map<String, String> data = this.getCloudinary().uploader().upload(file.getBytes(), Map.of());
 			var f = new File(data.get("url"), data.get("public_id"), rep);
+			f.setHeight(height);
+			f.setWidth(width);
 			fileRepository.save(f);
 			rep.getFiles().add(f);
 			replyRepository.save(rep);
