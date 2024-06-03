@@ -203,7 +203,7 @@ public class MessageUserService implements MessageUserManagement{
 			}
 		}
 		
-		return listMessageUser.stream().sorted((m1,m2) -> m1.getDateSent().compareTo(m2.getDateSent())).collect(Collectors.toList());
+		return listMessageUser.stream().sorted((m1,m2) -> m2.getDateSent().compareTo(m1.getDateSent())).collect(Collectors.toList());
 	}
 	
 	@Override

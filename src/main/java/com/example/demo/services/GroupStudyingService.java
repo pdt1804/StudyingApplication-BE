@@ -198,7 +198,6 @@ public class GroupStudyingService implements GroupManagement {
 	{
 		var listGroup = groupStudyingRepository.findAll().stream().filter(p -> p.getNameGroup().toLowerCase().contains(nameGroup.toLowerCase()) && p.getUsers().size() > 0).collect(Collectors.toList());
 		listGroup.removeAll(userRepository.getById(userName).getGroups());
-		
 		return listGroup;
 	}
 
