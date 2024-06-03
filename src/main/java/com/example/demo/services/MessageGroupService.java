@@ -136,7 +136,7 @@ public class MessageGroupService implements MessageGroupManagement {
 		lastMess.get().getStatusMessageWithUsers().remove(userRepository.getById(myUserName));
 		messageGroupRepository.save(lastMess.get());
 		
-		var listMessage = group.getMessages().stream().sorted((d1,d2) -> d1.getDateSent().compareTo(d2.getDateSent())).collect(Collectors.toList());
+		var listMessage = group.getMessages().stream().sorted((d1,d2) -> d2.getDateSent().compareTo(d1.getDateSent())).collect(Collectors.toList());
 		return listMessage.size() != 0 ? listMessage : null;
 	}
 	
