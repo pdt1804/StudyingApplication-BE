@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,6 +34,7 @@ public class MessageGroup {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long ID;
 	@Lob
+	@Column(columnDefinition = "TEXT")
 	private String Content;
 	private Date dateSent;
 	@OneToMany

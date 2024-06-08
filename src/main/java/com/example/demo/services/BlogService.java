@@ -757,7 +757,7 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 				 .Content(userTag.getInformation().getFulName() + " tag bạn vào " + typeName + " trong nhóm " + group.getNameGroup() + ".")
 				 .Header("Bạn đã được tag tên !!!").contentID(id)
 				 .groupStudying(group)
-				 .dateSent(new Date()).notifycationType(NotifycationType.user).build();
+				 .dateSent(new Date()).notifycationType(NotifycationType.admin).build();
 				
 		if (notifycation.getUserSeenNotifycation() == null) notifycation.setUserSeenNotifycation(new ArrayList<>());
 		if (notifycation.getUsers() == null) notifycation.setUsers(new ArrayList<>());

@@ -297,6 +297,11 @@ public class GroupStudyingService implements GroupManagement {
 		
 		for(var p : allGroups)
 		{
+			if (p.getUsers().size() == 0)
+			{
+				continue;
+			}
+			
 			if (CheckGroupByTopic(p, topic))
 			{
 				filterGroups.add(p);
