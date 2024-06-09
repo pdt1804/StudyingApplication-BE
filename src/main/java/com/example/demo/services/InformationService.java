@@ -50,6 +50,11 @@ public class InformationService implements InformationManagement {
 		return cloudinaryService.uploadImageAvatar(image, userName);
 	}
 	
+	public List<User> getAllChatbots()
+	{
+		return userRepository.findAll().stream().filter(p -> p.getUserName().contains("Chatbot")).toList();
+	}
+	
 	@Override
 	public Information getInformationbyID(int ID)
 	{

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -61,6 +62,12 @@ public class MessageUserController {
 		return messageUserService.getSentUser(id);
 	}
 	
+	@GetMapping("/getGroupData")
+	public ResponseEntity<String> getGroupData()
+	{
+		return ResponseEntity.ok(messageUserService.retrievingInformationGroup());
+	}
+	
 	@GetMapping("/checkSender")
 	public boolean checkSender(@RequestParam("userName") String userName, HttpServletRequest request)
 	{
@@ -100,11 +107,11 @@ public class MessageUserController {
 	}
 	
 	@PostMapping("/saveChatbotMessage")
-	public long saveChatbotMessage(@RequestParam("messContent") String content, HttpServletRequest request)
+	public long saveChatbotMessage(@RequestParam("messContent") String content, HttpServletRequest request, @RequestParam("chatbotUserName") String chatbotUserName)
 	{
 		var mess = new MessageUser();
 		mess.setContent(content);
 		
-		return messageUserService.saveChatBotMessage(mess, extractTokenToGetUsername(request));
+		return messageUserService.saveChatBotMessage(mess, extractTokenToGetUsername(request), chatbotUserName);
 	}
 }

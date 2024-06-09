@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -185,6 +187,31 @@ public class UserService implements AccountManagement, RecoveryAccount {
 			return -1;
 		}
     }
+	
+	@PostConstruct
+	private void SettingUpChatbots()
+	{
+		if (userRepository.getById("Chatbot-Application") == null)
+		{
+			var chatbotGemini = new User();
+			chatbotGemini.setUserName("Chatbot-Gemini");
+			chatbotGemini.setInformation(informationRepository.save(new Information()));
+			chatbotGemini.getInformation().setFulName("Gemini AI");
+			chatbotGemini.setEmail("None");
+			chatbotGemini.getInformation().setImage("https://s.cafebazaar.ir/images/icons/com.google.android.apps.bard-cb4d9ab8-803b-45f7-9333-ac326c276662_512x512.png?x-img=v1/resize,h_256,w_256,lossless_false/optimize");
+			informationRepository.save(chatbotGemini.getInformation());
+			userRepository.save(chatbotGemini);
+			
+			var chatbotApplication = new User();
+			chatbotApplication.setUserName("Chatbot-Application");
+			chatbotApplication.setInformation(informationRepository.save(new Information()));
+			chatbotApplication.getInformation().setFulName("Chatbot Application");
+			chatbotGemini.setEmail("None");
+			chatbotApplication.getInformation().setImage("https://icon-library.com/images/bot-icon/bot-icon-5.jpg");
+			informationRepository.save(chatbotApplication.getInformation());
+			userRepository.save(chatbotApplication);				
+		}
+	}
 	
 	private int sendOTPtoAuthenticate(String email, int otp) 
 	{	

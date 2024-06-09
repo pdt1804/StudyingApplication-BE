@@ -21,5 +21,5 @@ public interface MessageUserManagement {
 	
 	public int getFriendID(String fromUserName, String toUserName);
 	
-	public long saveChatBotMessage(MessageUser mess, String toUserName);
+	public long saveChatBotMessage(MessageUser mess, String toUserName, String ChatbotUserName);
 }

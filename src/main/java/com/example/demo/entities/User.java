@@ -60,6 +60,10 @@ public class User {
     )
     private List<Notifycation> notifycations = new ArrayList<>();
 	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "reviewer")
+	@JsonIgnore
+	private List<Review> reviews = new ArrayList<>();
+	
 //	@OneToMany
 //    @JoinColumn(name="username_notifycation", nullable = true)
 //    private List<User> userSeenNotifycation = new ArrayList<>();

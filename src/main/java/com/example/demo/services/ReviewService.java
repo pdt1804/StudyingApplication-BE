@@ -50,6 +50,9 @@ public class ReviewService {
 		group.getReviews().add(review);
 		group.getUserNameReviewed().add(userName);
 		groupStudyingRepository.save(group);
+		
+		user.getReviews().add(review);
+		userRepository.save(user);
 	}
 	
 	public void updateReview(String content, double rating, int reviewID, String userName)

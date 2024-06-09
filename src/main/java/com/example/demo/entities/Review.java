@@ -38,7 +38,7 @@ public class Review {
 	@ManyToOne
 	@JoinColumn(name = "userName")
 	private User reviewer;
-	@OneToOne
+	@ManyToOne
 	@JsonIgnore
 	@JoinColumn(name = "groupID")
 	private GroupStudying group;
