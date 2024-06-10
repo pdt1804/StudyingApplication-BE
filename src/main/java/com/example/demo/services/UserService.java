@@ -3,6 +3,7 @@ package com.example.demo.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 import jakarta.annotation.PostConstruct;
 
@@ -191,13 +192,15 @@ public class UserService implements AccountManagement, RecoveryAccount {
 	@PostConstruct
 	private void SettingUpChatbots()
 	{
-		if (userRepository.getById("Chatbot-Application") == null)
+		var checkExist = userRepository.findAll().stream().anyMatch(p -> p.getUserName().contains("Chatbot"));
+		
+		if (checkExist == false)
 		{
 			var chatbotGemini = new User();
 			chatbotGemini.setUserName("Chatbot-Gemini");
 			chatbotGemini.setInformation(informationRepository.save(new Information()));
 			chatbotGemini.getInformation().setFulName("Gemini AI");
-			chatbotGemini.setEmail("None");
+			chatbotGemini.setEmail(UUID.randomUUID().toString());
 			chatbotGemini.getInformation().setImage("https://s.cafebazaar.ir/images/icons/com.google.android.apps.bard-cb4d9ab8-803b-45f7-9333-ac326c276662_512x512.png?x-img=v1/resize,h_256,w_256,lossless_false/optimize");
 			informationRepository.save(chatbotGemini.getInformation());
 			userRepository.save(chatbotGemini);
@@ -206,10 +209,37 @@ public class UserService implements AccountManagement, RecoveryAccount {
 			chatbotApplication.setUserName("Chatbot-Application");
 			chatbotApplication.setInformation(informationRepository.save(new Information()));
 			chatbotApplication.getInformation().setFulName("Chatbot Application");
-			chatbotGemini.setEmail("None");
+			chatbotApplication.setEmail(UUID.randomUUID().toString());
 			chatbotApplication.getInformation().setImage("https://icon-library.com/images/bot-icon/bot-icon-5.jpg");
 			informationRepository.save(chatbotApplication.getInformation());
-			userRepository.save(chatbotApplication);				
+			userRepository.save(chatbotApplication);	
+			
+			var chatbotOpenAI = new User();
+			chatbotOpenAI.setUserName("Chatbot-OpenAI");
+			chatbotOpenAI.setInformation(informationRepository.save(new Information()));
+			chatbotOpenAI.getInformation().setFulName("Chatbot GPT");
+			chatbotOpenAI.setEmail(UUID.randomUUID().toString());
+			chatbotOpenAI.getInformation().setImage("https://static.vecteezy.com/system/resources/previews/021/608/795/non_2x/chatgpt-logo-chat-gpt-icon-on-green-background-free-vector.jpg");
+			informationRepository.save(chatbotOpenAI.getInformation());
+			userRepository.save(chatbotOpenAI);
+		
+			var chatbotJasperAI = new User();
+			chatbotJasperAI.setUserName("Chatbot-JasperAI");
+			chatbotJasperAI.setInformation(informationRepository.save(new Information()));
+			chatbotJasperAI.getInformation().setFulName("Chatbot Jasper");
+			chatbotJasperAI.setEmail(UUID.randomUUID().toString());
+			chatbotJasperAI.getInformation().setImage("https://cdn.prod.website-files.com/60e5f2de011b865a06c30ddd/65157fcb687da6b4bb42085f_Jasper%20Author-min.png");
+			informationRepository.save(chatbotJasperAI.getInformation());
+			userRepository.save(chatbotJasperAI);
+			
+			var chatbotWitAI = new User();
+			chatbotWitAI.setUserName("Chatbot-WitAI");
+			chatbotWitAI.setInformation(informationRepository.save(new Information()));
+			chatbotWitAI.getInformation().setFulName("Chatbot Wit AI");
+			chatbotWitAI.setEmail(UUID.randomUUID().toString());
+			chatbotWitAI.getInformation().setImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi2uwj2XTMUAXYDt-QGpsolQzIt5ZIzcJNxg&s");
+			informationRepository.save(chatbotWitAI.getInformation());
+			userRepository.save(chatbotWitAI);
 		}
 	}
 	

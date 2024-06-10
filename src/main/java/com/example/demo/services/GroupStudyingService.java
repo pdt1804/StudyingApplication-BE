@@ -289,6 +289,13 @@ public class GroupStudyingService implements GroupManagement {
 		return filterGroups;
 	}
 	
+	public String getLastMessageOfGroup(int groupID)
+	{
+		var messList = groupStudyingRepository.getById(groupID).getMessages();
+		var mess = messList.get(messList.size() - 1);
+		return mess.getUser().getInformation().getFulName() + ": " + mess.getContent();
+	}
+	
 	public List<GroupStudying> filterGroupByTopic(String userName, Integer topic)
 	{
 		var filterGroups = new ArrayList<GroupStudying>();

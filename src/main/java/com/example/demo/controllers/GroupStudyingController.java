@@ -87,6 +87,12 @@ public class GroupStudyingController {
 		return groupStudyingService.getNameGroupByNotificationID(id);
 	}
 	
+	@GetMapping("/getLastMessageOfGroup")
+	public String getLastMessageOfGroup(@RequestParam("groupID") int groupID)
+	{
+		return groupStudyingService.getLastMessageOfGroup(groupID);
+	}
+	
 	@GetMapping("/getAllGroupByTopics")
 	public List<GroupStudying> getAllGroupByTopics(HttpServletRequest request, @RequestParam("topics") List<Integer> topics)
 	{
