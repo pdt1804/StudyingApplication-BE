@@ -57,11 +57,12 @@ public class DocumentController {
 	
 	
 	@PostMapping("/addDocument")
-	public int addDocument(@RequestParam("file") MultipartFile file, @RequestParam("groupID") int groupID, HttpServletRequest request)
+	public int addDocument(@RequestParam("file") MultipartFile file, @RequestParam("groupID") int groupID, @RequestParam("fileName") String fileName, HttpServletRequest request)
 	{
 		try
 		{
-			return documentService.addDocument(file, groupID, extractTokenToGetUsername(request));
+			System.out.println(fileName);
+			return documentService.addDocument(file, groupID, extractTokenToGetUsername(request), fileName);
 		}
 		catch (Exception e)
 		{
