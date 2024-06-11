@@ -203,13 +203,15 @@ public class BlogService implements SubjectManagement, BlogManagement, CommentMa
 	
 	@Override
 	@Synchronized
-	public void insertImageInBlog(long blogID, MultipartFile file)
+	public void insertImageInBlog(long blogID, MultipartFile file, int width, int height)
 	{
 		try
 		{
 			var blog = blogRepository.getById(blogID);
 			Map<String, String> data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
 			File f = new File(data.get("url").toString(), data.get("public_id").toString(), blog);
+			f.setWidth(width);
+			f.setHeight(height);
 			fileRepository.save(f);
 			blog.getFiles().add(f);
 			blogRepository.save(blog);

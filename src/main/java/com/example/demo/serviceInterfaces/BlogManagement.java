@@ -28,7 +28,7 @@ public interface BlogManagement {
 	
 	public boolean checkLikeBlog(String userName, long blogID);
 	
-	public void insertImageInBlog(long blogID, MultipartFile file);
+	public void insertImageInBlog(long blogID, MultipartFile file, int width, int height);
 	
 	public long createBlog(int GroupID, String userName, String content, int subjectID, List<String> userNames);
 	
